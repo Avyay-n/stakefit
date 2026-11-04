@@ -49,8 +49,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
   // FAQ Accordion open index
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
-  // Scroll and active section tracking
-  const [scrolled, setScrolled] = useState(false);
+  // Scroll and active section tracking for the right side bar
   const [scrollProgress, setScrollProgress] = useState(0);
   const [activeSection, setActiveSection] = useState('hero');
   const pageRef = useRef<HTMLDivElement>(null);
@@ -60,7 +59,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
     playPop();
     const el = document.getElementById(id);
     if (el) {
-      const topOffset = 84;
+      const topOffset = 80;
       const elementPosition = el.getBoundingClientRect().top;
       const offsetPosition = elementPosition + window.pageYOffset - topOffset;
       window.scrollTo({
@@ -70,12 +69,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
     }
   };
 
-  // Scroll listener for moving header & side bar tracking
+  // Scroll listener for side bar tracking
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
-      setScrolled(scrollY > 40);
-
       const docHeight = document.documentElement.scrollHeight - window.innerHeight;
       const progress = docHeight > 0 ? (scrollY / docHeight) * 100 : 0;
       setScrollProgress(Math.min(100, Math.max(0, progress)));
@@ -235,128 +232,108 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
       </div>
 
       {/* ======================================================== */}
-      {/* Top Bar: Morphs & Moves into a Floating Dock on Scroll */}
+      {/* Top Navigation Bar (Stationary Full-Width Header) */}
       {/* ======================================================== */}
-      <div
-        className={`transition-all duration-300 z-50 ${
-          scrolled
-            ? 'fixed top-3 left-0 right-0 px-3 sm:px-6'
-            : 'sticky top-0 w-full'
-        }`}
-      >
-        <header
-          className={`transition-all duration-300 flex items-center justify-between relative overflow-hidden ${
-            scrolled
-              ? 'max-w-5xl mx-auto rounded-2xl bg-[#09090b]/90 backdrop-blur-xl border border-red-500/40 shadow-[0_12px_40px_rgba(0,0,0,0.85)] h-14 px-4 sm:px-6'
-              : 'w-full bg-[#09090b]/85 backdrop-blur-md border-b border-[#27272a]/70 h-16 px-4 sm:px-8'
-          }`}
-        >
-          {/* Moving Scroll Progress Indicator along the bottom rim */}
+      <header className="sticky top-0 z-40 w-full bg-[#09090b]/85 backdrop-blur-md border-b border-[#27272a]/70 h-16 px-4 sm:px-8 flex items-center justify-between">
+        <div className="flex items-center gap-3">
           <div
-            className="absolute bottom-0 left-0 h-[2.5px] bg-gradient-to-r from-red-600 via-amber-500 to-emerald-400 transition-all duration-75 shadow-[0_0_10px_#ef4444]"
-            style={{ width: `${scrollProgress}%` }}
-          />
-
-          <div className="flex items-center gap-3">
-            <div
-              onClick={() => scrollToSection('hero')}
-              className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-red-500 via-red-600 to-red-800 flex items-center justify-center text-white glow-red shadow-lg border border-red-400/40 cursor-pointer shrink-0 hover:scale-105 transition-transform"
-            >
-              <Flame className="w-5 h-5 fill-white" />
+            onClick={() => scrollToSection('hero')}
+            className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-500 via-red-600 to-red-800 flex items-center justify-center text-white glow-red shadow-lg border border-red-400/40 cursor-pointer shrink-0 hover:scale-105 transition-transform"
+          >
+            <Flame className="w-5 h-5 fill-white" />
+          </div>
+          <div onClick={() => scrollToSection('hero')} className="cursor-pointer">
+            <div className="flex items-center gap-1.5">
+              <span className="text-base sm:text-lg font-black tracking-tight text-white uppercase font-sans">
+                STAKE<span className="text-red-500">FIT</span>
+              </span>
+              <span className="px-1.5 py-0.5 rounded text-[8px] font-black uppercase bg-red-600 text-white">
+                PRO
+              </span>
             </div>
-            <div onClick={() => scrollToSection('hero')} className="cursor-pointer">
-              <div className="flex items-center gap-1.5">
-                <span className="text-base sm:text-lg font-black tracking-tight text-white uppercase font-sans">
-                  STAKE<span className="text-red-500">FIT</span>
-                </span>
-                <span className="px-1.5 py-0.5 rounded text-[8px] font-black uppercase bg-red-600 text-white">
-                  PRO
-                </span>
-              </div>
-              <p className="text-[9px] text-zinc-400 font-bold uppercase tracking-wider hidden sm:block">
-                Financial Fitness Accountability
-              </p>
-            </div>
+            <p className="text-[9px] text-zinc-400 font-bold uppercase tracking-wider hidden sm:block">
+              Financial Fitness Accountability
+            </p>
           </div>
+        </div>
 
-          {/* Interactive Navigation Links with Active Scroll Highlighting */}
-          <div className="hidden lg:flex items-center gap-6 text-xs font-black uppercase tracking-wider">
-            <button
-              onClick={() => scrollToSection('features')}
-              className={`transition-colors py-1 ${
-                activeSection === 'features'
-                  ? 'text-red-400 border-b-2 border-red-500 font-black'
-                  : 'text-zinc-400 hover:text-white'
-              }`}
-            >
-              How It Works
-            </button>
-            <button
-              onClick={() => scrollToSection('calculator')}
-              className={`transition-colors py-1 ${
-                activeSection === 'calculator'
-                  ? 'text-emerald-400 border-b-2 border-emerald-500 font-black'
-                  : 'text-zinc-400 hover:text-emerald-400'
-              }`}
-            >
-              Dividend Calculator
-            </button>
-            <button
-              onClick={() => scrollToSection('how-it-works')}
-              className={`transition-colors py-1 ${
-                activeSection === 'how-it-works'
-                  ? 'text-white border-b-2 border-red-500 font-black'
-                  : 'text-zinc-400 hover:text-white'
-              }`}
-            >
-              3-Step Flow
-            </button>
-            <button
-              onClick={() => scrollToSection('preview')}
-              className={`transition-colors py-1 ${
-                activeSection === 'preview'
-                  ? 'text-red-400 border-b-2 border-red-500 font-black'
-                  : 'text-zinc-400 hover:text-red-400'
-              }`}
-            >
-              Live Preview
-            </button>
-            <button
-              onClick={() => scrollToSection('faq')}
-              className={`transition-colors py-1 ${
-                activeSection === 'faq'
-                  ? 'text-white border-b-2 border-red-500 font-black'
-                  : 'text-zinc-400 hover:text-white'
-              }`}
-            >
-              FAQ
-            </button>
-          </div>
+        {/* Interactive Navigation Links with Active Scroll Highlighting */}
+        <div className="hidden lg:flex items-center gap-7 text-xs font-black uppercase tracking-wider">
+          <button
+            onClick={() => scrollToSection('features')}
+            className={`transition-colors py-1 ${
+              activeSection === 'features'
+                ? 'text-red-400 border-b-2 border-red-500 font-black'
+                : 'text-zinc-400 hover:text-white'
+            }`}
+          >
+            How It Works
+          </button>
+          <button
+            onClick={() => scrollToSection('calculator')}
+            className={`transition-colors py-1 ${
+              activeSection === 'calculator'
+                ? 'text-emerald-400 border-b-2 border-emerald-500 font-black'
+                : 'text-zinc-400 hover:text-emerald-400'
+            }`}
+          >
+            Dividend Calculator
+          </button>
+          <button
+            onClick={() => scrollToSection('how-it-works')}
+            className={`transition-colors py-1 ${
+              activeSection === 'how-it-works'
+                ? 'text-white border-b-2 border-red-500 font-black'
+                : 'text-zinc-400 hover:text-white'
+            }`}
+          >
+            3-Step Flow
+          </button>
+          <button
+            onClick={() => scrollToSection('preview')}
+            className={`transition-colors py-1 ${
+              activeSection === 'preview'
+                ? 'text-red-400 border-b-2 border-red-500 font-black'
+                : 'text-zinc-400 hover:text-red-400'
+            }`}
+          >
+            Live Preview
+          </button>
+          <button
+            onClick={() => scrollToSection('faq')}
+            className={`transition-colors py-1 ${
+              activeSection === 'faq'
+                ? 'text-white border-b-2 border-red-500 font-black'
+                : 'text-zinc-400 hover:text-white'
+            }`}
+          >
+            FAQ
+          </button>
+        </div>
 
-          <div className="flex items-center gap-2.5">
-            <button
-              onClick={() => {
-                playPop();
-                onOpenAuth();
-              }}
-              className="px-3.5 py-1.5 sm:py-2 rounded-xl bg-[#141416] hover:bg-zinc-800 text-zinc-200 text-xs font-black uppercase tracking-wider transition-all border border-zinc-700"
-            >
-              Sign In
-            </button>
+        <div className="flex items-center gap-2.5">
+          <button
+            onClick={() => {
+              playPop();
+              onOpenAuth();
+            }}
+            className="px-3.5 py-2 rounded-xl bg-[#141416] hover:bg-zinc-800 text-zinc-200 text-xs font-black uppercase tracking-wider transition-all border border-zinc-700"
+          >
+            Sign In
+          </button>
 
-            <button
-              onClick={() => {
-                playPop();
-                onEnterHub();
-              }}
-              className="flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-black uppercase tracking-wider transition-all shadow-lg shadow-red-950/60 glow-red border border-red-400/40 active:scale-95"
-            >
-              <span>Your Squads ⚡</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </button>
-          </div>
-        </header>
-      </div>
+          <button
+            onClick={() => {
+              playPop();
+              onEnterHub();
+            }}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-black uppercase tracking-wider transition-all shadow-lg shadow-red-950/60 glow-red border border-red-400/40 active:scale-95"
+          >
+            <span>Your Squads ⚡</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      </header>
 
       {/* ======================================================== */}
       {/* Floating Side Bar (Moves & Tracks Scroll Down the Page) */}
