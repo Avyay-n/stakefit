@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { PactCalendar } from './PactCalendar';
+import FlipCard from './ui/FlipCard';
 import {
   Sliders,
   Scale,
@@ -11,10 +12,15 @@ import {
   TrendingDown,
   X,
   Upload,
+  RotateCw,
+  Sparkles,
 } from 'lucide-react';
 
 export const BodyTransformationView: React.FC = () => {
   const { activeUser, logWeighIn } = useApp();
+
+  // Mode: 3D Flip Card Vault vs Split Slider
+  const [comparisonMode, setComparisonMode] = useState<'flip' | 'slider'>('flip');
 
   // Before/After Split Slider State
   const [sliderPosition, setSliderPosition] = useState(50); // percentage
@@ -178,23 +184,48 @@ export const BodyTransformationView: React.FC = () => {
         </div>
       </div>
 
-      {/* Before / After Interactive Photo Split Slider */}
+      {/* Before / After Physique Progress: 3D Flip Card Vault & Interactive Split Slider */}
       <div className="bg-[#121214] border border-[#27272a] rounded-3xl p-5 sm:p-6 shadow-xl space-y-4">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <div>
             <h3 className="text-base font-black text-white uppercase tracking-wider flex items-center gap-2">
-              <Sliders className="w-4 h-4 text-red-500" />
-              <span>Physique Progress Before vs. After</span>
+              <Sparkles className="w-4 h-4 text-red-500" />
+              <span>Body Transformation Vault (Before vs. After)</span>
             </h3>
             <p className="text-xs text-zinc-400 mt-0.5">
-              Drag slider left or right to compare baseline Day 1 against latest physique check
+              Flip the 3D vault card to compare Day 1 baseline against Day 90 shredded physique
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-mono font-bold text-zinc-300 bg-[#18181b] px-3 py-1 rounded-lg border border-[#27272a]">
-              {activeUser.baselineDate} vs {activeUser.currentDate}
-            </span>
+          <div className="flex flex-wrap items-center gap-2">
+            {/* View Mode Toggle: 3D Flip Vault vs Split Slider */}
+            <div className="flex items-center p-1 rounded-xl bg-black border border-zinc-800">
+              <button
+                type="button"
+                onClick={() => setComparisonMode('flip')}
+                className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-black uppercase tracking-wider transition-all ${
+                  comparisonMode === 'flip'
+                    ? 'bg-red-600 text-white shadow-md glow-red'
+                    : 'text-zinc-400 hover:text-white'
+                }`}
+              >
+                <RotateCw className="w-3.5 h-3.5" />
+                <span>3D Flip Vault</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setComparisonMode('slider')}
+                className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-black uppercase tracking-wider transition-all ${
+                  comparisonMode === 'slider'
+                    ? 'bg-red-600 text-white shadow-md glow-red'
+                    : 'text-zinc-400 hover:text-white'
+                }`}
+              >
+                <Sliders className="w-3.5 h-3.5" />
+                <span>Split Slider</span>
+              </button>
+            </div>
+
             <button
               onClick={() => setIsModalOpen(true)}
               className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-black uppercase tracking-wider transition-all shadow-md active:scale-95"
@@ -205,61 +236,180 @@ export const BodyTransformationView: React.FC = () => {
           </div>
         </div>
 
-        {/* Interactive Comparison Container */}
-        <div
-          ref={containerRef}
-          onMouseDown={handleMouseDown}
-          onTouchStart={handleMouseDown}
-          className="relative w-full h-[380px] sm:h-[440px] rounded-2xl overflow-hidden cursor-ew-resize select-none border border-[#27272a] bg-black shadow-inner"
-        >
-          {/* AFTER Image (Background full width) */}
-          <div className="absolute inset-0">
-            <img
-              src={activeUser.currentPhotoUrl}
-              alt="Current Physique (After)"
-              className="w-full h-full object-cover pointer-events-none"
-            />
-            <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-black/85 border border-emerald-500/50 backdrop-blur-md text-emerald-400 text-xs font-bold font-mono shadow-lg">
-              CURRENT ({activeUser.currentWeightKg} kg • {activeUser.bodyFatPctCurrent}% BF)
+        {comparisonMode === 'flip' ? (
+          /* SPOT #2: 3D FLIP CARD BODY TRANSFORMATION VAULT */
+          <div className="flex flex-col items-center justify-center py-2">
+            <div className="w-full max-w-xl">
+              <FlipCard
+                width="100%"
+                height={520}
+                radius={24}
+                tiltMax={12}
+                perspective={1100}
+                glare={true}
+                glareOpacity={0.25}
+                background="#09090b"
+                className="w-full shadow-2xl"
+                front={
+                  <div className="relative w-full h-full rounded-[24px] overflow-hidden bg-black select-none flex flex-col justify-between border-2 border-zinc-800">
+                    <img
+                      src={activeUser.baselinePhotoUrl}
+                      alt="Day 1 Starting Baseline Physique"
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-black/70 pointer-events-none" />
+
+                    {/* Top Status Badges */}
+                    <div className="relative z-10 p-4 sm:p-5 flex items-center justify-between">
+                      <div className="px-3.5 py-1.5 rounded-full bg-black/85 border border-zinc-700/80 backdrop-blur-md text-white text-xs font-mono font-bold flex items-center gap-2 shadow-lg">
+                        <span className="w-2 h-2 rounded-full bg-zinc-400" />
+                        <span>DAY 1 (BEFORE) • {activeUser.baselineDate}</span>
+                      </div>
+                      <span className="px-3 py-1 rounded-full bg-red-950/90 border border-red-800 text-red-300 text-xs font-mono font-bold uppercase tracking-wider">
+                        Kickoff Baseline
+                      </span>
+                    </div>
+
+                    {/* Bottom Telemetry HUD Overlay */}
+                    <div className="relative z-10 p-4 sm:p-5 space-y-3">
+                      <div className="grid grid-cols-3 gap-2 p-3.5 rounded-2xl bg-black/85 border border-zinc-800/80 backdrop-blur-md text-center shadow-xl">
+                        <div>
+                          <div className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider">Starting Weight</div>
+                          <div className="text-lg font-black font-mono text-white mt-0.5">{activeUser.baselineWeightKg} kg</div>
+                          <div className="text-[10px] font-mono text-zinc-500">Kickoff Day</div>
+                        </div>
+                        <div>
+                          <div className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider">Starting Fat</div>
+                          <div className="text-lg font-black font-mono text-zinc-300 mt-0.5">{activeUser.bodyFatPctBaseline}%</div>
+                          <div className="text-[10px] font-mono text-zinc-500">Body Fat</div>
+                        </div>
+                        <div>
+                          <div className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider">Target Goal</div>
+                          <div className="text-lg font-black font-mono text-red-400 mt-0.5">{activeUser.targetWeightKg} kg</div>
+                          <div className="text-[10px] font-mono text-zinc-500">Pact Goal</div>
+                        </div>
+                      </div>
+
+                      <div className="text-center py-2 px-3 rounded-xl bg-red-950/70 border border-red-500/50 text-xs font-mono font-bold text-red-300 flex items-center justify-center gap-2 shadow-lg">
+                        <RotateCw className="w-3.5 h-3.5 text-red-400 animate-spin" />
+                        <span>Click or drag card to flip to Day 90 Shredded Physique ➔</span>
+                      </div>
+                    </div>
+                  </div>
+                }
+                back={
+                  <div className="relative w-full h-full rounded-[24px] overflow-hidden bg-black select-none flex flex-col justify-between border-2 border-emerald-500/60 shadow-2xl">
+                    <img
+                      src={activeUser.currentPhotoUrl}
+                      alt="Day 90 Current Shredded Physique"
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/25 to-black/70 pointer-events-none" />
+
+                    {/* Top Status Badges */}
+                    <div className="relative z-10 p-4 sm:p-5 flex items-center justify-between">
+                      <div className="px-3.5 py-1.5 rounded-full bg-black/85 border border-emerald-500/60 backdrop-blur-md text-emerald-400 text-xs font-mono font-bold flex items-center gap-2 shadow-lg glow-green">
+                        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                        <span>DAY 90 (AFTER) • {activeUser.currentDate}</span>
+                      </div>
+                      <span className="px-3 py-1 rounded-full bg-emerald-950/90 border border-emerald-600 text-emerald-300 text-xs font-mono font-bold flex items-center gap-1 uppercase tracking-wider">
+                        <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+                        <span>Shredded Status</span>
+                      </span>
+                    </div>
+
+                    {/* Bottom Telemetry HUD Overlay */}
+                    <div className="relative z-10 p-4 sm:p-5 space-y-3">
+                      <div className="grid grid-cols-3 gap-2 p-3.5 rounded-2xl bg-black/85 border border-emerald-500/40 backdrop-blur-md text-center shadow-xl">
+                        <div>
+                          <div className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider">Current Weight</div>
+                          <div className="text-lg font-black font-mono text-emerald-400 mt-0.5">{activeUser.currentWeightKg} kg</div>
+                          <div className="text-[10px] font-mono text-emerald-400 font-bold">{weightDelta} kg Lost</div>
+                        </div>
+                        <div>
+                          <div className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider">Body Fat</div>
+                          <div className="text-lg font-black font-mono text-emerald-400 mt-0.5">{activeUser.bodyFatPctCurrent}%</div>
+                          <div className="text-[10px] font-mono text-emerald-400 font-bold">{bodyFatDelta}% Burned</div>
+                        </div>
+                        <div>
+                          <div className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider">Lean Delta</div>
+                          <div className="text-lg font-black font-mono text-white mt-0.5">+2.4 kg</div>
+                          <div className="text-[10px] font-mono text-emerald-400 font-bold">Muscle Mass</div>
+                        </div>
+                      </div>
+
+                      <div className="text-center py-2 px-3 rounded-xl bg-emerald-950/80 border border-emerald-500/50 text-xs font-mono font-bold text-emerald-300 flex items-center justify-center gap-2 shadow-lg">
+                        <RotateCw className="w-3.5 h-3.5 text-emerald-400" />
+                        <span>Click or drag card to flip back to Day 1 Baseline</span>
+                      </div>
+                    </div>
+                  </div>
+                }
+              />
+            </div>
+            <div className="text-center text-[11px] font-mono text-zinc-400 mt-2">
+              💡 Interactive 3D Card: Click, flick, or drag horizontally to reveal before/after transformation physics
             </div>
           </div>
-
-          {/* BEFORE Image (Clipped by slider position) */}
-          <div
-            className="absolute inset-y-0 left-0 overflow-hidden"
-            style={{ width: `${sliderPosition}%` }}
-          >
+        ) : (
+          /* SPLIT SLIDER VIEW */
+          <div className="space-y-3">
             <div
-              className="relative h-full pointer-events-none"
-              style={{
-                width: containerRef.current ? `${containerRef.current.clientWidth}px` : '100%',
-              }}
+              ref={containerRef}
+              onMouseDown={handleMouseDown}
+              onTouchStart={handleMouseDown}
+              className="relative w-full h-[380px] sm:h-[440px] rounded-2xl overflow-hidden cursor-ew-resize select-none border border-[#27272a] bg-black shadow-inner"
             >
-              <img
-                src={activeUser.baselinePhotoUrl}
-                alt="Baseline Physique (Before)"
-                className="w-full h-full object-cover pointer-events-none"
-              />
-              <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-black/85 border border-zinc-700 backdrop-blur-md text-zinc-300 text-xs font-bold font-mono shadow-lg">
-                DAY 1 BASELINE ({activeUser.baselineWeightKg} kg • {activeUser.bodyFatPctBaseline}% BF)
+              {/* AFTER Image (Background full width) */}
+              <div className="absolute inset-0">
+                <img
+                  src={activeUser.currentPhotoUrl}
+                  alt="Current Physique (After)"
+                  className="w-full h-full object-cover pointer-events-none"
+                />
+                <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-black/85 border border-emerald-500/50 backdrop-blur-md text-emerald-400 text-xs font-bold font-mono shadow-lg">
+                  CURRENT ({activeUser.currentWeightKg} kg • {activeUser.bodyFatPctCurrent}% BF)
+                </div>
+              </div>
+
+              {/* BEFORE Image (Clipped by slider position) */}
+              <div
+                className="absolute inset-y-0 left-0 overflow-hidden"
+                style={{ width: `${sliderPosition}%` }}
+              >
+                <div
+                  className="relative h-full pointer-events-none"
+                  style={{
+                    width: containerRef.current ? `${containerRef.current.clientWidth}px` : '100%',
+                  }}
+                >
+                  <img
+                    src={activeUser.baselinePhotoUrl}
+                    alt="Baseline Physique (Before)"
+                    className="w-full h-full object-cover pointer-events-none"
+                  />
+                  <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-black/85 border border-zinc-700 backdrop-blur-md text-zinc-300 text-xs font-bold font-mono shadow-lg">
+                    DAY 1 BASELINE ({activeUser.baselineWeightKg} kg • {activeUser.bodyFatPctBaseline}% BF)
+                  </div>
+                </div>
+              </div>
+
+              {/* Divider Line & Handle */}
+              <div
+                className="absolute inset-y-0 w-0.5 bg-red-500 shadow-2xl z-20 pointer-events-none"
+                style={{ left: `${sliderPosition}%` }}
+              >
+                <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-9 h-9 rounded-full bg-red-600 border-2 border-white shadow-xl flex items-center justify-center glow-red text-white">
+                  <Sliders className="w-4 h-4" />
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Divider Line & Handle */}
-          <div
-            className="absolute inset-y-0 w-0.5 bg-red-500 shadow-2xl z-20 pointer-events-none"
-            style={{ left: `${sliderPosition}%` }}
-          >
-            <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-9 h-9 rounded-full bg-red-600 border-2 border-white shadow-xl flex items-center justify-center glow-red text-white">
-              <Sliders className="w-4 h-4" />
+            <div className="text-center text-[11px] font-mono text-zinc-400">
+              💡 Click and drag the red divider horizontally to inspect muscle definition and posture changes
             </div>
           </div>
-        </div>
-
-        <div className="text-center text-[11px] font-mono text-zinc-400">
-          💡 Click and drag the red divider horizontally to inspect muscle definition and posture changes
-        </div>
+        )}
       </div>
 
       {/* Scale Weight Progress Chart & Heatmap */}

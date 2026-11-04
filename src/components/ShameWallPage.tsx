@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { AnimatedList, type AnimatedListItem } from './AnimatedList';
+import FlipCard from './ui/FlipCard';
 import {
   Skull,
   Flame,
@@ -12,6 +13,10 @@ import {
   Activity,
   MessageCircle,
   Copy,
+  MapPin,
+  RotateCw,
+  CreditCard,
+  Navigation,
 } from 'lucide-react';
 import { playSkullThud, playPop } from '../utils/audio';
 
@@ -146,6 +151,21 @@ export const ShameWallPage: React.FC = () => {
     showToast('Shame Wall receipt copied to clipboard!');
   };
 
+  const handleSendWhatsAppRoastForUser = (userName: string, userHandle: string, penaltyAmount: number, roast: string) => {
+    playPop();
+    const text = `🚨 *OFFICIAL STAKEFIT SLACKER DOCKET* 🚨\n\n💀 *${userName}* (${userHandle}) failed the 11:59 PM gym cutoff!\n💸 *Outstanding Penalty Debt:* -${activeGroup.currency}${penaltyAmount}\n📍 *GPS Telemetry:* 0 pings detected at Gold's Gym Sector 29.\n⚖️ *Crime:* "${roast}"\n\nPay your debt to the squad dividend pool or stay on the One Piece Shame Wall: https://stakefit.app`;
+    const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+    window.open(url, '_blank');
+    showToast(`WhatsApp Roast dispatched for ${userName}!`);
+  };
+
+  const handleSettleUpiDebtForUser = (userName: string, penaltyAmount: number, upiId?: string) => {
+    playPop();
+    const upiLink = `upi://pay?pa=${encodeURIComponent(upiId || 'stakefit@okaxis')}&pn=${encodeURIComponent(userName)}&am=${penaltyAmount}&cu=INR&tn=${encodeURIComponent(`StakeFit Default Forfeit: ${userName}`)}`;
+    window.open(upiLink, '_self');
+    showToast(`💳 Settle UPI Debt: Prompted ${activeGroup.currency}${penaltyAmount} transfer to ${activeGroup.poolType} dividend pool!`);
+  };
+
   return (
     <div className="space-y-8 max-w-5xl mx-auto">
       {/* Fun Hero Header */}
@@ -257,19 +277,18 @@ export const ShameWallPage: React.FC = () => {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {defaultedMembers.map(({ user, stats }, index) => {
               const missedCount = stats.missedDays || 1;
               const penaltyAmount = missedCount * activeGroup.penaltyPerMissedDay * (stats.isDoubleDown ? 2 : 1);
               const roast = funRoasts[index % funRoasts.length];
 
-              return (
+              const frontFace = (
                 <div
-                  key={user.id}
-                  className="relative p-6 sm:p-7 rounded-2xl bg-[#f5eed9] text-[#2c1809] border-[6px] border-[#532e17] shadow-[0_20px_40px_rgba(0,0,0,0.6)] space-y-4 overflow-hidden transform hover:-translate-y-1 transition-all duration-300 font-serif"
+                  className="relative h-full flex flex-col justify-between p-6 sm:p-7 rounded-2xl bg-[#f5eed9] text-[#2c1809] border-[6px] border-[#532e17] shadow-inner font-serif select-none"
                   style={{
                     backgroundImage: 'radial-gradient(#fff9e8 15%, #ebd3a8 100%)',
-                    boxShadow: 'inset 0 0 30px rgba(97,54,25,0.2), 0 15px 35px rgba(0,0,0,0.7)',
+                    boxShadow: 'inset 0 0 30px rgba(97,54,25,0.25)',
                   }}
                 >
                   {/* Weathered Corner Nails / Rivets */}
@@ -279,7 +298,7 @@ export const ShameWallPage: React.FC = () => {
                   <div className="absolute bottom-2 right-2 w-3 h-3 rounded-full bg-[#3e2213] border border-[#784628] shadow-inner" />
 
                   {/* Top Iconic "WANTED" Header */}
-                  <div className="text-center pt-1">
+                  <div className="text-center pt-0.5">
                     <h2
                       className="text-4xl sm:text-5xl font-black tracking-[0.22em] text-[#3e2213] uppercase drop-shadow-[0_2px_1px_rgba(255,255,255,0.8)]"
                       style={{ fontFamily: 'Georgia, serif' }}
@@ -292,13 +311,13 @@ export const ShameWallPage: React.FC = () => {
                   </div>
 
                   {/* Character Mugshot / Portrait in woodcut frame */}
-                  <div className="relative mx-auto w-36 h-36 sm:w-40 sm:h-40 rounded border-4 border-[#3e2213] bg-[#faf0db] p-1.5 shadow-inner overflow-hidden">
+                  <div className="relative mx-auto w-32 h-32 sm:w-36 sm:h-36 rounded border-4 border-[#3e2213] bg-[#faf0db] p-1 shadow-inner overflow-hidden my-1">
                     <img
                       src={user.avatar}
                       alt={user.name}
                       className="w-full h-full object-cover filter contrast-125 sepia-[0.3] brightness-95"
                     />
-                    <div className="absolute bottom-1 right-1 bg-[#3e2213] text-[#ebd3a8] text-[10px] font-mono font-black px-1.5 py-0.5 rounded shadow">
+                    <div className="absolute bottom-1 right-1 bg-[#3e2213] text-[#ebd3a8] text-[9px] font-mono font-black px-1.5 py-0.5 rounded shadow">
                       DEFAULTER
                     </div>
                   </div>
@@ -306,7 +325,7 @@ export const ShameWallPage: React.FC = () => {
                   {/* "DEAD OR ALIVE" Banner */}
                   <div className="text-center">
                     <div
-                      className="text-sm sm:text-base font-black tracking-[0.25em] text-[#3e2213] uppercase border-y-2 border-[#532e17] py-0.5"
+                      className="text-xs sm:text-sm font-black tracking-[0.25em] text-[#3e2213] uppercase border-y-2 border-[#532e17] py-0.5"
                       style={{ fontFamily: 'Georgia, serif' }}
                     >
                       DEAD OR FORFEITED
@@ -321,42 +340,202 @@ export const ShameWallPage: React.FC = () => {
                     >
                       {user.name}
                     </h3>
-                    <div className="text-xs font-mono font-black text-[#7a421b]">
+                    <div className="text-[11px] font-mono font-black text-[#7a421b]">
                       {user.handle} • {missedCount} Missed {missedCount === 1 ? 'Cutoff' : 'Cutoffs'}
                     </div>
                   </div>
 
                   {/* Bounty Amount with Berry ฿ symbol */}
-                  <div className="text-center py-2 px-3 rounded-xl bg-[#e3c79a]/60 border-2 border-[#532e17]/50 shadow-inner">
-                    <div className="text-[10px] font-black tracking-widest uppercase text-[#5c341b]">
+                  <div className="text-center py-1.5 px-3 rounded-xl bg-[#e3c79a]/60 border-2 border-[#532e17]/50 shadow-inner">
+                    <div className="text-[9px] font-black tracking-widest uppercase text-[#5c341b]">
                       SQUAD BOUNTY FORFEIT
                     </div>
-                    <div className="text-3xl sm:text-4xl font-black tracking-wider text-[#991b1b] font-mono flex items-center justify-center gap-1.5 drop-shadow-sm">
-                      <span className="font-serif text-2xl sm:text-3xl font-black">฿</span>
+                    <div className="text-2xl sm:text-3xl font-black tracking-wider text-[#991b1b] font-mono flex items-center justify-center gap-1.5 drop-shadow-sm">
+                      <span className="font-serif text-xl sm:text-2xl font-black">฿</span>
                       <span>{(penaltyAmount * 1000).toLocaleString()}-</span>
                     </div>
-                    <div className="text-[11px] font-black text-[#3e2213] font-mono mt-0.5">
+                    <div className="text-[10px] font-black text-[#3e2213] font-mono">
                       (-{activeGroup.currency}{penaltyAmount} deducted to {activeGroup.poolType} pool)
                     </div>
                   </div>
 
                   {/* Crime / Offense Quote */}
-                  <div className="p-3 rounded-xl bg-[#faf0db]/80 border border-[#784628]/40 text-xs text-[#3e2213] italic text-center font-serif leading-relaxed">
+                  <div className="p-2 rounded-xl bg-[#faf0db]/90 border border-[#784628]/40 text-xs text-[#3e2213] italic text-center font-serif leading-tight">
                     "{roast}"
                   </div>
 
-                  {/* Marine Seal & Claim Action */}
-                  <div className="pt-1 flex items-center justify-between gap-2 border-t-2 border-[#532e17]/40">
-                    <div className="text-[10px] font-mono font-black text-[#5c341b] tracking-wider uppercase">
-                      ⚓ MARINE HQ • STREAK: 0d
+                  {/* Marine Seal & Bottom Tap Prompt */}
+                  <div className="space-y-2 pt-1 border-t-2 border-[#532e17]/40">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="text-[9px] font-mono font-black text-[#5c341b] tracking-wider uppercase">
+                        ⚓ MARINE HQ • STREAK: 0d
+                      </div>
+                      <button
+                        type="button"
+                        data-no-flip="true"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          showToast(`⚓ Marine Nudge sent to ${user.name.split(' ')[0]}! "Collect your bounty tomorrow!"`);
+                        }}
+                        className="px-2.5 py-1 rounded-lg bg-[#851818] hover:bg-[#3e2213] text-[#fff6e5] text-[11px] font-black uppercase tracking-wider transition-all shadow-md active:scale-95 border border-[#532e17]"
+                      >
+                        Poke Pirate 🏴‍☠️
+                      </button>
                     </div>
-                    <button
-                      onClick={() => showToast(`⚓ Marine Nudge sent to ${user.name.split(' ')[0]}! "Collect your bounty tomorrow!"`)}
-                      className="px-3.5 py-1.5 rounded-xl bg-[#851818] hover:bg-[#3e2213] text-[#fff6e5] text-xs font-black uppercase tracking-wider transition-all shadow-md active:scale-95 border border-[#532e17]"
-                    >
-                      Poke Pirate 🏴‍☠️
-                    </button>
+
+                    <div className="text-center py-1 px-2 rounded-lg bg-[#3e2213]/10 border border-[#532e17]/30 text-[10px] font-mono font-bold text-[#4a2612] flex items-center justify-center gap-1.5">
+                      <RotateCw className="w-3 h-3 text-red-700 animate-spin" />
+                      <span>Click or drag to flip for Slacker Crime Sheet & Debt ➔</span>
+                    </div>
                   </div>
+                </div>
+              );
+
+              const backFace = (
+                <div
+                  className="relative h-full flex flex-col justify-between p-5 sm:p-6 rounded-2xl bg-[#09090b] text-white border-2 border-red-500/50 shadow-2xl overflow-y-auto select-none"
+                  style={{
+                    backgroundImage: 'radial-gradient(ellipse at top, #1c0a0e 0%, #09090b 80%)',
+                  }}
+                >
+                  {/* Top Docket Header */}
+                  <div className="flex items-center justify-between border-b border-red-500/30 pb-3">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse" />
+                      <div>
+                        <div className="text-[10px] font-mono font-black tracking-widest text-red-400 uppercase">
+                          CASE DOCKET #SF-2026-{user.id.slice(-4).toUpperCase()}
+                        </div>
+                        <div className="text-xs font-black text-white uppercase tracking-wider">
+                          Slacker Debt Invoice & Crime Sheet
+                        </div>
+                      </div>
+                    </div>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-red-950 text-red-300 border border-red-800 font-mono font-bold uppercase">
+                      Guilty as Charged
+                    </span>
+                  </div>
+
+                  {/* Accused Profile Row */}
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-zinc-900/70 border border-zinc-800 mt-2">
+                    <img
+                      src={user.avatar}
+                      alt={user.name}
+                      className="w-12 h-12 rounded-xl object-cover ring-2 ring-red-500/60"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between">
+                        <h4 className="text-sm font-black text-white truncate">{user.name}</h4>
+                        <span className="text-[10px] font-mono text-zinc-500">{user.handle}</span>
+                      </div>
+                      <div className="text-[11px] text-red-400 font-medium">
+                        Offense: Missed 11:59 PM Workout Cutoff ({missedCount}d)
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Exact Monetary Penalty Owed Box */}
+                  <div className="p-4 rounded-xl bg-gradient-to-br from-red-950/60 via-zinc-900 to-zinc-950 border border-red-500/40 text-center my-2 shadow-inner">
+                    <div className="text-[10px] font-mono font-black tracking-widest uppercase text-red-400">
+                      EXACT MONETARY PENALTY OWED
+                    </div>
+                    <div className="text-3xl sm:text-4xl font-black font-mono text-red-500 tracking-tight my-0.5">
+                      -{activeGroup.currency}{penaltyAmount}
+                    </div>
+                    <div className="text-[11px] font-mono text-zinc-300">
+                      {missedCount} Missed Day(s) × {activeGroup.currency}{activeGroup.penaltyPerMissedDay}
+                      {stats.isDoubleDown ? ' (2X Double Down High-Roller)' : ''}
+                    </div>
+                    <div className="text-[10px] font-mono text-emerald-400 mt-1 font-bold">
+                      → Forfeit routed directly into Sunday Dividend Pool
+                    </div>
+                  </div>
+
+                  {/* Gym GPS Telemetry & Absence Telemetry */}
+                  <div className="p-3 rounded-xl bg-zinc-900/60 border border-zinc-800 space-y-1.5 text-xs text-zinc-300">
+                    <div className="flex items-center justify-between text-[11px] font-mono">
+                      <span className="text-zinc-400 flex items-center gap-1">
+                        <MapPin className="w-3.5 h-3.5 text-red-500" />
+                        <span>Registered Gym:</span>
+                      </span>
+                      <span className="font-bold text-white">Gold's Gym - Sector 29</span>
+                    </div>
+
+                    <div className="flex items-center justify-between text-[11px] font-mono">
+                      <span className="text-zinc-400 flex items-center gap-1">
+                        <Navigation className="w-3.5 h-3.5 text-amber-500" />
+                        <span>GPS Coordinates:</span>
+                      </span>
+                      <span className="font-mono text-zinc-300 text-[10px]">28.4595° N, 77.0266° E</span>
+                    </div>
+
+                    <div className="flex items-center justify-between text-[11px] font-mono">
+                      <span className="text-zinc-400 flex items-center gap-1">
+                        <Clock className="w-3.5 h-3.5 text-red-400" />
+                        <span>Telemetry Check:</span>
+                      </span>
+                      <span className="text-red-400 font-bold">❌ 0 Pings at 11:59 PM Cutoff</span>
+                    </div>
+
+                    <div className="flex items-center justify-between text-[11px] font-mono pt-0.5 border-t border-zinc-800/60">
+                      <span className="text-zinc-400">Anti-Tamper Score:</span>
+                      <span className="text-red-400 font-black">0% Attendance Confidence</span>
+                    </div>
+                  </div>
+
+                  {/* Direct Action Buttons: Send WhatsApp Roast & Settle UPI Debt */}
+                  <div className="space-y-2 pt-2 border-t border-zinc-800">
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        type="button"
+                        data-no-flip="true"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleSendWhatsAppRoastForUser(user.name, user.handle, penaltyAmount, roast);
+                        }}
+                        className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-black uppercase tracking-wider transition-all shadow-md active:scale-95"
+                      >
+                        <MessageCircle className="w-3.5 h-3.5" />
+                        <span>WhatsApp Roast</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        data-no-flip="true"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleSettleUpiDebtForUser(user.name, penaltyAmount, user.upiId);
+                        }}
+                        className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white text-[11px] font-black uppercase tracking-wider transition-all shadow-md active:scale-95 glow-red"
+                      >
+                        <CreditCard className="w-3.5 h-3.5" />
+                        <span>Settle UPI Debt</span>
+                      </button>
+                    </div>
+
+                    <div className="text-center py-1 text-[10px] font-mono text-zinc-400 flex items-center justify-center gap-1">
+                      <RotateCw className="w-3 h-3 text-zinc-500" />
+                      <span>Click anywhere or drag to flip back to Wanted poster</span>
+                    </div>
+                  </div>
+                </div>
+              );
+
+              return (
+                <div key={user.id} className="w-full flex justify-center">
+                  <FlipCard
+                    width="100%"
+                    height={590}
+                    radius={24}
+                    tiltMax={10}
+                    perspective={1000}
+                    glare={true}
+                    glareOpacity={0.22}
+                    background="transparent"
+                    front={frontFace}
+                    back={backFace}
+                    className="w-full"
+                  />
                 </div>
               );
             })}

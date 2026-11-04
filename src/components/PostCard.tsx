@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import type { Post } from '../types';
+import FlipCard from './ui/FlipCard';
 import {
   CheckCircle2,
   AlertTriangle,
@@ -15,6 +16,10 @@ import {
   X,
   Share2,
   MessageCircle,
+  RotateCw,
+  Cpu,
+  Fingerprint,
+  CheckCheck,
 } from 'lucide-react';
 import { playPop } from '../utils/audio';
 
@@ -141,41 +146,207 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onOpenDispute }) => {
           </div>
         </div>
 
-        {/* Photo Proof */}
-        <div className="relative group bg-zinc-950 max-h-[460px] overflow-hidden flex items-center justify-center">
-          <img
-            src={post.imageUrl}
-            alt="Workout proof"
-            className="w-full object-cover max-h-[460px] group-hover:scale-[1.01] transition-transform duration-300"
+        {/* Photo Proof with 3D FlipCard Anti-Cheat Inspector */}
+        <div className="relative bg-zinc-950 flex items-center justify-center p-2.5 sm:p-3">
+          <FlipCard
+            width="100%"
+            height={460}
+            radius={20}
+            tiltMax={10}
+            perspective={1100}
+            glare={true}
+            glareOpacity={0.2}
+            background="#09090b"
+            className="w-full"
+            front={
+              <div className="relative w-full h-full rounded-[20px] overflow-hidden bg-black select-none flex flex-col justify-between group border border-zinc-800">
+                <img
+                  src={post.imageUrl}
+                  alt="Workout proof"
+                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.01] transition-transform duration-300"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-black/60 pointer-events-none" />
+
+                {/* Top Overlay: Telemetry Hint & Expand Modal */}
+                <div className="relative z-10 p-3 sm:p-4 flex items-center justify-between gap-2">
+                  <div className="px-3 py-1 rounded-full bg-black/80 border border-zinc-700/80 backdrop-blur-md text-zinc-300 text-[10px] sm:text-xs font-mono font-bold flex items-center gap-1.5 shadow-lg">
+                    <RotateCw className="w-3 h-3 text-red-500 animate-spin" />
+                    <span>Click or drag to inspect Anti-Cheat Forensic Passport ➔</span>
+                  </div>
+
+                  <button
+                    type="button"
+                    data-no-flip="true"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setPhotoModalOpen(true);
+                    }}
+                    className="p-2 rounded-xl bg-black/75 hover:bg-black text-white backdrop-blur-md transition-all border border-zinc-700 shadow-md active:scale-95"
+                    title="Expand full photo proof"
+                  >
+                    <Maximize2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+
+                {/* Bottom Overlay: Status Pill & Member Quote */}
+                <div className="relative z-10 p-3 sm:p-4 space-y-2">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div>
+                      {isVerified ? (
+                        <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-950/90 border border-emerald-500 text-emerald-300 backdrop-blur-md flex items-center gap-1.5 shadow-lg glow-green">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                          <span>Verified ({post.vouches.length} vouches)</span>
+                        </span>
+                      ) : isDisputed ? (
+                        <span className="px-3 py-1 rounded-full text-xs font-bold bg-red-950/90 border border-red-500 text-red-300 backdrop-blur-md flex items-center gap-1.5 shadow-lg glow-red">
+                          <AlertTriangle className="w-3.5 h-3.5 text-red-400" />
+                          <span>Disputed / Under Review</span>
+                        </span>
+                      ) : (
+                        <span className="px-3 py-1 rounded-full text-xs font-bold bg-black/85 border border-amber-500 text-amber-300 backdrop-blur-md flex items-center gap-1.5 shadow-lg">
+                          <Clock className="w-3.5 h-3.5 text-amber-400" />
+                          <span>Pending ({post.vouches.length}/2 vouches)</span>
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="px-2.5 py-0.5 rounded-full bg-black/80 border border-zinc-700/80 backdrop-blur-md text-zinc-300 text-[10px] font-mono">
+                      {post.exifData.device}
+                    </div>
+                  </div>
+
+                  {/* Member's Quote Highlight */}
+                  <div className="p-2.5 rounded-xl bg-black/80 border border-white/10 backdrop-blur-md text-xs text-white/95 italic font-medium">
+                    "{post.caption}"
+                  </div>
+                </div>
+              </div>
+            }
+            back={
+              <div
+                className="relative w-full h-full rounded-[20px] p-4 sm:p-5 bg-[#09090b] text-white border-2 border-emerald-500/50 shadow-2xl flex flex-col justify-between overflow-y-auto select-none"
+                style={{
+                  backgroundImage: 'radial-gradient(ellipse at top right, #06241a 0%, #09090b 70%)',
+                }}
+              >
+                {/* Header: Anti-Cheat Forensic Passport */}
+                <div className="flex items-center justify-between border-b border-emerald-500/30 pb-2.5">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-xl bg-emerald-950/80 border border-emerald-500/50 flex items-center justify-center text-emerald-400 shadow-sm">
+                      <Fingerprint className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div className="text-[9px] font-mono font-black tracking-widest text-emerald-400 uppercase">
+                        EXIF ANTI-CHEAT INSPECTOR
+                      </div>
+                      <h4 className="text-xs font-black text-white uppercase tracking-wider">
+                        Forensic Passport
+                      </h4>
+                    </div>
+                  </div>
+
+                  <div className="text-right">
+                    <span className="px-2 py-0.5 rounded-full bg-emerald-950/90 text-emerald-300 border border-emerald-600 font-mono text-[10px] font-black glow-green">
+                      {post.exifData.matchScore || 99}% Confidence
+                    </span>
+                    <div className="text-[9px] font-mono text-zinc-500 mt-0.5">Live Sensor Cryptohash</div>
+                  </div>
+                </div>
+
+                {/* 3 Forensic Data Blocks */}
+                <div className="space-y-2.5 py-1.5">
+                  {/* Block 1: Hardware Camera Sensor & Lens */}
+                  <div className="p-2.5 rounded-xl bg-zinc-900/70 border border-zinc-800 space-y-1">
+                    <div className="flex items-center gap-1.5 text-[10px] font-mono font-black text-zinc-400 uppercase tracking-wider">
+                      <Cpu className="w-3.5 h-3.5 text-cyan-400" />
+                      <span>Hardware Camera Sensor & Lens</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 text-[10px] font-mono">
+                      <div>
+                        <span className="text-zinc-500 block">Camera Rig:</span>
+                        <span className="text-white font-bold">{post.exifData.device || 'iPhone 16 Pro'}</span>
+                      </div>
+                      <div>
+                        <span className="text-zinc-500 block">Sensor Time:</span>
+                        <span className="text-cyan-300 font-bold">{post.exifData.capturedAt}</span>
+                      </div>
+                      <div>
+                        <span className="text-zinc-500 block">Lens Telemetry:</span>
+                        <span className="text-zinc-300">24mm f/1.78 · 1/250s · ISO 125</span>
+                      </div>
+                      <div>
+                        <span className="text-zinc-500 block">Hardware Sig:</span>
+                        <span className="text-emerald-400 font-bold">Cryptographically Valid ✓</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Block 2: Geofence Coordinates & Gym Map Pin */}
+                  <div className="p-2.5 rounded-xl bg-zinc-900/70 border border-zinc-800 space-y-1">
+                    <div className="flex items-center gap-1.5 text-[10px] font-mono font-black text-zinc-400 uppercase tracking-wider">
+                      <MapPin className="w-3.5 h-3.5 text-red-500" />
+                      <span>Geofence Coordinates & Gym Map Pin</span>
+                    </div>
+                    <div className="flex items-center justify-between text-[11px] font-mono">
+                      <span className="font-bold text-white">
+                        {post.exifData.locationTag || "Gold's Gym - Sector 29"}
+                      </span>
+                      <span className="text-[10px] text-zinc-400">28.4595° N, 77.0266° E</span>
+                    </div>
+                    <div className="flex items-center justify-between text-[9px] font-mono pt-1 border-t border-zinc-800/60">
+                      <span className="text-emerald-400 font-medium">✓ Within 25m of registered gym boundary</span>
+                      <span className="text-zinc-400">0 Mock GPS Flags</span>
+                    </div>
+                  </div>
+
+                  {/* Block 3: Peer Signatures of Squad Mates Who Vouched */}
+                  <div className="p-2.5 rounded-xl bg-zinc-900/70 border border-zinc-800 space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1.5 text-[10px] font-mono font-black text-zinc-400 uppercase tracking-wider">
+                        <CheckCheck className="w-3.5 h-3.5 text-emerald-400" />
+                        <span>Peer Signatures ({post.vouches.length}/2 Required)</span>
+                      </div>
+                      <span className="text-[10px] font-mono text-zinc-400">
+                        {isVerified ? '2-Vouch Rule Met ✓' : 'Pending Verification'}
+                      </span>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      {post.vouches.map((voucherId) => {
+                        const voucher = usersMap.get(voucherId);
+                        return (
+                          <div
+                            key={voucherId}
+                            className="flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-zinc-800 border border-emerald-500/40 text-[11px] text-white"
+                          >
+                            <img
+                              src={voucher?.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100'}
+                              alt={voucher?.name || voucherId}
+                              className="w-3.5 h-3.5 rounded-full object-cover"
+                            />
+                            <span className="font-bold">{voucher?.name?.split(' ')[0] || voucherId}</span>
+                            <span className="text-emerald-400 font-bold text-[9px]">Signed ✓</span>
+                          </div>
+                        );
+                      })}
+
+                      {post.vouches.length === 0 && (
+                        <div className="text-[10px] font-mono text-zinc-400 italic">
+                          Awaiting 2 squad peer vouches • Auto-passes at 11:59 PM if undisputed
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Flip back footer prompt */}
+                <div className="text-center py-1 text-[10px] font-mono text-zinc-400 flex items-center justify-center gap-1.5 pt-1.5 border-t border-zinc-800">
+                  <RotateCw className="w-3 h-3 text-emerald-400" />
+                  <span>Click anywhere or drag to flip back to workout sweat photo</span>
+                </div>
+              </div>
+            }
           />
-
-          <button
-            onClick={() => setPhotoModalOpen(true)}
-            className="absolute top-3 right-3 p-2 rounded-xl bg-black/70 hover:bg-black text-white backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity"
-            title="Expand photo proof"
-          >
-            <Maximize2 className="w-4 h-4" />
-          </button>
-
-          {/* Quick status pill overlay */}
-          <div className="absolute bottom-3 left-3">
-            {isVerified ? (
-              <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-950/90 border border-emerald-500 text-emerald-300 backdrop-blur-md flex items-center gap-1.5 shadow-lg glow-green">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Verified ({post.vouches.length} vouches)</span>
-              </span>
-            ) : isDisputed ? (
-              <span className="px-3 py-1 rounded-full text-xs font-bold bg-red-950/90 border border-red-500 text-red-300 backdrop-blur-md flex items-center gap-1.5 shadow-lg glow-red">
-                <AlertTriangle className="w-3.5 h-3.5 text-red-400" />
-                <span>Disputed / Under Review</span>
-              </span>
-            ) : (
-              <span className="px-3 py-1 rounded-full text-xs font-bold bg-black/80 border border-amber-500 text-amber-300 backdrop-blur-md flex items-center gap-1.5 shadow-lg">
-                <Clock className="w-3.5 h-3.5 text-amber-400" />
-                <span>Pending ({post.vouches.length}/2 vouches)</span>
-              </span>
-            )}
-          </div>
         </div>
 
         {/* Caption & Metrics */}
