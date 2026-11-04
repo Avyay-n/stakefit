@@ -49,8 +49,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
   // FAQ Accordion open index
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
-  // Scroll and active section tracking for the right side bar
-  const [scrollProgress, setScrollProgress] = useState(0);
+  // Active section tracking for the right side bar
   const [activeSection, setActiveSection] = useState('hero');
   const pageRef = useRef<HTMLDivElement>(null);
 
@@ -72,14 +71,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
     }
   };
 
-  // Scroll listener for side bar tracking
+  // Scroll listener for side bar section tracking
   useEffect(() => {
     const handleScroll = () => {
-      const scrollY = window.scrollY;
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const progress = docHeight > 0 ? (scrollY / docHeight) * 100 : 0;
-      setScrollProgress(Math.min(100, Math.max(0, progress)));
-
       // Determine active section based on scroll position
       const sections = ['hero', 'features', 'calculator', 'how-it-works', 'preview', 'faq'];
       for (const sectionId of [...sections].reverse()) {
@@ -393,51 +387,35 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
       </header>
 
       {/* ======================================================== */}
-      {/* Floating Side Bar (Moves & Tracks Scroll Down the Page) */}
+      {/* Floating Side Bar (Section Navigation Rail) */}
       {/* ======================================================== */}
       <aside
-        className="hidden xl:flex fixed right-4 sm:right-6 top-1/2 -translate-y-1/2 z-40 flex-col items-center gap-2.5 p-2.5 rounded-2xl bg-[#09090b]/85 backdrop-blur-xl border border-zinc-800/90 shadow-[0_12px_40px_rgba(0,0,0,0.85)] group select-none transition-all duration-300 hover:border-red-500/40"
-        aria-label="Scroll Navigation Rail"
+        className="hidden xl:flex fixed right-4 sm:right-6 top-1/2 -translate-y-1/2 z-40 flex-col items-center gap-2 p-2 rounded-2xl bg-[#09090b]/85 backdrop-blur-xl border border-zinc-800/90 shadow-[0_12px_40px_rgba(0,0,0,0.85)] group select-none transition-all duration-300 hover:border-red-500/40"
+        aria-label="Section Navigation Rail"
       >
-        {/* Scroll % Badge */}
-        <div className="text-[10px] font-mono font-black text-red-400 bg-red-950/70 border border-red-900/80 px-2 py-0.5 rounded-md shadow-xs">
-          {Math.round(scrollProgress)}%
-        </div>
+        {NAV_SECTIONS.map((sec) => {
+          const Icon = sec.icon;
+          const isActive = activeSection === sec.id;
+          return (
+            <button
+              key={sec.id}
+              onClick={() => scrollToSection(sec.id)}
+              className={`relative group/btn p-2 rounded-xl transition-all ${
+                isActive
+                  ? 'bg-red-600 text-white shadow-lg glow-red scale-110'
+                  : 'text-zinc-400 hover:text-white hover:bg-zinc-800/80'
+              }`}
+              title={sec.label}
+            >
+              <Icon className="w-4 h-4" />
 
-        {/* Vertical Moving Tracker Line */}
-        <div className="relative w-1 h-36 bg-zinc-800 rounded-full my-1 overflow-hidden">
-          <div
-            className="w-full bg-gradient-to-b from-red-600 via-amber-500 to-emerald-400 transition-all duration-100 rounded-full shadow-[0_0_8px_#ef4444]"
-            style={{ height: `${scrollProgress}%` }}
-          />
-        </div>
-
-        {/* Section Icons Navigation */}
-        <div className="flex flex-col items-center gap-2">
-          {NAV_SECTIONS.map((sec) => {
-            const Icon = sec.icon;
-            const isActive = activeSection === sec.id;
-            return (
-              <button
-                key={sec.id}
-                onClick={() => scrollToSection(sec.id)}
-                className={`relative group/btn p-2 rounded-xl transition-all ${
-                  isActive
-                    ? 'bg-red-600 text-white shadow-lg glow-red scale-110'
-                    : 'text-zinc-400 hover:text-white hover:bg-zinc-800/80'
-                }`}
-                title={sec.label}
-              >
-                <Icon className="w-4 h-4" />
-
-                {/* Floating Tooltip Label to the left */}
-                <span className="absolute right-12 top-1/2 -translate-y-1/2 px-2.5 py-1 rounded-lg bg-[#141416] text-white text-[11px] font-mono font-bold whitespace-nowrap shadow-xl border border-zinc-700 opacity-0 group-hover/btn:opacity-100 transition-all duration-150 pointer-events-none translate-x-1 group-hover/btn:translate-x-0">
-                  {sec.label}
-                </span>
-              </button>
-            );
-          })}
-        </div>
+              {/* Floating Tooltip Label to the left */}
+              <span className="absolute right-12 top-1/2 -translate-y-1/2 px-2.5 py-1 rounded-lg bg-[#141416] text-white text-[11px] font-mono font-bold whitespace-nowrap shadow-xl border border-zinc-700 opacity-0 group-hover/btn:opacity-100 transition-all duration-150 pointer-events-none translate-x-1 group-hover/btn:translate-x-0">
+                {sec.label}
+              </span>
+            </button>
+          );
+        })}
       </aside>
 
       {/* ======================================================== */}
