@@ -8,6 +8,8 @@ import {
   Dumbbell,
   MapPin,
   ShieldAlert,
+  Shield,
+  Bell,
   ThumbsUp,
   Maximize2,
   X,
@@ -22,7 +24,7 @@ interface PostCardProps {
 }
 
 export const PostCard: React.FC<PostCardProps> = ({ post, onOpenDispute }) => {
-  const { activeUserId, users, vouchPost } = useApp();
+  const { activeUserId, users, vouchPost, showToast } = useApp();
   const [photoModalOpen, setPhotoModalOpen] = useState(false);
 
   const usersMap = new Map(users.map((u) => [u.id, u]));
@@ -30,6 +32,15 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onOpenDispute }) => {
   const isAuthor = post.userId === activeUserId;
   const isVerified = post.status === 'verified' || post.vouches.length >= 2;
   const isDisputed = post.status === 'disputed' || (post.disputes && post.disputes.length > 0);
+
+  const handleNudgeSquad = () => {
+    playPop();
+    const needed = Math.max(0, 2 - post.vouches.length);
+    const text = `🚨 Hey squad! I posted my ${post.workoutType} proof (${post.metrics.durationMinutes}m) on StakeFit. Need ${needed} more vouch(es) before midnight cutoff to lock in my quota! 🏋️ Review here: https://stakefit.app`;
+    const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+    window.open(url, '_blank');
+    showToast(`📢 Squad Nudge sent! Alerted squad that you need ${needed} vouch(es).`);
+  };
 
   // Quick Emoji Reactions State
   const [reactions, setReactions] = useState<{ beast: number; fire: number; cap: number }>(() => {
@@ -118,6 +129,15 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onOpenDispute }) => {
             <span className="text-[10px] px-2 py-0.5 rounded bg-zinc-800 text-zinc-200 border border-zinc-700 font-bold shadow-xs">
               {post.exifData.matchScore}% Confidence
             </span>
+            {!isVerified && !isDisputed && (
+              <span
+                className="hidden sm:inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded bg-blue-950/60 text-blue-300 border border-blue-800/60 font-bold"
+                title="Anti-Sabotage Rule: If peers do not dispute this by midnight, it auto-verifies based on GPS/EXIF match."
+              >
+                <Shield className="w-3 h-3 text-blue-400" />
+                <span>Auto-Passes at 11:59 PM if undisputed</span>
+              </span>
+            )}
           </div>
         </div>
 
@@ -300,34 +320,45 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onOpenDispute }) => {
         {/* Action Bar */}
         <div className="p-3 sm:px-5 sm:py-3.5 bg-[#16161a] border-t border-[#27272a] flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            {/* Vouch Button */}
-            <button
-              onClick={() => {
-                playPop();
-                vouchPost(post.id);
-              }}
-              disabled={isAuthor || hasVouched}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black transition-all ${
-                hasVouched
-                  ? 'bg-emerald-950/80 text-emerald-300 border border-emerald-600/70 cursor-default shadow-xs'
-                  : isAuthor
-                  ? 'bg-[#18181b] text-zinc-500 border border-zinc-800 cursor-not-allowed'
-                  : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-950/30 glow-green active:scale-95'
-              }`}
-              title={
-                isAuthor
-                  ? 'You cannot vouch for your own check-in'
-                  : hasVouched
-                  ? 'You have already vouched'
-                  : 'Vouch for this workout proof'
-              }
-            >
-              <ThumbsUp className={`w-3.5 h-3.5 ${hasVouched ? 'fill-emerald-400 text-emerald-400' : ''}`} />
-              <span>{hasVouched ? 'Vouched ✓' : isAuthor ? 'Your Proof' : 'Vouch (Approve)'}</span>
-              <span className="px-1.5 py-0.2 rounded-full bg-black/30 text-[10px] font-mono">
-                {post.vouches.length}
-              </span>
-            </button>
+            {/* Vouch Button or Author Nudge */}
+            {isAuthor && !isVerified ? (
+              <button
+                onClick={handleNudgeSquad}
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-black bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/40 transition-all active:scale-95 shadow-sm"
+                title="Send a quick reminder to squad mates on WhatsApp to review and vouch"
+              >
+                <Bell className="w-3.5 h-3.5 text-amber-400 animate-bounce" />
+                <span>Nudge Squad ({post.vouches.length}/2 vouches)</span>
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  playPop();
+                  vouchPost(post.id);
+                }}
+                disabled={isAuthor || hasVouched}
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black transition-all ${
+                  hasVouched
+                    ? 'bg-emerald-950/80 text-emerald-300 border border-emerald-600/70 cursor-default shadow-xs'
+                    : isAuthor
+                    ? 'bg-[#18181b] text-zinc-500 border border-zinc-800 cursor-not-allowed'
+                    : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-950/30 glow-green active:scale-95'
+                }`}
+                title={
+                  isAuthor
+                    ? 'Your workout proof is verified'
+                    : hasVouched
+                    ? 'You have already vouched'
+                    : 'Vouch for this workout proof'
+                }
+              >
+                <ThumbsUp className={`w-3.5 h-3.5 ${hasVouched ? 'fill-emerald-400 text-emerald-400' : ''}`} />
+                <span>{hasVouched ? 'Vouched ✓' : isAuthor ? 'Your Proof ✓' : 'Vouch (Approve)'}</span>
+                <span className="px-1.5 py-0.2 rounded-full bg-black/30 text-[10px] font-mono">
+                  {post.vouches.length}
+                </span>
+              </button>
+            )}
 
             {/* Dispute / Call Out Button */}
             {!isAuthor && (
