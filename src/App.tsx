@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { AppProvider, useApp } from './context/AppContext';
-import { Navbar } from './components/Navbar';
-import { Navigation } from './components/Navigation';
-import type { ActiveTab } from './components/Navigation';
+import { Sidebar } from './components/Sidebar';
+import type { PageId } from './components/Sidebar';
 import { FeedView } from './components/FeedView';
+import { ShameWallPage } from './components/ShameWallPage';
 import { LedgerView } from './components/LedgerView';
 import { BodyTransformationView } from './components/BodyTransformationView';
 import { GroupSettingsView } from './components/GroupSettingsView';
@@ -13,13 +13,20 @@ import { SettleModal } from './components/SettleModal';
 import { CreateGroupModal } from './components/CreateGroupModal';
 import { SimulationControls } from './components/SimulationControls';
 import { Toast } from './components/Toast';
+import { MidnightCutoffTimer } from './components/MidnightCutoffTimer';
 import type { DebtTransaction } from './types';
-import { Flame } from 'lucide-react';
+import {
+  Flame,
+  Menu,
+  Coins,
+} from 'lucide-react';
+import { playPop } from './utils/audio';
 
 const MainApp: React.FC = () => {
-  const { transactions, activeGroupId } = useApp();
+  const { transactions, activeGroupId, activeGroup, activeUser } = useApp();
 
-  const [activeTab, setActiveTab] = useState<ActiveTab>('feed');
+  const [currentPage, setCurrentPage] = useState<PageId>('feed');
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [checkInModalOpen, setCheckInModalOpen] = useState(false);
   const [createGroupModalOpen, setCreateGroupModalOpen] = useState(false);
   const [disputePostId, setDisputePostId] = useState<string | null>(null);
@@ -30,58 +37,185 @@ const MainApp: React.FC = () => {
     (tx) => tx.groupId === activeGroupId && !tx.isSettled
   ).length;
 
+  const totalStakesAtRisk =
+    activeGroup.memberIds.length *
+    activeGroup.targetDaysPerWeek *
+    activeGroup.penaltyPerMissedDay;
+
+  const defaultedCount = Object.values(activeGroup.membersStats || {}).filter(
+    (s) => s.status === 'defaulted'
+  ).length;
+
   return (
-    <div className="min-h-screen bg-[#09090b] text-[#f4f4f5] flex flex-col font-sans selection:bg-red-500/30 selection:text-white">
-      {/* Top Navbar */}
-      <Navbar
+    <div className="min-h-screen bg-[#000000] text-[#f4f4f5] flex font-sans selection:bg-red-600 selection:text-white">
+      {/* Backdrop for mobile drawer */}
+      {mobileSidebarOpen && (
+        <div
+          onClick={() => setMobileSidebarOpen(false)}
+          className="fixed inset-0 z-30 bg-black/80 backdrop-blur-sm md:hidden animate-in fade-in duration-200"
+        />
+      )}
+
+      {/* Left Sidebar (Image 2 Navigation Items) */}
+      <Sidebar
+        currentPage={currentPage}
+        onPageChange={setCurrentPage}
+        pendingDebtsCount={pendingDebts}
         onOpenCheckIn={() => setCheckInModalOpen(true)}
         onOpenCreateGroup={() => setCreateGroupModalOpen(true)}
+        isMobileOpen={mobileSidebarOpen}
+        onMobileClose={() => setMobileSidebarOpen(false)}
       />
 
-      {/* Navigation Sub-header */}
-      <Navigation
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-        pendingDebtsCount={pendingDebts}
-      />
+      {/* Main Content Layout (Offset for Left Sidebar on md+) */}
+      <div className="flex-1 flex flex-col min-w-0 md:pl-72 pb-20 md:pb-8">
+        {/* Top Header Bar */}
+        <header className="sticky top-0 z-20 w-full bg-[#000000]/90 backdrop-blur-md border-b-2 border-[#27272a] h-16 px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
+          {/* Left: Mobile hamburger + Active Page title */}
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setMobileSidebarOpen(true)}
+              className="md:hidden p-2 rounded-xl bg-[#121214] border border-[#27272a] text-white hover:bg-red-600 hover:border-red-500 transition-colors"
+              aria-label="Open Sidebar Menu"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
 
-      {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-        {activeTab === 'feed' && (
-          <FeedView
-            onOpenCheckIn={() => setCheckInModalOpen(true)}
-            onOpenDispute={(id) => setDisputePostId(id)}
-          />
-        )}
-
-        {activeTab === 'ledger' && (
-          <LedgerView
-            onSettleTransaction={(tx) => setSettleTransaction(tx)}
-          />
-        )}
-
-        {activeTab === 'body' && <BodyTransformationView />}
-
-        {activeTab === 'settings' && <GroupSettingsView />}
-      </main>
-
-      {/* Footer */}
-      <footer className="border-t border-[#27272a] bg-[#0c0c0e] py-8 text-center text-xs text-zinc-500">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <Flame className="w-4 h-4 text-red-500 fill-red-500" />
-            <span className="font-bold text-zinc-300 uppercase tracking-wider">StakeFit</span>
-            <span>— Social Fitness Accountability & Financial Stakes</span>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-sm sm:text-base font-black uppercase tracking-wider text-white">
+                  {currentPage === 'feed' && '🔥 Daily Proof Feed'}
+                  {currentPage === 'shame-wall' && '💀 The Shame Wall'}
+                  {currentPage === 'ledger' && '💸 Settlement Ledger'}
+                  {currentPage === 'transformation' && '📸 Transformation Vault'}
+                  {currentPage === 'squad' && '⚔️ Squad Pact Settings'}
+                </span>
+                <span className="hidden sm:inline-block px-2 py-0.5 rounded text-[10px] font-black uppercase bg-red-600 text-white">
+                  {activeGroup.name}
+                </span>
+              </div>
+            </div>
           </div>
-          <div className="flex items-center gap-4 text-zinc-400">
-            <span>Splitwise Settlement Engine</span>
-            <span>•</span>
-            <span>Peer Verification Feed</span>
-            <span>•</span>
-            <span>Body Transformation Tracker</span>
+
+          {/* Right: Midnight Cutoff Timer + Quick Indicators */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Live Midnight Cutoff Countdown Timer */}
+            <MidnightCutoffTimer />
+
+            {/* Active Stakes Pill */}
+            <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-red-600 text-white text-xs font-mono font-black shadow-md glow-red">
+              <Coins className="w-3.5 h-3.5" />
+              <span>
+                Pool: {activeGroup.currency}
+                {totalStakesAtRisk.toLocaleString()}
+              </span>
+            </div>
+
+            {/* User Streak Quick Badge */}
+            <div className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-white text-black text-xs font-black font-mono border-2 border-red-500 shadow-md">
+              <Flame className="w-3.5 h-3.5 text-red-600 fill-red-600" />
+              <span>{activeUser.streakDays}d Streak</span>
+            </div>
           </div>
-        </div>
-      </footer>
+        </header>
+
+        {/* Main Content Area */}
+        <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+          {currentPage === 'feed' && (
+            <FeedView
+              onOpenCheckIn={() => setCheckInModalOpen(true)}
+              onOpenDispute={(id) => setDisputePostId(id)}
+            />
+          )}
+
+          {currentPage === 'shame-wall' && <ShameWallPage />}
+
+          {currentPage === 'ledger' && (
+            <LedgerView
+              onSettleTransaction={(tx) => setSettleTransaction(tx)}
+            />
+          )}
+
+          {currentPage === 'transformation' && <BodyTransformationView />}
+
+          {currentPage === 'squad' && <GroupSettingsView />}
+        </main>
+
+        {/* Minimal Footer */}
+        <footer className="border-t-2 border-[#27272a] bg-[#000000] py-6 text-center text-xs text-zinc-500">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <Flame className="w-4 h-4 text-red-500 fill-red-500" />
+              <span className="font-black text-white uppercase tracking-wider">
+                Stake<span className="text-red-500">Fit</span>
+              </span>
+            </div>
+            <div className="flex items-center gap-4 text-zinc-400 font-bold">
+              <span>🔥 Daily Proofs</span>
+              <span>•</span>
+              <span>💀 Shame Wall</span>
+              <span>•</span>
+              <span>💸 UPI Settlement</span>
+              <span>•</span>
+              <span>📸 Transformations</span>
+            </div>
+          </div>
+        </footer>
+      </div>
+
+      {/* Mobile Bottom Navigation Bar (Image 2 Quick Nav) */}
+      <nav
+        className="md:hidden fixed bottom-0 left-0 right-0 z-30 bg-[#000000]/95 backdrop-blur-md border-t-2 border-[#27272a] px-2 py-2 flex items-center justify-around"
+        aria-label="Mobile Navigation"
+      >
+        {[
+          { id: 'feed' as PageId, icon: '🔥', label: 'Feed' },
+          {
+            id: 'shame-wall' as PageId,
+            icon: '💀',
+            label: 'Shame',
+            badge: defaultedCount > 0 ? defaultedCount : null,
+          },
+          {
+            id: 'ledger' as PageId,
+            icon: '💸',
+            label: 'Ledger',
+            badge: pendingDebts > 0 ? pendingDebts : null,
+          },
+          { id: 'transformation' as PageId, icon: '📸', label: 'Vault' },
+          { id: 'squad' as PageId, icon: '⚔️', label: 'Squad' },
+        ].map((tab) => {
+          const isActive = currentPage === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => {
+                playPop();
+                setCurrentPage(tab.id);
+              }}
+              className={`relative flex flex-col items-center justify-center py-1 px-3 rounded-xl transition-all ${
+                isActive
+                  ? 'bg-red-600 text-white font-black shadow-md'
+                  : 'text-zinc-400 hover:text-white'
+              }`}
+            >
+              <span className="text-base">{tab.icon}</span>
+              <span className="text-[10px] font-bold uppercase tracking-wider mt-0.5">
+                {tab.label}
+              </span>
+              {tab.badge && (
+                <span
+                  className={`absolute -top-1 -right-1 px-1.5 py-0.2 text-[9px] font-black rounded-full font-mono ${
+                    isActive ? 'bg-white text-red-600' : 'bg-red-600 text-white'
+                  }`}
+                >
+                  {tab.badge}
+                </span>
+              )}
+            </button>
+          );
+        })}
+      </nav>
 
       {/* Modals */}
       <CheckInModal
@@ -107,7 +241,7 @@ const MainApp: React.FC = () => {
       {/* Floating Simulation Controls */}
       <SimulationControls />
 
-      {/* Toast Notification Container */}
+      {/* Toast Notifications */}
       <Toast />
     </div>
   );

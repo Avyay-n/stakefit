@@ -1,52 +1,38 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
-import { CheckCircle2, Clock, AlertTriangle, XCircle, ShieldCheck } from 'lucide-react';
+import { CheckCircle2, Clock, XCircle, ShieldCheck } from 'lucide-react';
 
 export const StatusBar: React.FC = () => {
   const { activeGroup, users } = useApp();
-
   const usersMap = new Map(users.map((u) => [u.id, u]));
 
   return (
-    <div className="w-full bg-[#121214] border border-[#27272a] rounded-2xl p-4 sm:p-5 shadow-xl mb-6">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
-        <div>
-          <div className="flex items-center gap-2">
-            <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-              <span>Daily Check-In Status & Shame Wall</span>
-            </h3>
-            <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-zinc-800 text-zinc-300 border border-zinc-700">
-              Midnight Cutoff
-            </span>
-          </div>
-          <p className="text-xs text-zinc-400 mt-0.5">
-            Peer vouches required before 11:59 PM to avoid daily forfeit penalties
-          </p>
-        </div>
-
-        {/* Legend */}
-        <div className="flex flex-wrap items-center gap-3 text-[11px] font-medium text-zinc-400">
-          <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-emerald-500/20" />
-            <span>Verified</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-amber-500 ring-2 ring-amber-500/20" />
-            <span>Reviewing</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-zinc-600 ring-2 ring-zinc-600/20" />
-            <span>Yet to log</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-red-500 ring-2 ring-red-500/30 animate-pulse" />
-            <span className="text-red-400 font-semibold">Defaulted</span>
-          </div>
+    <div className="w-full bg-[#121214] border border-[#27272a] rounded-3xl p-5 shadow-xl">
+      <div className="flex items-center justify-between gap-2 mb-3.5">
+        <span className="text-xs font-black text-white uppercase tracking-wider flex items-center gap-2">
+          <span>Today's Squad Roll Call</span>
+          <span className="text-[10px] text-red-400 font-mono font-black px-2 py-0.5 rounded-full bg-red-950/60 border border-red-800">
+            11:59 PM CUTOFF
+          </span>
+        </span>
+        <div className="flex items-center gap-2.5 text-[10px] font-mono font-black text-zinc-400">
+          <span className="flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-sm" />
+            <span className="text-zinc-300">Verified</span>
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-amber-400 shadow-sm" />
+            <span className="text-zinc-300">Review</span>
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse shadow-sm" />
+            <span className="text-red-400">Defaulted</span>
+          </span>
         </div>
       </div>
 
-      {/* Avatars Bar */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 pt-1">
+      {/* Sleek horizontal avatars scroll */}
+      <div className="flex items-center gap-3 overflow-x-auto pb-1 scrollbar-none">
         {activeGroup.memberIds.map((memberId) => {
           const user = usersMap.get(memberId);
           if (!user) return null;
@@ -62,87 +48,63 @@ export const StatusBar: React.FC = () => {
             status: 'yet_to_log',
           };
 
-          // Ring styling based on status
-          let ringColor = 'ring-zinc-700 border-zinc-800';
-          let statusBadge = (
-            <span className="flex items-center gap-1 text-[10px] text-zinc-400 font-semibold">
-              <Clock className="w-3 h-3 text-zinc-500" />
-              <span>Pending log</span>
-            </span>
-          );
-          let cardBg = 'bg-[#18181b]/60 border-[#27272a]';
+          let ringColor = 'ring-zinc-700';
+          let badgeIcon = <Clock className="w-2.5 h-2.5 text-zinc-400" />;
+          let label = 'Pending';
+          let textColor = 'text-zinc-400';
+          let cardBg = 'bg-[#18181b] border-zinc-800';
 
           if (stats.shieldUsedThisWeek) {
-            ringColor = 'ring-blue-500 ring-offset-2 ring-offset-[#121214]';
-            cardBg = 'bg-blue-950/20 border-blue-900/40';
-            statusBadge = (
-              <span className="flex items-center gap-1 text-[10px] text-blue-400 font-semibold">
-                <ShieldCheck className="w-3 h-3 text-blue-400" />
-                <span>Rest Shield</span>
-              </span>
-            );
+            ringColor = 'ring-blue-500';
+            badgeIcon = <ShieldCheck className="w-2.5 h-2.5 text-blue-400" />;
+            label = 'Shielded';
+            textColor = 'text-blue-400 font-bold';
+            cardBg = 'bg-blue-950/40 border-blue-800/60';
           } else if (stats.status === 'verified') {
-            ringColor = 'ring-emerald-500 ring-offset-2 ring-offset-[#121214] shadow-lg shadow-emerald-950/50';
-            cardBg = 'bg-emerald-950/15 border-emerald-900/40';
-            statusBadge = (
-              <span className="flex items-center gap-1 text-[10px] text-emerald-400 font-semibold">
-                <CheckCircle2 className="w-3 h-3 text-emerald-400" />
-                <span>Verified</span>
-              </span>
-            );
+            ringColor = 'ring-emerald-500 shadow-md shadow-emerald-950/40';
+            badgeIcon = <CheckCircle2 className="w-2.5 h-2.5 text-emerald-400" />;
+            label = 'Verified ✓';
+            textColor = 'text-emerald-400 font-bold';
+            cardBg = 'bg-emerald-950/30 border-emerald-800/50';
           } else if (stats.status === 'pending') {
-            ringColor = 'ring-amber-500 ring-offset-2 ring-offset-[#121214] animate-pulse';
-            cardBg = 'bg-amber-950/15 border-amber-900/40';
-            statusBadge = (
-              <span className="flex items-center gap-1 text-[10px] text-amber-400 font-semibold">
-                <AlertTriangle className="w-3 h-3 text-amber-400" />
-                <span>Under Review</span>
-              </span>
-            );
+            ringColor = 'ring-amber-500 animate-pulse';
+            badgeIcon = <Clock className="w-2.5 h-2.5 text-amber-400" />;
+            label = 'Reviewing';
+            textColor = 'text-amber-400 font-bold';
+            cardBg = 'bg-amber-950/30 border-amber-800/50';
           } else if (stats.status === 'defaulted') {
-            ringColor = 'ring-red-600 ring-offset-2 ring-offset-[#121214] shadow-lg shadow-red-950/70';
-            cardBg = 'bg-red-950/25 border-red-900/50 glow-red';
-            statusBadge = (
-              <span className="flex items-center gap-1 text-[10px] text-red-400 font-black uppercase tracking-wider animate-pulse">
-                <XCircle className="w-3 h-3 text-red-500" />
-                <span>DEFAULTED</span>
-              </span>
-            );
+            ringColor = 'ring-red-500 shadow-md shadow-red-950/50 animate-pulse';
+            badgeIcon = <XCircle className="w-2.5 h-2.5 text-white" />;
+            label = 'Defaulted';
+            textColor = 'text-white font-black';
+            cardBg = 'bg-red-600 border-red-500 text-white shadow-md';
           }
 
           return (
             <div
               key={user.id}
-              className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${cardBg}`}
+              className={`flex items-center gap-2.5 px-3 py-2 rounded-xl border shrink-0 transition-all ${cardBg}`}
             >
-              <div className="relative shrink-0">
+              <div className="relative">
                 <img
                   src={user.avatar}
                   alt={user.name}
-                  className={`w-11 h-11 rounded-full object-cover ring-2 ${ringColor}`}
+                  className={`w-8 h-8 rounded-full object-cover ring-2 ${ringColor}`}
                 />
                 {stats.status === 'defaulted' && (
-                  <span className="absolute -bottom-1 -right-1 text-xs">💀</span>
+                  <span className="absolute -bottom-1 -right-1 text-[10px]">💀</span>
                 )}
                 {stats.status === 'verified' && (
-                  <span className="absolute -bottom-1 -right-1 text-xs">🔥</span>
+                  <span className="absolute -bottom-1 -right-1 text-[10px]">🔥</span>
                 )}
               </div>
-
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center justify-between gap-1">
-                  <h4 className="text-xs font-bold text-zinc-100 truncate">
-                    {user.name.split(' ')[0]}
-                  </h4>
-                  {stats.isDoubleDown && (
-                    <span className="text-[9px] px-1 py-0.2 bg-red-950 border border-red-800 text-red-400 font-bold rounded">
-                      2X
-                    </span>
-                  )}
+              <div className="text-left">
+                <div className="text-xs font-black truncate max-w-[85px] text-white">
+                  {user.name.split(' ')[0]}
                 </div>
-                <div className="mt-0.5">{statusBadge}</div>
-                <div className="text-[10px] font-mono text-zinc-400 mt-1">
-                  Week: {stats.daysVerifiedThisWeek}/{activeGroup.targetDaysPerWeek} days
+                <div className={`text-[10px] font-bold flex items-center gap-1 ${textColor}`}>
+                  {badgeIcon}
+                  <span>{label}</span>
                 </div>
               </div>
             </div>
@@ -152,4 +114,3 @@ export const StatusBar: React.FC = () => {
     </div>
   );
 };
-

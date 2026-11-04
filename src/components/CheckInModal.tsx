@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import type { WorkoutType } from '../types';
 import {
@@ -10,7 +10,11 @@ import {
   Heart,
   Check,
   Sparkles,
+  Play,
+  Pause,
+  RotateCcw,
 } from 'lucide-react';
+import { playGong, playPop } from '../utils/audio';
 
 interface CheckInModalProps {
   isOpen: boolean;
@@ -72,6 +76,46 @@ export const CheckInModal: React.FC<CheckInModalProps> = ({ isOpen, onClose }) =
   const [heartRate, setHeartRate] = useState(152);
   const [locationTag, setLocationTag] = useState("Gold's Gym - Sector 29");
 
+  // Live Workout Stopwatch State
+  const [stopwatchSeconds, setStopwatchSeconds] = useState(0);
+  const [stopwatchActive, setStopwatchActive] = useState(false);
+
+  useEffect(() => {
+    let interval: ReturnType<typeof setInterval> | null = null;
+    if (stopwatchActive) {
+      interval = setInterval(() => {
+        setStopwatchSeconds((s) => s + 1);
+      }, 1000);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [stopwatchActive]);
+
+  const handleToggleStopwatch = () => {
+    setStopwatchActive(!stopwatchActive);
+    playPop();
+  };
+
+  const handleResetStopwatch = () => {
+    setStopwatchActive(false);
+    setStopwatchSeconds(0);
+    playPop();
+  };
+
+  const handleApplyStopwatch = () => {
+    const mins = Math.max(1, Math.round(stopwatchSeconds / 60));
+    setDuration(mins);
+    setCalories(mins * 9);
+    playPop();
+  };
+
+  const formatStopwatch = (totalSec: number) => {
+    const mins = Math.floor(totalSec / 60);
+    const secs = totalSec % 60;
+    return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+  };
+
   if (!isOpen) return null;
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -90,6 +134,8 @@ export const CheckInModal: React.FC<CheckInModalProps> = ({ isOpen, onClose }) =
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!imageUrl) return;
+
+    playGong();
 
     createPost({
       workoutType,
@@ -257,6 +303,65 @@ export const CheckInModal: React.FC<CheckInModalProps> = ({ isOpen, onClose }) =
                 placeholder="e.g. Gold's Gym - Sector 29"
                 className="w-full px-3 py-1.5 bg-[#121214] border border-[#27272a] rounded-lg text-xs text-zinc-200 focus:outline-none focus:border-red-500"
               />
+            </div>
+          </div>
+
+          {/* Live Workout Stopwatch Widget */}
+          <div className="p-4 rounded-2xl bg-[#18181b] text-white border border-[#27272a] shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div>
+              <div className="text-[10px] font-black uppercase tracking-wider text-red-500 flex items-center gap-1.5">
+                <Timer className="w-3.5 h-3.5" />
+                <span>Live Workout Stopwatch</span>
+              </div>
+              <div className="text-2xl font-black font-mono text-white mt-0.5">
+                {formatStopwatch(stopwatchSeconds)}
+              </div>
+              <p className="text-[10px] text-zinc-400 font-bold">
+                {stopwatchActive ? '⚡ Workout in progress...' : 'Tap start to track exact duration'}
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <button
+                type="button"
+                onClick={handleToggleStopwatch}
+                className={`flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-md ${
+                  stopwatchActive
+                    ? 'bg-amber-500 hover:bg-amber-600 text-black'
+                    : 'bg-red-600 hover:bg-red-500 text-white glow-red'
+                }`}
+              >
+                {stopwatchActive ? (
+                  <>
+                    <Pause className="w-3.5 h-3.5" />
+                    <span>Pause</span>
+                  </>
+                ) : (
+                  <>
+                    <Play className="w-3.5 h-3.5 fill-white" />
+                    <span>Start Timer</span>
+                  </>
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={handleResetStopwatch}
+                className="p-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-bold transition-colors"
+                title="Reset timer"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+              </button>
+
+              {stopwatchSeconds >= 10 && (
+                <button
+                  type="button"
+                  onClick={handleApplyStopwatch}
+                  className="flex-1 sm:flex-none px-3.5 py-2 rounded-xl bg-white text-black hover:bg-zinc-200 text-xs font-black uppercase tracking-wider transition-all shadow-md"
+                >
+                  ✓ Use as Duration
+                </button>
+              )}
             </div>
           </div>
 

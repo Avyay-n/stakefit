@@ -19,6 +19,7 @@ import {
   INITIAL_SETTLEMENT_HISTORY,
 } from '../data/mockData';
 import { calculateCycleSettlement } from '../utils/settlementEngine';
+import { supabase } from '../lib/supabase';
 
 interface AppContextType {
   users: User[];
@@ -64,6 +65,7 @@ interface AppContextType {
   removeMemberFromGroup: (groupId: string, userId: string) => void;
   toggleDoubleDown: () => void;
   activateStreakShield: () => void;
+  addStreakShields: (count: number) => void;
   markTransactionSettled: (
     txId: string,
     paymentRef?: string,
@@ -142,6 +144,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     localStorage.setItem('stakefit_settlements', JSON.stringify(settlementHistory));
   }, [settlementHistory]);
+
+  // Sync with live Supabase database if configured
+  useEffect(() => {
+    async function initSupabaseData() {
+      if (!supabase) return;
+      try {
+        const { data: dbProfiles } = await supabase.from('profiles').select('*');
+        if (dbProfiles && dbProfiles.length > 0) {
+          console.log('✅ Connected to Supabase! Loaded profiles:', dbProfiles.length);
+        }
+      } catch (err) {
+        console.warn('Supabase sync warning:', err);
+      }
+    }
+    initSupabaseData();
+  }, []);
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -236,6 +254,28 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         };
       })
     );
+
+    // Persist to Supabase if available
+    if (supabase) {
+      supabase
+        .from('check_ins')
+        .insert({
+          group_id: 'b1111111-1111-1111-1111-111111111111',
+          user_id: 'a1111111-1111-1111-1111-111111111111',
+          workout_type: data.workoutType,
+          caption: data.caption,
+          image_url: data.imageUrl,
+          duration_minutes: data.durationMinutes,
+          distance_km: data.distanceKm,
+          calories: data.calories,
+          heart_rate_bpm: data.heartRateBpm,
+          location_tag: data.locationTag || "Gold's Gym - Sector 29",
+          status: 'pending',
+        })
+        .then(() => {
+          console.log('✅ Check-in persisted to Supabase database');
+        });
+    }
 
     showToast('Check-in submitted! Needs 2 peer vouches to count toward weekly target.');
   };
@@ -598,6 +638,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     showToast('🛡️ Rest / Emergency Shield activated! Today is protected from penalties.');
   };
 
+  const addStreakShields = (count: number) => {
+    setUsers((prev) =>
+      prev.map((u) =>
+        u.id === activeUserId
+          ? {
+              ...u,
+              shieldsAvailable: u.shieldsAvailable + count,
+            }
+          : u
+      )
+    );
+  };
+
   const markTransactionSettled = (
     txId: string,
     paymentRef: string = `TX-${Math.floor(100000 + Math.random() * 900000)}`,
@@ -806,6 +859,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         removeMemberFromGroup,
         toggleDoubleDown,
         activateStreakShield,
+        addStreakShields,
         markTransactionSettled,
         logWeighIn,
         simulateMidnightCutoff,

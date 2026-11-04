@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { calculateCycleSettlement } from '../utils/settlementEngine';
 import type { DebtTransaction } from '../types';
+import { AnimatedList, type AnimatedListItem } from './AnimatedList';
 import {
   Receipt,
   Scale,
@@ -13,6 +14,8 @@ import {
   TrendingDown,
   Flame,
   Calendar,
+  List,
+  LayoutGrid,
 } from 'lucide-react';
 
 interface LedgerViewProps {
@@ -43,103 +46,115 @@ export const LedgerView: React.FC<LedgerViewProps> = ({ onSettleTransaction }) =
   const pendingTransactions = groupTransactions.filter((tx) => !tx.isSettled);
   const settledTransactions = groupTransactions.filter((tx) => tx.isSettled);
 
+  const [debtView, setDebtView] = useState<'animated' | 'grid'>('animated');
+
+  const animatedDebtItems: AnimatedListItem[] = groupTransactions.map((tx) => ({
+    id: tx.id,
+    image: tx.fromUserAvatar,
+    title: `${tx.fromUserName} → ${tx.toUserName}`,
+    description: tx.isSettled
+      ? `Settled on ${tx.settledAt || 'Nov 01'} (${tx.paymentMethod || 'UPI'})`
+      : tx.fromUserId === activeUserId
+      ? `⚠️ You owe this penalty debt to ${tx.toUserName}`
+      : tx.toUserId === activeUserId
+      ? `🎉 You receive dividend payout from ${tx.fromUserName}`
+      : `Peer forfeit resolution`,
+    meta: tx.isSettled ? `Settled (${tx.currency}${tx.amount})` : `${tx.currency}${tx.amount}`,
+    payload: tx,
+  }));
+
   return (
     <div className="space-y-6">
       {/* Top Pact Rules Summary */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="p-4 rounded-2xl bg-[#121214] border border-[#27272a] shadow-lg">
-          <div className="text-xs font-bold text-zinc-400 uppercase tracking-wider">
+        <div className="p-5 rounded-3xl bg-white text-zinc-950 border-2 border-zinc-200 shadow-xl">
+          <div className="text-[10px] font-black text-zinc-500 uppercase tracking-wider">
             Pact Rule Model
           </div>
-          <div className="text-lg font-black text-white mt-1 capitalize flex items-center gap-1.5">
+          <div className="text-lg font-black text-black mt-1 capitalize flex items-center gap-1.5">
             <span>{activeGroup.poolType === 'dividend' ? 'Dividend Payout' : 'Group Bounty'}</span>
-            <span className="text-xs px-2 py-0.5 rounded-full bg-red-500/10 text-red-400 border border-red-500/20 font-mono">
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-red-50 text-red-600 border border-red-200 font-black">
               {activeGroup.poolType === 'dividend' ? 'Winner Split' : 'Shared Escrow'}
             </span>
           </div>
-          <p className="text-[11px] text-zinc-400 mt-1">
+          <p className="text-[11px] text-zinc-600 font-medium mt-1">
             {activeGroup.poolType === 'dividend'
               ? 'Missed day penalties split among 100% achievers'
               : `Penalties pool into ${activeGroup.bountyGoalDescription || 'group feast budget'}`}
           </p>
         </div>
 
-        <div className="p-4 rounded-2xl bg-[#121214] border border-[#27272a] shadow-lg">
-          <div className="text-xs font-bold text-zinc-400 uppercase tracking-wider">
+        <div className="p-5 rounded-3xl bg-white text-zinc-950 border-2 border-zinc-200 shadow-xl">
+          <div className="text-[10px] font-black text-zinc-500 uppercase tracking-wider">
             Daily Forfeit Stake
           </div>
-          <div className="text-lg font-black text-white font-mono mt-1 text-red-400">
+          <div className="text-2xl font-black text-red-600 font-mono mt-1">
             {activeGroup.currency}{activeGroup.penaltyPerMissedDay}
-            <span className="text-xs font-normal text-zinc-400 font-sans"> / missed day</span>
+            <span className="text-xs font-semibold text-zinc-500 font-sans"> / missed day</span>
           </div>
-          <p className="text-[11px] text-zinc-400 mt-1">
+          <p className="text-[11px] text-zinc-600 font-medium mt-1">
             Target: {activeGroup.targetDaysPerWeek} verified days / week
           </p>
         </div>
 
-        <div className="p-4 rounded-2xl bg-[#121214] border border-[#27272a] shadow-lg">
-          <div className="text-xs font-bold text-zinc-400 uppercase tracking-wider">
+        <div className="p-5 rounded-3xl bg-white text-zinc-950 border-2 border-zinc-200 shadow-xl">
+          <div className="text-[10px] font-black text-zinc-500 uppercase tracking-wider">
             Current Week Pool
           </div>
-          <div className="text-lg font-black text-white font-mono mt-1 text-amber-400">
+          <div className="text-2xl font-black text-black font-mono mt-1">
             {activeGroup.currency}
             {activeGroup.poolType === 'dividend'
               ? currentSettlement.totalPenalties
               : activeGroup.bountyTotal + currentSettlement.totalPenalties}
           </div>
-          <p className="text-[11px] text-zinc-400 mt-1 font-mono">
+          <p className="text-[11px] text-zinc-600 font-medium mt-1 font-mono">
             {currentSettlement.defaultersCount} defaulters • {currentSettlement.qualifiersCount} qualifiers
           </p>
         </div>
 
-        <div className="p-4 rounded-2xl bg-[#121214] border border-[#27272a] shadow-lg">
-          <div className="text-xs font-bold text-zinc-400 uppercase tracking-wider">
+        <div className="p-5 rounded-3xl bg-white text-zinc-950 border-2 border-zinc-200 shadow-xl">
+          <div className="text-[10px] font-black text-zinc-500 uppercase tracking-wider">
             Active Cycle #{activeGroup.cycleNumber}
           </div>
-          <div className="text-xs font-bold text-zinc-200 mt-1">
+          <div className="text-xs font-black text-black mt-1">
             {activeGroup.currentCycleStart} – {activeGroup.currentCycleEnd}
           </div>
-          <div className="flex items-center gap-1.5 text-xs text-red-400 font-mono mt-1.5 font-bold">
-            <span className="w-2 h-2 rounded-full bg-red-500 animate-ping" />
+          <div className="flex items-center gap-1.5 text-xs text-red-600 font-mono mt-1.5 font-black">
+            <span className="w-2 h-2 rounded-full bg-red-600 animate-ping" />
             <span>Resolves Sunday 11:59 PM</span>
           </div>
         </div>
       </div>
 
-      {/* Personal Net Balance Hero Card */}
-      <div
-        className={`p-6 rounded-2xl border transition-all ${
-          myNetBalance > 0
-            ? 'bg-gradient-to-r from-emerald-950/40 to-[#121214] border-emerald-500/40 glow-green'
-            : myNetBalance < 0
-            ? 'bg-gradient-to-r from-red-950/40 to-[#121214] border-red-500/40 glow-red'
-            : 'bg-[#121214] border-[#27272a]'
-        }`}
-      >
+      {/* High-Contrast Red, White & Black Personal Net Balance Card */}
+      <div className="p-6 rounded-3xl bg-white text-zinc-950 border-4 border-red-600 shadow-2xl transition-all">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <img
-              src={activeUser.avatar}
-              alt={activeUser.name}
-              className="w-12 h-12 rounded-full object-cover ring-2 ring-red-500"
-            />
+          <div className="flex items-center gap-3.5">
+            <div className="relative">
+              <img
+                src={activeUser.avatar}
+                alt={activeUser.name}
+                className="w-14 h-14 rounded-full object-cover ring-4 ring-red-600 shadow-md"
+              />
+              <span className="absolute -bottom-1 -right-1 text-xs">🔥</span>
+            </div>
             <div>
-              <div className="text-xs font-bold text-zinc-400 uppercase tracking-wider">
+              <div className="text-xs font-black text-red-600 uppercase tracking-wider">
                 Your Running Cycle Balance
               </div>
-              <div className="text-2xl sm:text-3xl font-black font-mono mt-0.5 flex items-center gap-2">
+              <div className="text-2xl sm:text-3xl font-black font-mono mt-0.5 flex items-center gap-2 text-black">
                 {myNetBalance > 0 ? (
-                  <span className="text-emerald-400 flex items-center gap-2">
-                    <TrendingUp className="w-6 h-6" />
+                  <span className="text-emerald-700 flex items-center gap-2">
+                    <TrendingUp className="w-6 h-6 text-emerald-600" />
                     <span>+{activeGroup.currency}{myNetBalance}</span>
                   </span>
                 ) : myNetBalance < 0 ? (
-                  <span className="text-red-400 flex items-center gap-2">
-                    <TrendingDown className="w-6 h-6" />
+                  <span className="text-red-600 flex items-center gap-2">
+                    <TrendingDown className="w-6 h-6 text-red-600" />
                     <span>-{activeGroup.currency}{Math.abs(myNetBalance)}</span>
                   </span>
                 ) : (
-                  <span className="text-zinc-200">
+                  <span className="text-zinc-900">
                     {activeGroup.currency}0 (Even)
                   </span>
                 )}
@@ -148,16 +163,16 @@ export const LedgerView: React.FC<LedgerViewProps> = ({ onSettleTransaction }) =
           </div>
 
           <div className="text-left sm:text-right">
-            <div className="text-xs font-medium text-zinc-300">
+            <div className="text-xs font-bold text-zinc-700">
               {myNetBalance > 0
                 ? '🎉 You have met your commitment and will receive dividend payout!'
                 : myNetBalance < 0
-                ? '⚠️ You have missed days this week. Settle debt to maintain good standing.'
+                ? '⚠️ You have missed days this week. Settle via UPI to maintain standing.'
                 : '✓ On track! Complete remaining sessions to earn dividend shares.'}
             </div>
             {myCalc?.isDoubleDown && (
-              <span className="inline-flex items-center gap-1 mt-1 text-[11px] font-mono font-bold text-red-400 bg-red-950/60 px-2 py-0.5 rounded border border-red-800">
-                <Flame className="w-3 h-3 fill-red-400" />
+              <span className="inline-flex items-center gap-1 mt-1 text-[11px] font-mono font-black text-white bg-red-600 px-2.5 py-0.5 rounded-full shadow-sm">
+                <Flame className="w-3 h-3 fill-white text-white" />
                 2X Double Down Active
               </span>
             )}
@@ -335,8 +350,37 @@ export const LedgerView: React.FC<LedgerViewProps> = ({ onSettleTransaction }) =
                 </p>
               </div>
 
-              <div className="text-[11px] font-mono text-zinc-400 bg-[#18181b] px-3 py-1 rounded-lg border border-[#27272a]">
-                {pendingTransactions.length} Pending • {settledTransactions.length} Settled
+              <div className="flex items-center gap-2">
+                <div className="flex items-center bg-[#18181b] p-1 rounded-xl border border-[#27272a]">
+                  <button
+                    type="button"
+                    onClick={() => setDebtView('animated')}
+                    className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                      debtView === 'animated'
+                        ? 'bg-red-600 text-white shadow-sm glow-red'
+                        : 'text-zinc-400 hover:text-white'
+                    }`}
+                  >
+                    <List className="w-3.5 h-3.5" />
+                    <span>Animated List</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setDebtView('grid')}
+                    className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                      debtView === 'grid'
+                        ? 'bg-red-600 text-white shadow-sm glow-red'
+                        : 'text-zinc-400 hover:text-white'
+                    }`}
+                  >
+                    <LayoutGrid className="w-3.5 h-3.5" />
+                    <span>Cards</span>
+                  </button>
+                </div>
+
+                <div className="text-[11px] font-mono text-zinc-400 bg-[#18181b] px-3 py-1.5 rounded-lg border border-[#27272a] hidden sm:block">
+                  {pendingTransactions.length} Pending • {settledTransactions.length} Settled
+                </div>
               </div>
             </div>
 
@@ -348,6 +392,25 @@ export const LedgerView: React.FC<LedgerViewProps> = ({ onSettleTransaction }) =
                 <div className="text-xs text-zinc-500 mt-1">
                   All active members are hitting their weekly targets or debts have already been settled!
                 </div>
+              </div>
+            ) : debtView === 'animated' ? (
+              <div className="flex flex-col items-center justify-center py-2">
+                <p className="text-xs text-zinc-400 mb-2 font-mono">
+                  ✨ Use arrow keys or click any debt row to open instant Settle Sheet
+                </p>
+                <AnimatedList
+                  items={animatedDebtItems}
+                  onItemSelect={(item) => {
+                    if (item?.payload && !item.payload.isSettled) {
+                      onSettleTransaction(item.payload);
+                    }
+                  }}
+                  animation="pop"
+                  theme="dark"
+                  accentColor="#ef4444"
+                  width="100%"
+                  maxHeight={420}
+                />
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">

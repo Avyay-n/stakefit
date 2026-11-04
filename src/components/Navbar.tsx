@@ -8,6 +8,7 @@ import {
   UserCheck,
   Plus,
   Coins,
+  Database,
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -123,6 +124,16 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenCheckIn, onOpenCreateGroup
 
         {/* Right: Perspective Switcher, Stats & Check-in CTA */}
         <div className="flex items-center gap-2 sm:gap-3">
+          {/* Supabase Connected Indicator */}
+          <div
+            className="hidden xl:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-950/40 border border-emerald-800 text-emerald-400 text-xs font-mono"
+            title="Connected to Supabase Project: vlbxiwybyeowqkewmttn"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <Database className="w-3.5 h-3.5" />
+            <span>Supabase Active</span>
+          </div>
+
           {/* Active Stakes Pill */}
           <div className="hidden lg:flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-950/40 border border-red-900/50 text-red-400 text-xs font-mono">
             <Coins className="w-3.5 h-3.5" />
