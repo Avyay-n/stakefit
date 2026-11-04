@@ -108,7 +108,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       icon: <Skull className="w-5 h-5" />,
       funEmoji: '💀',
       badge: defaultedCount > 0 ? `${defaultedCount} 💀` : null,
-      badgeColor: 'bg-white text-red-600 border border-red-500/30',
+      badgeColor: 'bg-red-950/80 text-red-400 border border-red-700/60',
       hasAlert: defaultedCount > 0,
     },
     {
@@ -117,8 +117,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
       shortLabel: 'Ledger',
       icon: <Coins className="w-5 h-5" />,
       funEmoji: '💸',
-      badge: pendingDebtsCount > 0 ? `${pendingDebtsCount} unsettled` : null,
-      badgeColor: 'bg-white text-emerald-700 border border-emerald-500/30',
+      badge: pendingDebtsCount > 0 ? `${pendingDebtsCount} Due` : null,
+      badgeColor: 'bg-emerald-950/80 text-emerald-400 border border-emerald-700/60',
       hasAlert: pendingDebtsCount > 0,
     },
     {
@@ -161,7 +161,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         isMobileOpen
           ? 'translate-x-0 w-72 shadow-2xl z-50'
           : '-translate-x-full md:translate-x-0'
-      } ${isExpanded ? 'md:w-64 shadow-2xl shadow-black/90' : 'md:w-16 shadow-none'}`}
+      } ${isExpanded ? 'md:w-72 shadow-2xl shadow-black/90' : 'md:w-16 shadow-none'}`}
     >
       {/* Top Section */}
       <div className="p-3 border-b border-[#222225] bg-[#111113]/90 relative">
@@ -365,7 +365,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 onClick={() => handleNavClick(item.id)}
                 className={`relative w-full flex items-center rounded-xl transition-all group/nav ${
                   isExpanded
-                    ? `px-3.5 py-2.5 justify-between text-xs sm:text-sm font-black tracking-wide ${
+                    ? `px-3 py-2.5 text-xs font-black tracking-wide ${
                         isActive
                           ? 'bg-red-600 text-white shadow-xl glow-red border border-red-400/40'
                           : 'text-zinc-300 hover:text-white hover:bg-[#18181b] border border-transparent'
@@ -378,23 +378,23 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 }`}
                 title={!isExpanded ? item.label : undefined}
               >
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2.5 min-w-0 flex-1 truncate">
                   <span className="shrink-0">{item.icon}</span>
                   {isExpanded && (
-                    <span className="uppercase tracking-wider font-extrabold whitespace-nowrap animate-in fade-in duration-200">
+                    <span className="uppercase tracking-wider font-extrabold truncate animate-in fade-in duration-200">
                       {item.label}
                     </span>
                   )}
                 </div>
 
-                {/* Badges */}
+                {/* Badges - single-line pill, never wrap or overlap */}
                 {isExpanded ? (
                   item.badge && (
                     <span
-                      className={`px-2 py-0.5 text-[9px] font-mono font-black rounded-full shadow-md ${
+                      className={`ml-2 shrink-0 whitespace-nowrap px-2 py-0.5 text-[10px] font-mono font-black rounded-full shadow-md leading-none inline-flex items-center gap-1 ${
                         isActive
                           ? 'bg-white text-red-600'
-                          : item.badgeColor || 'bg-white text-black'
+                          : item.badgeColor || 'bg-zinc-800 text-zinc-300 border border-zinc-700'
                       }`}
                     >
                       {item.badge}

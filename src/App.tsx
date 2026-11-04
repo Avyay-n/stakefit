@@ -157,10 +157,10 @@ const MainApp: React.FC = () => {
         onTogglePin={handleTogglePin}
       />
 
-      {/* Main Content Layout (Offset for Left Sidebar on md+): 64px rail, 256px pinned */}
+      {/* Main Content Layout (Offset for Left Sidebar on md+): 64px rail, 288px (w-72) pinned */}
       <div
         className={`flex-1 flex flex-col min-w-0 pb-20 md:pb-8 transition-all duration-300 ${
-          isSidebarPinned ? 'md:pl-64' : 'md:pl-16'
+          isSidebarPinned ? 'md:pl-72' : 'md:pl-16'
         }`}
       >
         {/* Top Header Bar */}

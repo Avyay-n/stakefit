@@ -266,19 +266,20 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
 
   return (
     <div ref={pageRef} className="min-h-screen bg-[#070709] text-[#f4f4f5] font-sans selection:bg-red-600 selection:text-white relative overflow-x-hidden">
-      {/* WebGL Grain Gradient Background (Breathing Film Grain) */}
-      <div className="fixed inset-0 z-0 pointer-events-none opacity-45">
+      {/* WebGL Grain Gradient Background (Breathing Film Grain) - Covers ~half screen with silky atmospheric red glow */}
+      <div className="fixed inset-0 z-0 pointer-events-none opacity-80 transition-opacity duration-500">
         <GrainGradient
-          colorLight="#dc2626"
-          colorMid="#7f1d1d"
-          colorDark="#050505"
-          angle={25}
-          curve={0.5}
-          softness={0.24}
-          scale={1.15}
-          grain={0.42}
+          colorLight="#ef4444"
+          colorMid="#991b1b"
+          colorDark="#070709"
+          angle={20}
+          position={0.16}
+          curve={0.35}
+          softness={0.32}
+          scale={1.05}
+          grain={0.45}
           grainSize={1.1}
-          speed={1.55}
+          speed={1.6}
         />
       </div>
 
@@ -428,10 +429,179 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
           <span>Real Financial Stakes • Peer Camera Vouches • Sunday Dividends</span>
         </div>
 
-        {/* Main Hero Headline */}
-        <h1 className="gsap-hero-title text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-black uppercase tracking-tight text-white font-display leading-[0.92] max-w-4xl mx-auto select-text">
-          Put Your <span className="text-red-500 inline-block">Money</span> Where Your{' '}
-          <span className="underline decoration-red-600 decoration-4 sm:decoration-8">Sweat</span> Is.
+        {/* Main Hero Headline with animated Glare on 'Money' and Dripping Sweat on 'Sweat' */}
+        <h1 className="gsap-hero-title text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-black uppercase tracking-tight text-white font-display leading-[0.96] max-w-4xl mx-auto select-text">
+          Put Your{' '}
+          {/* Animated Glare & Sparkle Money */}
+          <span className="relative inline-block mx-1 group align-baseline">
+            <span className="animate-money-glare inline-block font-black select-text drop-shadow-[0_0_24px_rgba(239,68,68,0.5)]">
+              Money
+            </span>
+            {/* Diagonal Lens Flare Glare Beam */}
+            <span className="absolute inset-0 overflow-hidden pointer-events-none rounded-lg">
+              <span className="absolute -inset-y-3 -inset-x-10 w-14 bg-gradient-to-r from-transparent via-white/80 to-transparent rotate-[28deg] blur-[1px] animate-glare-beam pointer-events-none" />
+            </span>
+            {/* Corner Sparkle Glints (✦) */}
+            <span
+              className="absolute -top-3 -left-3 pointer-events-none animate-sparkle-1 z-20"
+              aria-hidden="true"
+            >
+              <svg viewBox="0 0 24 24" className="w-5 h-5 sm:w-7 sm:h-7 text-amber-200 drop-shadow-[0_0_10px_rgba(254,240,138,0.95)]">
+                <path
+                  d="M12 0 C12 7 17 12 24 12 C17 12 12 17 12 24 C12 17 7 12 0 12 C7 12 12 7 12 0 Z"
+                  fill="currentColor"
+                />
+              </svg>
+            </span>
+            <span
+              className="absolute -top-2 -right-3 pointer-events-none animate-sparkle-2 z-20"
+              aria-hidden="true"
+            >
+              <svg viewBox="0 0 24 24" className="w-4 h-4 sm:w-6 sm:h-6 text-white drop-shadow-[0_0_12px_rgba(255,255,255,0.95)]">
+                <path
+                  d="M12 0 C12 7 17 12 24 12 C17 12 12 17 12 24 C12 17 7 12 0 12 C7 12 12 7 12 0 Z"
+                  fill="currentColor"
+                />
+              </svg>
+            </span>
+          </span>{' '}
+          Where Your{' '}
+          {/* Animated Sweaty Drip & Condensation Word */}
+          <span className="relative inline-block mx-1 pb-1 sm:pb-2 border-b-4 sm:border-b-8 border-red-600 group align-baseline">
+            {/* Word with wet sheen */}
+            <span className="animate-sweat-text inline-block text-white">
+              Sweat
+            </span>
+
+            {/* Resting Sweat Bead Top-Left (above 'S') */}
+            <span
+              className="absolute -top-2 left-[4%] pointer-events-none animate-sweat-bead z-20"
+              aria-hidden="true"
+            >
+              <span className="block w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-gradient-to-tr from-cyan-400 via-sky-200 to-white shadow-[0_0_8px_rgba(56,189,248,0.9)] ring-1 ring-white/60 relative">
+                <span className="absolute top-0.5 left-0.5 w-1 h-1 rounded-full bg-white" />
+              </span>
+            </span>
+
+            {/* Resting Sweat Bead Top-Right (above 'T') */}
+            <span
+              className="absolute -top-2.5 right-[8%] pointer-events-none animate-sweat-bead z-20"
+              style={{ animationDelay: '0.8s' }}
+              aria-hidden="true"
+            >
+              <span className="block w-2.5 sm:w-3 h-2.5 sm:h-3 rounded-full bg-gradient-to-tr from-cyan-400 via-sky-200 to-white shadow-[0_0_8px_rgba(56,189,248,0.9)] ring-1 ring-white/60 relative">
+                <span className="absolute top-0.5 left-0.5 w-1 h-1 rounded-full bg-white" />
+              </span>
+            </span>
+
+            {/* Dripping Droplet 1 (under S) */}
+            <span
+              className="absolute pointer-events-none z-20"
+              style={{
+                left: '12%',
+                bottom: '-6px',
+                animation: 'sweat-drip-fall 2.8s cubic-bezier(0.55, 0.085, 0.68, 0.53) infinite',
+                animationDelay: '0s',
+              }}
+              aria-hidden="true"
+            >
+              <svg viewBox="0 0 14 22" className="w-2.5 sm:w-3.5 h-3.5 sm:h-5 text-cyan-300 drop-shadow-[0_2px_6px_rgba(34,211,238,0.85)]">
+                <path
+                  d="M7 0 C7 0 0.5 8.5 0.5 14.5 C0.5 18.09 3.41 21 7 21 C10.59 21 13.5 18.09 13.5 14.5 C13.5 8.5 7 0 7 0 Z"
+                  fill="url(#sweat_cyan_grad)"
+                />
+                <ellipse cx="5" cy="14" rx="1.5" ry="3.5" fill="white" fillOpacity="0.85" />
+                <circle cx="9" cy="16" r="0.8" fill="white" fillOpacity="0.95" />
+              </svg>
+            </span>
+            {/* Splash Ripple 1 */}
+            <span
+              className="absolute pointer-events-none w-3 sm:w-4 h-1 rounded-full bg-cyan-300/80 blur-[0.5px] z-10"
+              style={{
+                left: '10%',
+                bottom: '-12px',
+                animation: 'sweat-splash-ring 2.8s ease-out infinite',
+                animationDelay: '0s',
+              }}
+              aria-hidden="true"
+            />
+
+            {/* Dripping Droplet 2 (under E/A) */}
+            <span
+              className="absolute pointer-events-none z-20"
+              style={{
+                left: '50%',
+                bottom: '-6px',
+                animation: 'sweat-drip-fall 3.2s cubic-bezier(0.55, 0.085, 0.68, 0.53) infinite',
+                animationDelay: '1.1s',
+              }}
+              aria-hidden="true"
+            >
+              <svg viewBox="0 0 14 22" className="w-2.5 sm:w-3.5 h-3.5 sm:h-5 text-cyan-300 drop-shadow-[0_2px_6px_rgba(34,211,238,0.85)]">
+                <path
+                  d="M7 0 C7 0 0.5 8.5 0.5 14.5 C0.5 18.09 3.41 21 7 21 C10.59 21 13.5 18.09 13.5 14.5 C13.5 8.5 7 0 7 0 Z"
+                  fill="url(#sweat_cyan_grad)"
+                />
+                <ellipse cx="5" cy="14" rx="1.5" ry="3.5" fill="white" fillOpacity="0.85" />
+                <circle cx="9" cy="16" r="0.8" fill="white" fillOpacity="0.95" />
+              </svg>
+            </span>
+            {/* Splash Ripple 2 */}
+            <span
+              className="absolute pointer-events-none w-3 sm:w-4 h-1 rounded-full bg-cyan-300/80 blur-[0.5px] z-10"
+              style={{
+                left: '48%',
+                bottom: '-12px',
+                animation: 'sweat-splash-ring 3.2s ease-out infinite',
+                animationDelay: '1.1s',
+              }}
+              aria-hidden="true"
+            />
+
+            {/* Dripping Droplet 3 (under T) */}
+            <span
+              className="absolute pointer-events-none z-20"
+              style={{
+                left: '84%',
+                bottom: '-6px',
+                animation: 'sweat-drip-fall 2.6s cubic-bezier(0.55, 0.085, 0.68, 0.53) infinite',
+                animationDelay: '1.9s',
+              }}
+              aria-hidden="true"
+            >
+              <svg viewBox="0 0 14 22" className="w-2 sm:w-3 h-3 sm:h-4 text-cyan-300 drop-shadow-[0_2px_6px_rgba(34,211,238,0.85)]">
+                <path
+                  d="M7 0 C7 0 0.5 8.5 0.5 14.5 C0.5 18.09 3.41 21 7 21 C10.59 21 13.5 18.09 13.5 14.5 C13.5 8.5 7 0 7 0 Z"
+                  fill="url(#sweat_cyan_grad)"
+                />
+                <ellipse cx="5" cy="14" rx="1.5" ry="3.5" fill="white" fillOpacity="0.85" />
+                <circle cx="9" cy="16" r="0.8" fill="white" fillOpacity="0.95" />
+              </svg>
+            </span>
+            {/* Splash Ripple 3 */}
+            <span
+              className="absolute pointer-events-none w-3 sm:w-4 h-1 rounded-full bg-cyan-300/80 blur-[0.5px] z-10"
+              style={{
+                left: '82%',
+                bottom: '-12px',
+                animation: 'sweat-splash-ring 2.6s ease-out infinite',
+                animationDelay: '1.9s',
+              }}
+              aria-hidden="true"
+            />
+
+            {/* Embedded SVG gradient def for sweat droplets */}
+            <svg className="absolute w-0 h-0" aria-hidden="true" focusable="false">
+              <defs>
+                <linearGradient id="sweat_cyan_grad" x1="7" y1="0" x2="7" y2="21" gradientUnits="userSpaceOnUse">
+                  <stop stopColor="#67e8f9" stopOpacity="0.95" />
+                  <stop offset="0.6" stopColor="#38bdf8" stopOpacity="0.9" />
+                  <stop offset="1" stopColor="#0284c7" stopOpacity="0.95" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </span>{' '}
+          Is.
         </h1>
 
         <p className="gsap-hero-sub max-w-2xl mx-auto text-sm sm:text-base text-zinc-300 font-medium leading-relaxed">
