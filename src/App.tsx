@@ -35,6 +35,17 @@ const MainApp: React.FC = () => {
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState<PageId>('feed');
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [isSidebarPinned, setIsSidebarPinned] = useState(() => {
+    return localStorage.getItem('stakefit_sidebar_pinned') === 'true';
+  });
+
+  const handleTogglePin = () => {
+    setIsSidebarPinned((prev) => {
+      const next = !prev;
+      localStorage.setItem('stakefit_sidebar_pinned', String(next));
+      return next;
+    });
+  };
   const [checkInModalOpen, setCheckInModalOpen] = useState(false);
   const [createGroupModalOpen, setCreateGroupModalOpen] = useState(false);
   const [disputePostId, setDisputePostId] = useState<string | null>(null);
@@ -132,7 +143,7 @@ const MainApp: React.FC = () => {
         />
       )}
 
-      {/* Left Sidebar */}
+      {/* Left Sidebar (Supabase hover-expandable rail) */}
       <Sidebar
         currentPage={currentPage}
         onPageChange={setCurrentPage}
@@ -142,10 +153,16 @@ const MainApp: React.FC = () => {
         onOpenHub={() => setViewMode('squads-hub')}
         isMobileOpen={mobileSidebarOpen}
         onMobileClose={() => setMobileSidebarOpen(false)}
+        isPinned={isSidebarPinned}
+        onTogglePin={handleTogglePin}
       />
 
-      {/* Main Content Layout (Offset for Left Sidebar on md+) */}
-      <div className="flex-1 flex flex-col min-w-0 md:pl-72 pb-20 md:pb-8">
+      {/* Main Content Layout (Offset for Left Sidebar on md+): 64px rail, 256px pinned */}
+      <div
+        className={`flex-1 flex flex-col min-w-0 pb-20 md:pb-8 transition-all duration-300 ${
+          isSidebarPinned ? 'md:pl-64' : 'md:pl-16'
+        }`}
+      >
         {/* Top Header Bar */}
         <header className="sticky top-0 z-20 w-full bg-[#000000]/90 backdrop-blur-md border-b-2 border-[#27272a] h-16 px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
           {/* Left: Mobile hamburger + Hub Back Link + Active Page title */}
@@ -211,7 +228,7 @@ const MainApp: React.FC = () => {
         </header>
 
         {/* Main Content Area */}
-        <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        <main className="flex-1 max-w-[1600px] w-full mx-auto px-3 sm:px-6 lg:px-8 py-5 sm:py-7">
           {currentPage === 'feed' && (
             <FeedView
               onOpenCheckIn={() => setCheckInModalOpen(true)}
