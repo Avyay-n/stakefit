@@ -367,6 +367,8 @@ export const INITIAL_POSTS: Post[] = [
     imageUrl: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=800&auto=format&fit=crop&q=80',
     metrics: {
       durationMinutes: 65,
+      workoutFocus: 'Heavy Squats & Legs',
+      intensity: 'Heavy PR 🔥',
       calories: 520,
       heartRateBpm: 154,
     },
@@ -397,6 +399,8 @@ export const INITIAL_POSTS: Post[] = [
     metrics: {
       durationMinutes: 44,
       distanceKm: 8.2,
+      workoutFocus: 'Sunrise 8K Tempo',
+      intensity: 'High Cardio 🏃‍♀️',
       calories: 460,
       heartRateBpm: 162,
     },
@@ -426,6 +430,8 @@ export const INITIAL_POSTS: Post[] = [
     imageUrl: 'https://images.unsplash.com/photo-1598971639058-fab3c3109a00?w=800&auto=format&fit=crop&q=80',
     metrics: {
       durationMinutes: 50,
+      workoutFocus: 'Muscle-ups & Core',
+      intensity: 'High Intensity ⚡',
       calories: 380,
       heartRateBpm: 142,
     },
@@ -455,6 +461,8 @@ export const INITIAL_POSTS: Post[] = [
     imageUrl: 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&auto=format&fit=crop&q=80',
     metrics: {
       durationMinutes: 30,
+      workoutFocus: 'Late Night Arms',
+      intensity: 'Moderate ⚡',
       calories: 210,
       heartRateBpm: 128,
     },

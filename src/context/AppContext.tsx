@@ -41,7 +41,9 @@ interface AppContextType {
     imageUrl: string;
     durationMinutes: number;
     distanceKm?: number;
-    calories: number;
+    workoutFocus?: string;
+    intensity?: string;
+    calories?: number;
     heartRateBpm?: number;
     locationTag?: string;
   }) => void;
@@ -189,7 +191,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     imageUrl: string;
     durationMinutes: number;
     distanceKm?: number;
-    calories: number;
+    workoutFocus?: string;
+    intensity?: string;
+    calories?: number;
     heartRateBpm?: number;
     locationTag?: string;
   }) => {
@@ -208,7 +212,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       metrics: {
         durationMinutes: data.durationMinutes,
         distanceKm: data.distanceKm,
-        calories: data.calories,
+        workoutFocus: data.workoutFocus || (data.workoutType === 'Running' ? 'Outdoor Run' : `${data.workoutType} Session`),
+        intensity: data.intensity || 'High Intensity 🔥',
+        calories: data.calories || 350,
         heartRateBpm: data.heartRateBpm,
       },
       exifData: {

@@ -6,8 +6,6 @@ import {
   Camera,
   Upload,
   Timer,
-  Flame,
-  Heart,
   Check,
   Sparkles,
   Play,
@@ -72,8 +70,8 @@ export const CheckInModal: React.FC<CheckInModalProps> = ({ isOpen, onClose }) =
   const [imageUrl, setImageUrl] = useState(PRESET_PROOFS[0].url);
   const [duration, setDuration] = useState(55);
   const [distance, setDistance] = useState<number | undefined>(undefined);
-  const [calories, setCalories] = useState(480);
-  const [heartRate, setHeartRate] = useState(152);
+  const [workoutFocus, setWorkoutFocus] = useState('Heavy Squats & Legs');
+  const [intensity, setIntensity] = useState('High Intensity 🔥');
   const [locationTag, setLocationTag] = useState("Gold's Gym - Sector 29");
 
   // Live Workout Stopwatch State
@@ -106,7 +104,6 @@ export const CheckInModal: React.FC<CheckInModalProps> = ({ isOpen, onClose }) =
   const handleApplyStopwatch = () => {
     const mins = Math.max(1, Math.round(stopwatchSeconds / 60));
     setDuration(mins);
-    setCalories(mins * 9);
     playPop();
   };
 
@@ -143,8 +140,10 @@ export const CheckInModal: React.FC<CheckInModalProps> = ({ isOpen, onClose }) =
       imageUrl,
       durationMinutes: Number(duration) || 45,
       distanceKm: distance ? Number(distance) : undefined,
-      calories: Number(calories) || 350,
-      heartRateBpm: Number(heartRate) || 145,
+      workoutFocus: workoutFocus || (workoutType === 'Running' ? 'Outdoor Run' : `${workoutType} Session`),
+      intensity,
+      calories: 350,
+      heartRateBpm: 145,
       locationTag,
     });
 
@@ -368,9 +367,9 @@ export const CheckInModal: React.FC<CheckInModalProps> = ({ isOpen, onClose }) =
           {/* Metrics Inputs */}
           <div>
             <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-2">
-              Workout Metrics
+              Workout Focus & Intensity
             </label>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div>
                 <label className="block text-[11px] text-zinc-400 mb-1">Duration (mins)</label>
                 <div className="relative">
@@ -387,41 +386,42 @@ export const CheckInModal: React.FC<CheckInModalProps> = ({ isOpen, onClose }) =
               </div>
 
               <div>
-                <label className="block text-[11px] text-zinc-400 mb-1">Distance (km)</label>
-                <input
-                  type="number"
-                  step="0.1"
-                  value={distance || ''}
-                  onChange={(e) => setDistance(e.target.value ? Number(e.target.value) : undefined)}
-                  placeholder="Optional"
-                  className="w-full px-3 py-1.5 bg-[#18181b] border border-[#27272a] rounded-lg text-xs font-mono text-white focus:outline-none focus:border-red-500"
-                />
+                <label className="block text-[11px] text-zinc-400 mb-1">
+                  {workoutType === 'Running' || workoutType === 'Cycling' ? 'Distance (km)' : 'Muscle Target / Focus'}
+                </label>
+                {workoutType === 'Running' || workoutType === 'Cycling' ? (
+                  <input
+                    type="number"
+                    step="0.1"
+                    value={distance || ''}
+                    onChange={(e) => setDistance(e.target.value ? Number(e.target.value) : undefined)}
+                    placeholder="e.g. 5.0"
+                    className="w-full px-3 py-1.5 bg-[#18181b] border border-[#27272a] rounded-lg text-xs font-mono text-white focus:outline-none focus:border-red-500"
+                  />
+                ) : (
+                  <input
+                    type="text"
+                    value={workoutFocus}
+                    onChange={(e) => setWorkoutFocus(e.target.value)}
+                    placeholder="e.g. Chest & Triceps"
+                    className="w-full px-3 py-1.5 bg-[#18181b] border border-[#27272a] rounded-lg text-xs text-white focus:outline-none focus:border-red-500"
+                  />
+                )}
               </div>
 
               <div>
-                <label className="block text-[11px] text-zinc-400 mb-1">Calories (kcal)</label>
-                <div className="relative">
-                  <input
-                    type="number"
-                    value={calories}
-                    onChange={(e) => setCalories(Number(e.target.value))}
-                    className="w-full pl-7 pr-3 py-1.5 bg-[#18181b] border border-[#27272a] rounded-lg text-xs font-mono text-white focus:outline-none focus:border-red-500"
-                  />
-                  <Flame className="w-3.5 h-3.5 text-amber-500 absolute left-2 top-2" />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-[11px] text-zinc-400 mb-1">Avg Heart Rate</label>
-                <div className="relative">
-                  <input
-                    type="number"
-                    value={heartRate}
-                    onChange={(e) => setHeartRate(Number(e.target.value))}
-                    className="w-full pl-7 pr-3 py-1.5 bg-[#18181b] border border-[#27272a] rounded-lg text-xs font-mono text-white focus:outline-none focus:border-red-500"
-                  />
-                  <Heart className="w-3.5 h-3.5 text-red-500 absolute left-2 top-2" />
-                </div>
+                <label className="block text-[11px] text-zinc-400 mb-1">Workout Intensity</label>
+                <select
+                  value={intensity}
+                  onChange={(e) => setIntensity(e.target.value)}
+                  className="w-full px-3 py-1.5 bg-[#18181b] border border-[#27272a] rounded-lg text-xs text-white focus:outline-none focus:border-red-500 font-medium"
+                >
+                  <option value="High Intensity 🔥">High Intensity 🔥</option>
+                  <option value="Heavy PR 💥">Heavy PR 💥</option>
+                  <option value="Moderate Effort ⚡">Moderate Effort ⚡</option>
+                  <option value="Cardio Burn 🏃">Cardio Burn 🏃</option>
+                  <option value="Active Recovery 🧘">Active Recovery 🧘</option>
+                </select>
               </div>
             </div>
           </div>

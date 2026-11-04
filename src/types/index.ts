@@ -78,7 +78,9 @@ export interface Post {
   metrics: {
     durationMinutes: number;
     distanceKm?: number;
-    calories: number;
+    workoutFocus?: string;
+    intensity?: string;
+    calories?: number;
     heartRateBpm?: number;
   };
   exifData: ExifVerification;

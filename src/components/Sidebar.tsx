@@ -1,14 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import {
   Flame,
-  PlusCircle,
   ChevronDown,
   UserCheck,
   Plus,
   Coins,
   X,
-  Clock,
   Volume2,
   VolumeX,
   Shield,
@@ -22,7 +20,7 @@ interface SidebarProps {
   currentPage: PageId;
   onPageChange: (page: PageId) => void;
   pendingDebtsCount: number;
-  onOpenCheckIn: () => void;
+  onOpenCheckIn?: () => void;
   onOpenCreateGroup: () => void;
   isMobileOpen?: boolean;
   onMobileClose?: () => void;
@@ -32,7 +30,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
   currentPage,
   onPageChange,
   pendingDebtsCount,
-  onOpenCheckIn,
   onOpenCreateGroup,
   isMobileOpen = false,
   onMobileClose,
@@ -53,26 +50,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const [groupDropdownOpen, setGroupDropdownOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [soundOn, setSoundOn] = useState(() => isSoundEnabled());
-
-  // Countdown timer to 11:59:59 PM
-  const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 });
-
-  useEffect(() => {
-    const updateCountdown = () => {
-      const now = new Date();
-      const midnight = new Date(now);
-      midnight.setHours(23, 59, 59, 999);
-      const diffMs = Math.max(0, midnight.getTime() - now.getTime());
-      const hours = Math.floor(diffMs / (1000 * 60 * 60));
-      const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((diffMs % (1000 * 60)) / 1000);
-      setTimeLeft({ hours, minutes, seconds });
-    };
-
-    updateCountdown();
-    const interval = setInterval(updateCountdown, 1000);
-    return () => clearInterval(interval);
-  }, []);
 
   const handleToggleSound = () => {
     const next = !soundOn;
@@ -273,58 +250,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
       </div>
 
-      {/* Middle Section: Navigation Links + Countdown + Stakes */}
+      {/* Middle Section: Navigation Links + Stakes */}
       <div className="flex-1 overflow-y-auto px-3 py-4 space-y-5">
-        {/* Primary Workout Proof Button */}
-        <div>
-          <button
-            onClick={() => {
-              onOpenCheckIn();
-              if (onMobileClose) onMobileClose();
-            }}
-            className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-red-600 hover:bg-red-500 active:scale-95 text-white text-xs font-black uppercase tracking-wider transition-all shadow-lg shadow-red-950/70 glow-red border border-red-400/30"
-          >
-            <PlusCircle className="w-4 h-4" />
-            <span>+ Post Workout Proof</span>
-          </button>
-        </div>
-
-        {/* Live Midnight Cutoff Countdown Widget */}
-        <div className="p-3.5 rounded-2xl bg-[#121214] border-2 border-red-600 shadow-xl space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] font-black uppercase tracking-wider text-red-500 flex items-center gap-1">
-              <Clock className="w-3.5 h-3.5 text-red-500 animate-spin" />
-              <span>Midnight Cutoff</span>
-            </span>
-            <span className="text-[9px] font-mono font-black text-white bg-red-600 px-1.5 py-0.5 rounded shadow-xs">
-              11:59 PM
-            </span>
-          </div>
-
-          <div className="flex items-center justify-center gap-1.5 font-mono text-center py-1">
-            <div className="bg-[#18181b] border border-zinc-800 px-2.5 py-1 rounded-xl">
-              <span className="text-base font-black text-white">
-                {String(timeLeft.hours).padStart(2, '0')}
-              </span>
-              <div className="text-[8px] text-zinc-500 font-bold uppercase">HRS</div>
-            </div>
-            <span className="text-red-500 font-black text-lg">:</span>
-            <div className="bg-[#18181b] border border-zinc-800 px-2.5 py-1 rounded-xl">
-              <span className="text-base font-black text-white">
-                {String(timeLeft.minutes).padStart(2, '0')}
-              </span>
-              <div className="text-[8px] text-zinc-500 font-bold uppercase">MIN</div>
-            </div>
-            <span className="text-red-500 font-black text-lg">:</span>
-            <div className="bg-[#18181b] border border-zinc-800 px-2.5 py-1 rounded-xl">
-              <span className="text-base font-black text-red-500 animate-pulse">
-                {String(timeLeft.seconds).padStart(2, '0')}
-              </span>
-              <div className="text-[8px] text-zinc-500 font-bold uppercase">SEC</div>
-            </div>
-          </div>
-        </div>
-
         {/* Navigation Section (Image 2 Items) */}
         <div>
           <div className="text-[10px] font-black uppercase tracking-widest text-zinc-500 px-3 mb-2">

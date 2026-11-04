@@ -6,8 +6,6 @@ import {
   AlertTriangle,
   Clock,
   Dumbbell,
-  Flame,
-  Heart,
   MapPin,
   ShieldAlert,
   ThumbsUp,
@@ -175,34 +173,25 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onOpenDispute }) => {
               </div>
             </div>
 
-            {post.metrics.distanceKm ? (
-              <div className="p-2.5 rounded-xl bg-[#18181b] border border-[#27272a] text-center">
-                <div className="text-[10px] font-black text-zinc-400 uppercase tracking-wider">
-                  Distance
-                </div>
-                <div className="text-sm font-black font-mono text-white mt-0.5">
-                  {post.metrics.distanceKm} km
-                </div>
+            <div className="p-2.5 rounded-xl bg-[#18181b] border border-[#27272a] text-center">
+              <div className="text-[10px] font-black text-zinc-400 uppercase tracking-wider">
+                Workout Focus
               </div>
-            ) : (
-              <div className="p-2.5 rounded-xl bg-[#18181b] border border-[#27272a] text-center">
-                <div className="text-[10px] font-black text-zinc-400 uppercase tracking-wider">
-                  Heart Rate
-                </div>
-                <div className="text-sm font-black font-mono text-red-400 mt-0.5 flex items-center justify-center gap-1">
-                  <Heart className="w-3 h-3 fill-red-500 text-red-500" />
-                  <span>{post.metrics.heartRateBpm || 148} bpm</span>
-                </div>
+              <div className="text-xs font-black font-sans text-white mt-0.5 truncate px-1">
+                {post.metrics.workoutFocus || (post.metrics.distanceKm ? `${post.metrics.distanceKm}k Run` : `${post.workoutType} Session`)}
               </div>
-            )}
+            </div>
 
             <div className="p-2.5 rounded-xl bg-[#18181b] border border-[#27272a] text-center">
               <div className="text-[10px] font-black text-zinc-400 uppercase tracking-wider">
-                Calories
+                {post.metrics.distanceKm ? 'Distance' : 'Intensity'}
               </div>
-              <div className="text-sm font-black font-mono text-red-400 mt-0.5 flex items-center justify-center gap-1">
-                <Flame className="w-3 h-3 fill-red-500 text-red-500" />
-                <span>{post.metrics.calories} kcal</span>
+              <div className="text-xs font-black font-sans text-amber-400 mt-0.5 flex items-center justify-center gap-1 truncate px-1">
+                {post.metrics.distanceKm ? (
+                  <span className="font-mono text-white text-sm">{post.metrics.distanceKm} km</span>
+                ) : (
+                  <span>{post.metrics.intensity || 'High Intensity 🔥'}</span>
+                )}
               </div>
             </div>
 
@@ -212,11 +201,11 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onOpenDispute }) => {
               </div>
               <div className="text-xs font-black font-mono mt-0.5">
                 {isVerified ? (
-                  <span className="text-emerald-400">+1 Counted</span>
+                  <span className="text-emerald-400 font-bold">+1 Verified ✓</span>
                 ) : isDisputed ? (
-                  <span className="text-red-400">On Hold</span>
+                  <span className="text-red-400 font-bold">On Hold ⚠️</span>
                 ) : (
-                  <span className="text-amber-400">Pending</span>
+                  <span className="text-amber-400 font-bold">Pending ({post.vouches.length}/2)</span>
                 )}
               </div>
             </div>
