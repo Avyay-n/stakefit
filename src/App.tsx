@@ -14,17 +14,25 @@ import { CreateGroupModal } from './components/CreateGroupModal';
 import { SimulationControls } from './components/SimulationControls';
 import { Toast } from './components/Toast';
 import { MidnightCutoffTimer } from './components/MidnightCutoffTimer';
+import { LandingPage } from './components/LandingPage';
+import { SquadsHub } from './components/SquadsHub';
+import { AuthModal } from './components/AuthModal';
 import type { DebtTransaction } from './types';
 import {
   Flame,
   Menu,
   Coins,
+  ChevronLeft,
 } from 'lucide-react';
 import { playPop } from './utils/audio';
 
-const MainApp: React.FC = () => {
-  const { transactions, activeGroupId, activeGroup, activeUser } = useApp();
+export type AppViewMode = 'landing' | 'squads-hub' | 'app';
 
+const MainApp: React.FC = () => {
+  const { transactions, activeGroupId, activeGroup, activeUser, switchActiveGroup } = useApp();
+
+  const [viewMode, setViewMode] = useState<AppViewMode>('landing');
+  const [authModalOpen, setAuthModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState<PageId>('feed');
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [checkInModalOpen, setCheckInModalOpen] = useState(false);
@@ -46,6 +54,74 @@ const MainApp: React.FC = () => {
     (s) => s.status === 'defaulted'
   ).length;
 
+  // View 1: Marketing / Product Intro Landing Page
+  if (viewMode === 'landing') {
+    return (
+      <>
+        <LandingPage
+          onEnterHub={() => {
+            playPop();
+            setViewMode('squads-hub');
+          }}
+          onOpenAuth={() => {
+            playPop();
+            setAuthModalOpen(true);
+          }}
+        />
+        <AuthModal
+          isOpen={authModalOpen}
+          onClose={() => setAuthModalOpen(false)}
+          onSuccess={() => {
+            setViewMode('squads-hub');
+          }}
+        />
+        <Toast />
+      </>
+    );
+  }
+
+  // View 2: Supabase-Style Organizations & Fitness Squads Hub
+  if (viewMode === 'squads-hub') {
+    return (
+      <>
+        <SquadsHub
+          onSelectSquad={(squadId) => {
+            playPop();
+            switchActiveGroup(squadId);
+            setViewMode('app');
+          }}
+          onOpenCreateSquad={() => {
+            playPop();
+            setCreateGroupModalOpen(true);
+          }}
+          onOpenAuth={() => {
+            playPop();
+            setAuthModalOpen(true);
+          }}
+          onBackToHome={() => {
+            playPop();
+            setViewMode('landing');
+          }}
+        />
+        <CreateGroupModal
+          isOpen={createGroupModalOpen}
+          onClose={() => setCreateGroupModalOpen(false)}
+          onCreated={(newId) => {
+            switchActiveGroup(newId);
+            setViewMode('app');
+          }}
+        />
+        <AuthModal
+          isOpen={authModalOpen}
+          onClose={() => setAuthModalOpen(false)}
+          onSuccess={() => {}}
+        />
+        <Toast />
+      </>
+    );
+  }
+
+  // View 3: In-App Dashboard & Squad View
   return (
     <div className="min-h-screen bg-[#000000] text-[#f4f4f5] flex font-sans selection:bg-red-600 selection:text-white">
       {/* Backdrop for mobile drawer */}
@@ -56,13 +132,14 @@ const MainApp: React.FC = () => {
         />
       )}
 
-      {/* Left Sidebar (Image 2 Navigation Items) */}
+      {/* Left Sidebar */}
       <Sidebar
         currentPage={currentPage}
         onPageChange={setCurrentPage}
         pendingDebtsCount={pendingDebts}
         onOpenCheckIn={() => setCheckInModalOpen(true)}
         onOpenCreateGroup={() => setCreateGroupModalOpen(true)}
+        onOpenHub={() => setViewMode('squads-hub')}
         isMobileOpen={mobileSidebarOpen}
         onMobileClose={() => setMobileSidebarOpen(false)}
       />
@@ -71,14 +148,28 @@ const MainApp: React.FC = () => {
       <div className="flex-1 flex flex-col min-w-0 md:pl-72 pb-20 md:pb-8">
         {/* Top Header Bar */}
         <header className="sticky top-0 z-20 w-full bg-[#000000]/90 backdrop-blur-md border-b-2 border-[#27272a] h-16 px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
-          {/* Left: Mobile hamburger + Active Page title */}
-          <div className="flex items-center gap-3">
+          {/* Left: Mobile hamburger + Hub Back Link + Active Page title */}
+          <div className="flex items-center gap-2 sm:gap-3">
             <button
               onClick={() => setMobileSidebarOpen(true)}
               className="md:hidden p-2 rounded-xl bg-[#121214] border border-[#27272a] text-white hover:bg-red-600 hover:border-red-500 transition-colors"
               aria-label="Open Sidebar Menu"
             >
               <Menu className="w-5 h-5" />
+            </button>
+
+            {/* Quick Button to return to Supabase-style Squads Hub */}
+            <button
+              onClick={() => {
+                playPop();
+                setViewMode('squads-hub');
+              }}
+              className="flex items-center gap-1 sm:gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#141416] border border-zinc-800 hover:border-emerald-500/50 text-xs font-bold text-zinc-300 hover:text-white transition-all group shadow-sm"
+              title="Return to Organizations & Squads Hub"
+            >
+              <ChevronLeft className="w-3.5 h-3.5 text-zinc-400 group-hover:text-emerald-400" />
+              <span className="text-emerald-400 font-black">⚡</span>
+              <span className="hidden sm:inline">All Squads</span>
             </button>
 
             <div>
@@ -163,7 +254,7 @@ const MainApp: React.FC = () => {
         </footer>
       </div>
 
-      {/* Mobile Bottom Navigation Bar (Image 2 Quick Nav) */}
+      {/* Mobile Bottom Navigation Bar */}
       <nav
         className="md:hidden fixed bottom-0 left-0 right-0 z-30 bg-[#000000]/95 backdrop-blur-md border-t-2 border-[#27272a] px-2 py-2 flex items-center justify-around"
         aria-label="Mobile Navigation"

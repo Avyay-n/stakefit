@@ -22,6 +22,7 @@ interface SidebarProps {
   pendingDebtsCount: number;
   onOpenCheckIn?: () => void;
   onOpenCreateGroup: () => void;
+  onOpenHub?: () => void;
   isMobileOpen?: boolean;
   onMobileClose?: () => void;
 }
@@ -31,6 +32,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onPageChange,
   pendingDebtsCount,
   onOpenCreateGroup,
+  onOpenHub,
   isMobileOpen = false,
   onMobileClose,
 }) => {
@@ -233,7 +235,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 ))}
               </div>
 
-              <div className="border-t border-[#27272a] mt-2 pt-2">
+              <div className="border-t border-[#27272a] mt-2 pt-2 space-y-1.5">
+                {onOpenHub && (
+                  <button
+                    onClick={() => {
+                      setGroupDropdownOpen(false);
+                      onOpenHub();
+                    }}
+                    className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-left text-xs font-black text-zinc-300 hover:text-white bg-[#18181b] hover:bg-zinc-800 transition-all border border-zinc-700"
+                  >
+                    <span>⚡</span>
+                    <span>All Squads & Orgs Hub</span>
+                  </button>
+                )}
                 <button
                   onClick={() => {
                     setGroupDropdownOpen(false);
