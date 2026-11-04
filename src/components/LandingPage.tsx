@@ -66,6 +66,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
         top: offsetPosition,
         behavior: 'smooth',
       });
+      setTimeout(() => {
+        ScrollTrigger.refresh();
+      }, 150);
     }
   };
 
@@ -104,107 +107,161 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
     const ctx = gsap.context(() => {
       // 1. Hero Entrance animations
       gsap.from('.gsap-hero-badge', {
-        y: -25,
+        y: -20,
         opacity: 0,
-        duration: 0.8,
+        duration: 0.7,
         ease: 'power2.out',
+        clearProps: 'all',
       });
       gsap.from('.gsap-hero-title', {
-        y: 45,
-        opacity: 0,
-        duration: 1,
-        ease: 'power3.out',
-        delay: 0.1,
-      });
-      gsap.from('.gsap-hero-sub', {
-        y: 30,
-        opacity: 0,
-        duration: 0.85,
-        ease: 'power2.out',
-        delay: 0.25,
-      });
-      gsap.from('.gsap-hero-cta', {
-        y: 20,
-        opacity: 0,
-        duration: 0.8,
-        ease: 'back.out(1.4)',
-        delay: 0.4,
-      });
-      gsap.from('.gsap-stat-card', {
-        y: 30,
-        opacity: 0,
-        duration: 0.75,
-        stagger: 0.1,
-        ease: 'power2.out',
-        delay: 0.5,
-      });
-
-      // 2. 4 Pillars / Features section scroll animation
-      gsap.from('.gsap-pillar-card', {
-        scrollTrigger: {
-          trigger: '#features',
-          start: 'top 80%',
-        },
-        y: 45,
-        opacity: 0,
-        duration: 0.8,
-        stagger: 0.12,
-        ease: 'power3.out',
-      });
-
-      // 3. Calculator section scroll animation
-      gsap.from('.gsap-calculator-box', {
-        scrollTrigger: {
-          trigger: '#calculator',
-          start: 'top 75%',
-        },
-        scale: 0.96,
         y: 35,
         opacity: 0,
         duration: 0.85,
         ease: 'power3.out',
+        delay: 0.08,
+        clearProps: 'all',
       });
-
-      // 4. How It Works 3-Steps scroll animation
-      gsap.from('.gsap-step-card', {
-        scrollTrigger: {
-          trigger: '#how-it-works',
-          start: 'top 80%',
-        },
-        y: 40,
+      gsap.from('.gsap-hero-sub', {
+        y: 20,
         opacity: 0,
-        duration: 0.8,
-        stagger: 0.15,
-        ease: 'power3.out',
+        duration: 0.75,
+        ease: 'power2.out',
+        delay: 0.2,
+        clearProps: 'all',
       });
-
-      // 5. Product Preview scroll animation
-      gsap.from('.gsap-preview-card', {
-        scrollTrigger: {
-          trigger: '#preview',
-          start: 'top 75%',
-        },
-        y: 40,
+      gsap.from('.gsap-hero-cta', {
+        y: 15,
         opacity: 0,
-        duration: 0.85,
-        ease: 'power3.out',
+        duration: 0.7,
+        ease: 'back.out(1.4)',
+        delay: 0.3,
+        clearProps: 'all',
       });
-
-      // 6. FAQ Section scroll animation
-      gsap.from('.gsap-faq-item', {
-        scrollTrigger: {
-          trigger: '#faq',
-          start: 'top 80%',
-        },
-        y: 25,
+      gsap.from('.gsap-stat-card', {
+        y: 20,
         opacity: 0,
-        duration: 0.65,
+        duration: 0.6,
         stagger: 0.08,
         ease: 'power2.out',
+        delay: 0.4,
+        clearProps: 'all',
       });
+
+      // 2. 4 Pillars / Features section scroll animation
+      gsap.fromTo(
+        '.gsap-pillar-card',
+        { y: 30, opacity: 0.2 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.6,
+          stagger: 0.1,
+          ease: 'power2.out',
+          clearProps: 'all',
+          scrollTrigger: {
+            trigger: '#features',
+            start: 'top 95%',
+            once: true,
+          },
+        }
+      );
+
+      // 3. Calculator section scroll animation
+      gsap.fromTo(
+        '.gsap-calculator-box',
+        { y: 25, opacity: 0.3, scale: 0.98 },
+        {
+          y: 0,
+          opacity: 1,
+          scale: 1,
+          duration: 0.65,
+          ease: 'power2.out',
+          clearProps: 'all',
+          scrollTrigger: {
+            trigger: '#calculator',
+            start: 'top 95%',
+            once: true,
+          },
+        }
+      );
+
+      // 4. How It Works 3-Steps scroll animation (starts top 95% + clearProps guarantees visibility)
+      gsap.fromTo(
+        '.gsap-step-card',
+        { y: 30, opacity: 0.2 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.6,
+          stagger: 0.1,
+          ease: 'power2.out',
+          clearProps: 'all',
+          scrollTrigger: {
+            trigger: '#how-it-works',
+            start: 'top 95%',
+            once: true,
+          },
+        }
+      );
+
+      // 5. Product Preview scroll animation
+      gsap.fromTo(
+        '.gsap-preview-card',
+        { y: 30, opacity: 0.2 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.6,
+          ease: 'power2.out',
+          clearProps: 'all',
+          scrollTrigger: {
+            trigger: '#preview',
+            start: 'top 95%',
+            once: true,
+          },
+        }
+      );
+
+      // 6. FAQ Section scroll animation (starts top 95% + clearProps guarantees visibility)
+      gsap.fromTo(
+        '.gsap-faq-item',
+        { y: 20, opacity: 0.2 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.5,
+          stagger: 0.08,
+          ease: 'power2.out',
+          clearProps: 'all',
+          scrollTrigger: {
+            trigger: '#faq',
+            start: 'top 95%',
+            once: true,
+          },
+        }
+      );
     }, pageRef);
 
-    return () => ctx.revert();
+    // Refresh ScrollTrigger and safety check so elements are NEVER left blank
+    ScrollTrigger.refresh();
+    const safetyTimer = setTimeout(() => {
+      ScrollTrigger.refresh();
+      document
+        .querySelectorAll<HTMLElement>(
+          '.gsap-step-card, .gsap-faq-item, .gsap-pillar-card, .gsap-calculator-box, .gsap-preview-card'
+        )
+        .forEach((el) => {
+          if (el.style.opacity && parseFloat(el.style.opacity) < 0.5) {
+            el.style.opacity = '1';
+            el.style.transform = 'none';
+          }
+        });
+    }, 350);
+
+    return () => {
+      clearTimeout(safetyTimer);
+      ctx.revert();
+    };
   }, []);
 
   // Calculator computations
