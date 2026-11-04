@@ -18,6 +18,7 @@ import {
   CartoonShameSkull,
   CartoonStreakShield,
 } from './illustrations/CartoonAssets';
+import { GrainGradient } from './ui/GrainGradient';
 
 interface LandingPageProps {
   onEnterHub: () => void;
@@ -44,9 +45,25 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
   const estimatedDividendPerWinner = Math.round(totalForfeitedFines / winnersCount);
 
   return (
-    <div className="min-h-screen bg-[#09090b] text-[#f4f4f5] font-sans selection:bg-red-600 selection:text-white relative overflow-x-hidden">
+    <div className="min-h-screen bg-[#070709] text-[#f4f4f5] font-sans selection:bg-red-600 selection:text-white relative overflow-x-hidden">
+      {/* WebGL Grain Gradient Background (Breathing Film Grain) */}
+      <div className="fixed inset-0 z-0 pointer-events-none opacity-45">
+        <GrainGradient
+          colorLight="#dc2626"
+          colorMid="#7f1d1d"
+          colorDark="#050505"
+          angle={25}
+          curve={0.5}
+          softness={0.24}
+          scale={1.15}
+          grain={0.42}
+          grainSize={1.1}
+          speed={0.65}
+        />
+      </div>
+
       {/* Top Navigation Bar */}
-      <header className="sticky top-0 z-40 w-full bg-[#09090b]/90 backdrop-blur-md border-b border-[#27272a] h-16 px-4 sm:px-8 flex items-center justify-between">
+      <header className="sticky top-0 z-40 w-full bg-[#09090b]/85 backdrop-blur-md border-b border-[#27272a]/70 h-16 px-4 sm:px-8 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-500 via-red-600 to-red-800 flex items-center justify-center text-white glow-red shadow-lg border border-red-400/40">
             <Flame className="w-5 h-5 fill-white" />
@@ -109,89 +126,88 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
       </header>
 
       {/* ======================================================== */}
-      {/* Hero Section with Playful Cartoon Assets Floating */}
+      {/* Hero Section with Non-Overlapping Cartoon Icons Around Title */}
       {/* ======================================================== */}
-      <section className="relative overflow-hidden pt-12 pb-20 sm:pt-20 sm:pb-28 px-4 sm:px-8 max-w-7xl mx-auto text-center space-y-7">
-        {/* Glow Ambient Backdrop */}
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-red-600/15 rounded-full blur-[140px] pointer-events-none" />
-
-        {/* Floating Cartoon Stickers (Left & Right Wings) */}
-        {/* Left Floating Sticker: Cartoon Dumbbell */}
-        <div className="hidden xl:block absolute left-4 top-16 animate-float pointer-events-none z-10">
-          <div className="relative group">
-            <CartoonDumbbell className="w-32 h-32 drop-shadow-2xl" />
-            <div className="absolute -bottom-2 -left-2 px-3 py-1 rounded-full bg-[#18181b] border-2 border-red-500 text-white text-[10px] font-black uppercase tracking-wider shadow-xl whitespace-nowrap rotate-[-6deg]">
-              🏋️ 50 KG SQUAD • NO EXCUSES
-            </div>
-          </div>
-        </div>
-
-        {/* Right Floating Sticker: Cartoon Money Stack & Coins */}
-        <div className="hidden xl:block absolute right-4 top-14 animate-float-slow pointer-events-none z-10">
-          <div className="relative">
-            <CartoonMoneyStack className="w-36 h-36 drop-shadow-2xl" />
-            <div className="absolute -bottom-2 -right-2 px-3 py-1 rounded-full bg-emerald-950 border-2 border-emerald-500 text-emerald-300 text-[10px] font-black uppercase tracking-wider shadow-xl whitespace-nowrap rotate-[6deg]">
-              💸 ₹250 FINES POOL
-            </div>
-          </div>
-        </div>
-
-        {/* Floating Cartoon Skull (Left Lower) */}
-        <div className="hidden xl:block absolute left-8 bottom-10 animate-float-reverse pointer-events-none z-10">
-          <div className="relative">
-            <CartoonShameSkull className="w-28 h-28 drop-shadow-2xl" />
-            <div className="absolute -bottom-2 left-0 px-2.5 py-0.5 rounded-full bg-[#121214] border border-red-600 text-red-400 text-[9px] font-mono font-bold shadow-lg whitespace-nowrap">
-              💀 WANTED: SLACKERS
-            </div>
-          </div>
-        </div>
-
-        {/* Floating Cartoon Streak Shield (Right Lower) */}
-        <div className="hidden xl:block absolute right-8 bottom-10 animate-float pointer-events-none z-10">
-          <div className="relative">
-            <CartoonStreakShield className="w-28 h-28 drop-shadow-2xl" />
-            <div className="absolute -bottom-2 right-0 px-2.5 py-0.5 rounded-full bg-blue-950 border border-blue-500 text-blue-300 text-[9px] font-mono font-bold shadow-lg whitespace-nowrap">
-              🛡️ STREAK PROTECTED!
-            </div>
-          </div>
-        </div>
-
+      <section className="relative z-10 pt-10 pb-16 sm:pt-16 sm:pb-24 px-4 sm:px-8 max-w-7xl mx-auto text-center space-y-6">
         {/* Top Tag Pill */}
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-950/70 border border-red-700/80 text-red-400 text-xs font-mono font-black shadow-lg glow-red">
           <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse" />
           <span>Real Financial Stakes • Peer Camera Vouches • Sunday Dividends</span>
         </div>
 
-        {/* Main Hero Headline */}
-        <h1 className="text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-black uppercase tracking-tight text-white font-display leading-[0.92] max-w-5xl mx-auto">
-          Put Your <span className="text-red-500 inline-block">Money</span> Where Your{' '}
-          <span className="underline decoration-red-600 decoration-4 sm:decoration-8">Sweat</span> Is.
-        </h1>
+        {/* Title Container: Cartoon Assets Positioned Safely Around Title WITHOUT Covering Text */}
+        <div className="relative max-w-5xl mx-auto py-2">
+          {/* Top-Left Floating Dumbbell - Framed in outer margin */}
+          <div className="hidden lg:block absolute -top-8 -left-8 xl:-left-20 animate-float pointer-events-none z-0">
+            <div className="relative">
+              <CartoonDumbbell className="w-20 h-20 xl:w-28 xl:h-28 drop-shadow-2xl" />
+              <div className="px-2.5 py-0.5 rounded-full bg-[#18181b]/95 border-2 border-red-500 text-white text-[9px] font-black uppercase tracking-wider shadow-xl whitespace-nowrap rotate-[-8deg] inline-block">
+                🏋️ 50 KG SQUAD
+              </div>
+            </div>
+          </div>
 
-        <p className="max-w-2xl mx-auto text-sm sm:text-base text-zinc-300 font-medium leading-relaxed">
+          {/* Top-Right Floating Money - Framed in outer margin */}
+          <div className="hidden lg:block absolute -top-8 -right-8 xl:-right-20 animate-float-slow pointer-events-none z-0">
+            <div className="relative">
+              <CartoonMoneyStack className="w-20 h-20 xl:w-28 xl:h-28 drop-shadow-2xl" />
+              <div className="px-2.5 py-0.5 rounded-full bg-emerald-950/95 border-2 border-emerald-500 text-emerald-300 text-[9px] font-black uppercase tracking-wider shadow-xl whitespace-nowrap rotate-[8deg] inline-block">
+                💸 ₹250 FINES
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom-Left Pirate Skull - Framed in outer margin */}
+          <div className="hidden xl:block absolute -bottom-6 -left-16 animate-float-reverse pointer-events-none z-0">
+            <div className="relative">
+              <CartoonShameSkull className="w-20 h-20 drop-shadow-2xl" />
+              <div className="px-2 py-0.5 rounded-full bg-[#121214] border border-red-600 text-red-400 text-[8px] font-mono font-bold shadow-lg whitespace-nowrap inline-block">
+                💀 WANTED SLACKERS
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom-Right Streak Shield - Framed in outer margin */}
+          <div className="hidden xl:block absolute -bottom-6 -right-16 animate-float pointer-events-none z-0">
+            <div className="relative">
+              <CartoonStreakShield className="w-20 h-20 drop-shadow-2xl" />
+              <div className="px-2 py-0.5 rounded-full bg-blue-950 border border-blue-500 text-blue-300 text-[8px] font-mono font-bold shadow-lg whitespace-nowrap inline-block">
+                🛡️ STREAK SAVED
+              </div>
+            </div>
+          </div>
+
+          {/* Main Hero Headline (Layered above icons with clear horizontal padding) */}
+          <h1 className="relative z-10 text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-black uppercase tracking-tight text-white font-display leading-[0.92] max-w-4xl mx-auto px-4 select-text">
+            Put Your <span className="text-red-500 inline-block">Money</span> Where Your{' '}
+            <span className="underline decoration-red-600 decoration-4 sm:decoration-8">Sweat</span> Is.
+          </h1>
+        </div>
+
+        <p className="max-w-2xl mx-auto text-sm sm:text-base text-zinc-300 font-medium leading-relaxed relative z-10">
           Form private fitness accountability pacts with friends. Stake financial penalties on every workout.
           Slackers forfeit <strong className="text-white font-black">₹250 per missed day</strong> directly into the dividend pool paid to members who hit 100% — and get roasted on the{' '}
           <strong className="text-red-400 font-black">One Piece Shame Wall</strong>.
         </p>
 
-        {/* Cartoon Badges Strip on Mobile / Tablet */}
-        <div className="xl:hidden flex items-center justify-center gap-4 pt-2">
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-[#141416] border border-zinc-800 text-xs font-bold text-zinc-300">
-            <CartoonDumbbell className="w-6 h-6 inline-block" />
+        {/* Cartoon Badges Strip on Mobile / Tablet (Cleanly positioned below text, zero collision) */}
+        <div className="lg:hidden flex items-center justify-center gap-3 pt-1">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-[#141416]/90 border border-zinc-800 text-xs font-bold text-zinc-300">
+            <CartoonDumbbell className="w-5 h-5 inline-block" />
             <span>Iron Squads</span>
           </div>
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-emerald-950/40 border border-emerald-800 text-xs font-bold text-emerald-400">
-            <CartoonMoneyStack className="w-6 h-6 inline-block" />
+            <CartoonMoneyStack className="w-5 h-5 inline-block" />
             <span>Cash Loot</span>
           </div>
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-blue-950/40 border border-blue-800 text-xs font-bold text-blue-300">
-            <CartoonStreakShield className="w-6 h-6 inline-block" />
+            <CartoonStreakShield className="w-5 h-5 inline-block" />
             <span>Rest Shields</span>
           </div>
         </div>
 
         {/* Hero CTAs */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-3">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2 relative z-10">
           <button
             onClick={() => {
               playGong();
@@ -209,15 +225,15 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
               playPop();
               onOpenAuth();
             }}
-            className="w-full sm:w-auto flex items-center justify-center gap-2 px-7 py-4 rounded-2xl bg-[#141416] hover:bg-[#1a1a1e] text-zinc-200 text-sm font-black uppercase tracking-wider transition-all border border-zinc-700 active:scale-95 shadow-md"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-7 py-4 rounded-2xl bg-[#141416]/90 hover:bg-[#1a1a1e] text-zinc-200 text-sm font-black uppercase tracking-wider transition-all border border-zinc-700 active:scale-95 shadow-md"
           >
             <span>Sign In / Demo Login</span>
           </button>
         </div>
 
         {/* Live Social Proof Stats Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 pt-10 max-w-4xl mx-auto text-center font-mono">
-          <div className="p-4 rounded-2xl bg-[#121214] border border-[#27272a] shadow-xl relative overflow-hidden group">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 pt-8 max-w-4xl mx-auto text-center font-mono relative z-10">
+          <div className="p-4 rounded-2xl bg-[#121214]/90 border border-[#27272a] shadow-xl relative overflow-hidden group backdrop-blur-sm">
             <div className="text-2xl sm:text-3xl font-black text-white font-display">₹25,000+</div>
             <div className="text-[10px] text-zinc-400 uppercase font-black mt-1 tracking-wider">
               Stakes Locked
@@ -225,7 +241,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
             <span className="absolute -right-2 -bottom-2 text-3xl opacity-15">💰</span>
           </div>
 
-          <div className="p-4 rounded-2xl bg-[#121214] border border-[#27272a] shadow-xl relative overflow-hidden group">
+          <div className="p-4 rounded-2xl bg-[#121214]/90 border border-[#27272a] shadow-xl relative overflow-hidden group backdrop-blur-sm">
             <div className="text-2xl sm:text-3xl font-black text-emerald-400 font-display">460+</div>
             <div className="text-[10px] text-zinc-400 uppercase font-black mt-1 tracking-wider">
               Verified Workouts
@@ -233,7 +249,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
             <span className="absolute -right-2 -bottom-2 text-3xl opacity-15">🏋️</span>
           </div>
 
-          <div className="p-4 rounded-2xl bg-[#121214] border border-[#27272a] shadow-xl relative overflow-hidden group">
+          <div className="p-4 rounded-2xl bg-[#121214]/90 border border-[#27272a] shadow-xl relative overflow-hidden group backdrop-blur-sm">
             <div className="text-2xl sm:text-3xl font-black text-amber-400 font-display">28 Days</div>
             <div className="text-[10px] text-zinc-400 uppercase font-black mt-1 tracking-wider">
               Top Active Streak
@@ -241,7 +257,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
             <span className="absolute -right-2 -bottom-2 text-3xl opacity-15">🔥</span>
           </div>
 
-          <div className="p-4 rounded-2xl bg-[#121214] border border-[#27272a] shadow-xl relative overflow-hidden group">
+          <div className="p-4 rounded-2xl bg-[#121214]/90 border border-[#27272a] shadow-xl relative overflow-hidden group backdrop-blur-sm">
             <div className="text-2xl sm:text-3xl font-black text-red-500 font-display">0 Cheats</div>
             <div className="text-[10px] text-zinc-400 uppercase font-black mt-1 tracking-wider">
               Peer-Enforced
@@ -252,9 +268,77 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
       </section>
 
       {/* ======================================================== */}
+      {/* 4 Core Pillars (Simplified, Short, Punchy Lines - Image 1) */}
+      {/* ======================================================== */}
+      <section id="features" className="relative z-10 py-16 px-4 sm:px-8 max-w-6xl mx-auto space-y-10">
+        <div className="text-center space-y-2">
+          <span className="text-xs font-mono font-black uppercase tracking-widest text-red-500">
+            Engineered For Pure Discipline
+          </span>
+          <h2 className="text-3xl sm:text-5xl font-black uppercase text-white font-display">
+            How StakeFit Forces You To Show Up
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+          {/* Pillar 1 */}
+          <div className="p-5 sm:p-6 rounded-3xl bg-[#121214]/90 border border-[#27272a] hover:border-red-600/50 transition-all space-y-2.5 group shadow-xl backdrop-blur-sm">
+            <div className="w-11 h-11 rounded-2xl bg-red-600/20 border border-red-500/40 flex items-center justify-center text-red-500 group-hover:scale-110 transition-transform">
+              <Coins className="w-5 h-5" />
+            </div>
+            <h3 className="text-base sm:text-lg font-black uppercase text-white font-display">
+              1. Financial Stakes & Cash Dividends
+            </h3>
+            <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed font-medium">
+              Miss a day, pay ₹250. Hit 100% quota, split all slacker fines on Sunday.
+            </p>
+          </div>
+
+          {/* Pillar 2 */}
+          <div className="p-5 sm:p-6 rounded-3xl bg-[#121214]/90 border border-[#27272a] hover:border-emerald-600/50 transition-all space-y-2.5 group shadow-xl backdrop-blur-sm">
+            <div className="w-11 h-11 rounded-2xl bg-emerald-600/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform">
+              <Camera className="w-5 h-5" />
+            </div>
+            <h3 className="text-base sm:text-lg font-black uppercase text-white font-display">
+              2. EXIF GPS Camera & 2-Vouch Rule
+            </h3>
+            <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed font-medium">
+              Live camera & GPS anti-cheat. 2 peer vouches confirm your sweat.
+            </p>
+          </div>
+
+          {/* Pillar 3 */}
+          <div className="p-5 sm:p-6 rounded-3xl bg-[#121214]/90 border border-[#27272a] hover:border-amber-600/50 transition-all space-y-2.5 group shadow-xl backdrop-blur-sm">
+            <div className="w-11 h-11 rounded-2xl bg-amber-600/20 border border-amber-500/40 flex items-center justify-center text-amber-400 group-hover:scale-110 transition-transform">
+              <Skull className="w-5 h-5" />
+            </div>
+            <h3 className="text-base sm:text-lg font-black uppercase text-white font-display">
+              3. One Piece Shame Wall
+            </h3>
+            <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed font-medium">
+              Slackers get roasted on pirate bounty posters with ฿500,000 Berry bounties.
+            </p>
+          </div>
+
+          {/* Pillar 4 */}
+          <div className="p-5 sm:p-6 rounded-3xl bg-[#121214]/90 border border-[#27272a] hover:border-blue-600/50 transition-all space-y-2.5 group shadow-xl backdrop-blur-sm">
+            <div className="w-11 h-11 rounded-2xl bg-blue-600/20 border border-blue-500/40 flex items-center justify-center text-blue-400 group-hover:scale-110 transition-transform">
+              <Shield className="w-5 h-5" />
+            </div>
+            <h3 className="text-base sm:text-lg font-black uppercase text-white font-display">
+              4. Streak Shields & Duolingo Rewards
+            </h3>
+            <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed font-medium">
+              Earn rest shields for consistency. Freeze penalties on sick or travel days.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ======================================================== */}
       {/* Interactive Dividend & Slacker Penalty Calculator */}
       {/* ======================================================== */}
-      <section id="calculator" className="py-16 px-4 sm:px-8 max-w-5xl mx-auto space-y-8">
+      <section id="calculator" className="relative z-10 py-16 px-4 sm:px-8 max-w-5xl mx-auto space-y-8">
         <div className="text-center space-y-2">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-950/60 border border-emerald-800 text-emerald-400 text-xs font-mono font-bold">
             <Coins className="w-3.5 h-3.5" />
@@ -268,7 +352,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
           </p>
         </div>
 
-        <div className="p-6 sm:p-8 rounded-3xl bg-[#121214] border-2 border-emerald-500/50 shadow-2xl relative overflow-hidden">
+        <div className="p-6 sm:p-8 rounded-3xl bg-[#121214]/90 border-2 border-emerald-500/50 shadow-2xl relative overflow-hidden backdrop-blur-sm">
           {/* Background cartoon coin accent */}
           <div className="absolute -right-6 -bottom-6 pointer-events-none opacity-20">
             <CartoonGoldCoin className="w-48 h-48" />
@@ -398,7 +482,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
                   playPop();
                   onEnterHub();
                 }}
-                className="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black uppercase tracking-wider transition-all shadow-lg shadow-emerald-950/50"
+                className="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black uppercase tracking-wider transition-all shadow-lg shadow-emerald-950/50 active:scale-95"
               >
                 Create Squad With These Stakes 🚀
               </button>
@@ -410,7 +494,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
       {/* ======================================================== */}
       {/* How It Works in 3 Clear Steps */}
       {/* ======================================================== */}
-      <section id="how-it-works" className="py-16 px-4 sm:px-8 max-w-6xl mx-auto space-y-12">
+      <section id="how-it-works" className="relative z-10 py-16 px-4 sm:px-8 max-w-6xl mx-auto space-y-12">
         <div className="text-center space-y-2">
           <span className="text-xs font-mono font-black uppercase tracking-widest text-red-500">
             Social Game Rules
@@ -422,7 +506,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Step 1 */}
-          <div className="p-6 rounded-3xl bg-[#121214] border border-[#27272a] space-y-3 relative overflow-hidden group hover:border-red-600/50 transition-all shadow-xl">
+          <div className="p-6 rounded-3xl bg-[#121214]/90 border border-[#27272a] space-y-3 relative overflow-hidden group hover:border-red-600/50 transition-all shadow-xl backdrop-blur-sm">
             <div className="w-12 h-12 rounded-2xl bg-red-600/20 text-red-500 border border-red-500/40 flex items-center justify-center font-black text-xl">
               1
             </div>
@@ -436,7 +520,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
           </div>
 
           {/* Step 2 */}
-          <div className="p-6 rounded-3xl bg-[#121214] border border-[#27272a] space-y-3 relative overflow-hidden group hover:border-emerald-600/50 transition-all shadow-xl">
+          <div className="p-6 rounded-3xl bg-[#121214]/90 border border-[#27272a] space-y-3 relative overflow-hidden group hover:border-emerald-600/50 transition-all shadow-xl backdrop-blur-sm">
             <div className="w-12 h-12 rounded-2xl bg-emerald-600/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center font-black text-xl">
               2
             </div>
@@ -450,7 +534,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
           </div>
 
           {/* Step 3 */}
-          <div className="p-6 rounded-3xl bg-[#121214] border border-[#27272a] space-y-3 relative overflow-hidden group hover:border-amber-600/50 transition-all shadow-xl">
+          <div className="p-6 rounded-3xl bg-[#121214]/90 border border-[#27272a] space-y-3 relative overflow-hidden group hover:border-amber-600/50 transition-all shadow-xl backdrop-blur-sm">
             <div className="w-12 h-12 rounded-2xl bg-amber-600/20 text-amber-400 border border-amber-500/40 flex items-center justify-center font-black text-xl">
               3
             </div>
@@ -468,7 +552,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
       {/* ======================================================== */}
       {/* Live Interactive Product Preview */}
       {/* ======================================================== */}
-      <section id="preview" className="py-16 px-4 sm:px-8 max-w-6xl mx-auto space-y-8">
+      <section id="preview" className="relative z-10 py-16 px-4 sm:px-8 max-w-6xl mx-auto space-y-8">
         <div className="text-center space-y-2">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-950/60 border border-red-800 text-red-400 text-xs font-mono font-bold">
             <Sparkles className="w-3.5 h-3.5" />
@@ -507,7 +591,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
         </div>
 
         {/* Preview Frame */}
-        <div className="p-4 sm:p-6 rounded-3xl bg-[#121214] border-2 border-[#27272a] shadow-2xl max-w-4xl mx-auto">
+        <div className="p-4 sm:p-6 rounded-3xl bg-[#121214]/95 border-2 border-[#27272a] shadow-2xl max-w-4xl mx-auto backdrop-blur-sm">
           {activePreviewTab === 'feed' && (
             <div className="space-y-4">
               <div className="flex items-center justify-between p-3.5 rounded-2xl bg-[#18181b] border border-zinc-800">
@@ -590,78 +674,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
       </section>
 
       {/* ======================================================== */}
-      {/* 4 Core Pillars Detailed */}
-      {/* ======================================================== */}
-      <section id="features" className="py-16 px-4 sm:px-8 max-w-6xl mx-auto space-y-12">
-        <div className="text-center space-y-2">
-          <span className="text-xs font-mono font-black uppercase tracking-widest text-red-500">
-            Engineered For Pure Discipline
-          </span>
-          <h2 className="text-3xl sm:text-5xl font-black uppercase text-white font-display">
-            How StakeFit Forces You To Show Up
-          </h2>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Pillar 1 */}
-          <div className="p-6 sm:p-7 rounded-3xl bg-[#121214] border border-[#27272a] hover:border-red-600/50 transition-all space-y-3 group shadow-xl">
-            <div className="w-12 h-12 rounded-2xl bg-red-600/20 border border-red-500/40 flex items-center justify-center text-red-500 group-hover:scale-110 transition-transform">
-              <Coins className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-black uppercase text-white font-display">
-              1. Financial Stakes & Cash Dividends
-            </h3>
-            <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed">
-              Every squad agrees on a target (e.g. 4 days/week) and a penalty (e.g. ₹250 per missed day).
-              On Sunday midnight, members who missed pay their fines, which are split equally as a cash dividend to those who completed their quota.
-            </p>
-          </div>
-
-          {/* Pillar 2 */}
-          <div className="p-6 sm:p-7 rounded-3xl bg-[#121214] border border-[#27272a] hover:border-emerald-600/50 transition-all space-y-3 group shadow-xl">
-            <div className="w-12 h-12 rounded-2xl bg-emerald-600/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform">
-              <Camera className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-black uppercase text-white font-display">
-              2. EXIF GPS Camera & 2-Vouch Rule
-            </h3>
-            <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed">
-              No fake gym selfies. Uploads check live camera metadata and gym geofencing. Each workout requires 2 peer vouches to become verified. With our Anti-Sabotage guarantee, undisputed check-ins auto-pass at midnight!
-            </p>
-          </div>
-
-          {/* Pillar 3 */}
-          <div className="p-6 sm:p-7 rounded-3xl bg-[#121214] border border-[#27272a] hover:border-amber-600/50 transition-all space-y-3 group shadow-xl">
-            <div className="w-12 h-12 rounded-2xl bg-amber-600/20 border border-amber-500/40 flex items-center justify-center text-amber-400 group-hover:scale-110 transition-transform">
-              <Skull className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-black uppercase text-white font-display">
-              3. One Piece Most Wanted Shame Wall
-            </h3>
-            <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed">
-              Skip a workout? Your face is framed in a vintage One Piece "WANTED DEAD OR FORFEITED" pirate bounty poster with a ฿500,000 Berry bounty, roast crime tag, and interactive "Poke Pirate" button.
-            </p>
-          </div>
-
-          {/* Pillar 4 */}
-          <div className="p-6 sm:p-7 rounded-3xl bg-[#121214] border border-[#27272a] hover:border-blue-600/50 transition-all space-y-3 group shadow-xl">
-            <div className="w-12 h-12 rounded-2xl bg-blue-600/20 border border-blue-500/40 flex items-center justify-center text-blue-400 group-hover:scale-110 transition-transform">
-              <Shield className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-black uppercase text-white font-display">
-              4. Streak Shields & Duolingo Rewards
-            </h3>
-            <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed">
-              Maintain your streak to earn Emergency Rest Shields (7d, 14d, 30d, 60d, 100d milestones). Deploy shields on rest or travel days to legally freeze your penalties without breaking your streak!
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* ======================================================== */}
       {/* FAQ Accordion Section */}
       {/* ======================================================== */}
-      <section id="faq" className="py-16 px-4 sm:px-8 max-w-4xl mx-auto space-y-8">
+      <section id="faq" className="relative z-10 py-16 px-4 sm:px-8 max-w-4xl mx-auto space-y-8">
         <div className="text-center space-y-2">
           <span className="text-xs font-mono font-black uppercase tracking-widest text-zinc-500">
             Got Questions?
@@ -698,7 +713,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
             return (
               <div
                 key={index}
-                className="rounded-2xl bg-[#121214] border border-[#27272a] overflow-hidden transition-all"
+                className="rounded-2xl bg-[#121214]/90 border border-[#27272a] overflow-hidden transition-all backdrop-blur-sm"
               >
                 <button
                   onClick={() => setOpenFaq(isOpen ? null : index)}
@@ -725,7 +740,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
       {/* ======================================================== */}
       {/* Footer Banner */}
       {/* ======================================================== */}
-      <section className="border-t border-[#27272a] bg-[#0c0c0e] py-16 px-4 text-center">
+      <section className="relative z-10 border-t border-[#27272a]/70 bg-[#070709]/90 py-16 px-4 text-center">
         <div className="max-w-3xl mx-auto space-y-6">
           <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-red-500 to-red-700 flex items-center justify-center text-white glow-red shadow-xl mx-auto">
             <Flame className="w-8 h-8 fill-white" />

@@ -450,3 +450,4 @@ export const CartoonTrophy: React.FC<{ className?: string }> = ({ className = 'w
     <rect x="24" y="14" width="5" height="5" fill="#22c55e" transform="rotate(-30 24 14)" />
   </svg>
 );
+
