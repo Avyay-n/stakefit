@@ -54,7 +54,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
           scale={1.15}
           grain={0.42}
           grainSize={1.1}
-          speed={0.65}
+          speed={1.55}
         />
       </div>
 

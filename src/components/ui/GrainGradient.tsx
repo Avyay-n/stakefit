@@ -245,7 +245,7 @@ export function GrainGradient({
       const draw = (now: number) => {
         frame = 0;
         const config = settings.current;
-        const rate = bounded(config.speed, 0, 2, 1);
+        const rate = bounded(config.speed, 0, 5, 1);
         if (previous && !motion.matches)
           elapsed += Math.min((now - previous) / 1000, 0.05) * rate;
         previous = now;
