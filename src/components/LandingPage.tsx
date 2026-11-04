@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import Lenis from 'lenis';
+import 'lenis/dist/lenis.css';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import {
@@ -52,29 +54,66 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
   // Active section tracking for the right side bar
   const [activeSection, setActiveSection] = useState('hero');
   const pageRef = useRef<HTMLDivElement>(null);
+  const lenisRef = useRef<Lenis | null>(null);
 
-  // Smooth scroll helper
+  // Smooth scroll helper using Lenis
   const scrollToSection = (id: string) => {
     playPop();
-    const el = document.getElementById(id);
-    if (el) {
-      const topOffset = 80;
-      const elementPosition = el.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - topOffset;
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth',
+    if (lenisRef.current) {
+      lenisRef.current.scrollTo('#' + id, {
+        offset: -70,
+        duration: 1.35,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       });
       setTimeout(() => {
         ScrollTrigger.refresh();
-      }, 150);
+      }, 200);
+    } else {
+      const el = document.getElementById(id);
+      if (el) {
+        const topOffset = 80;
+        const elementPosition = el.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - topOffset;
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth',
+        });
+        setTimeout(() => {
+          ScrollTrigger.refresh();
+        }, 150);
+      }
     }
   };
 
-  // Scroll listener for side bar section tracking
+  // Lenis Smooth Scroll & GSAP ScrollTrigger Synchronization
   useEffect(() => {
-    const handleScroll = () => {
-      // Determine active section based on scroll position
+    if (typeof window === 'undefined') return;
+    gsap.registerPlugin(ScrollTrigger);
+
+    // 1. Initialize Lenis (Darkroom Engineering)
+    const lenis = new Lenis({
+      duration: 1.25,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      orientation: 'vertical',
+      gestureOrientation: 'vertical',
+      smoothWheel: true,
+      wheelMultiplier: 1.0,
+      touchMultiplier: 1.8,
+    });
+    lenisRef.current = lenis;
+
+    // 2. Synchronize Lenis with GSAP ScrollTrigger
+    lenis.on('scroll', ScrollTrigger.update);
+
+    // 3. Connect Lenis to GSAP ticker for 60/120fps frame-perfect lock
+    const tickerCallback = (time: number) => {
+      lenis.raf(time * 1000);
+    };
+    gsap.ticker.add(tickerCallback);
+    gsap.ticker.lagSmoothing(0);
+
+    // 4. Track active section based on scroll position
+    const updateActiveSection = () => {
       const sections = ['hero', 'features', 'calculator', 'how-it-works', 'preview', 'faq'];
       for (const sectionId of [...sections].reverse()) {
         const el = document.getElementById(sectionId);
@@ -87,16 +126,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
         }
       }
     };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // GSAP ScrollTrigger Animations
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    gsap.registerPlugin(ScrollTrigger);
+    lenis.on('scroll', updateActiveSection);
+    updateActiveSection();
 
     const ctx = gsap.context(() => {
       // 1. Hero Entrance animations
@@ -255,6 +286,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
     return () => {
       clearTimeout(safetyTimer);
       ctx.revert();
+      gsap.ticker.remove(tickerCallback);
+      lenis.destroy();
+      lenisRef.current = null;
     };
   }, []);
 
