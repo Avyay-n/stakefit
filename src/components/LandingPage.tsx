@@ -12,11 +12,7 @@ import {
 } from 'lucide-react';
 import { playPop, playGong } from '../utils/audio';
 import {
-  CartoonDumbbell,
-  CartoonMoneyStack,
   CartoonGoldCoin,
-  CartoonShameSkull,
-  CartoonStreakShield,
 } from './illustrations/CartoonAssets';
 import { GrainGradient } from './ui/GrainGradient';
 
@@ -126,88 +122,29 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
       </header>
 
       {/* ======================================================== */}
-      {/* Hero Section with Non-Overlapping Cartoon Icons Around Title */}
+      {/* Hero Section */}
       {/* ======================================================== */}
-      <section className="relative z-10 pt-10 pb-16 sm:pt-16 sm:pb-24 px-4 sm:px-8 max-w-7xl mx-auto text-center space-y-6">
+      <section className="relative z-10 pt-12 pb-16 sm:pt-20 sm:pb-24 px-4 sm:px-8 max-w-5xl mx-auto text-center space-y-7">
         {/* Top Tag Pill */}
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-950/70 border border-red-700/80 text-red-400 text-xs font-mono font-black shadow-lg glow-red">
           <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse" />
           <span>Real Financial Stakes • Peer Camera Vouches • Sunday Dividends</span>
         </div>
 
-        {/* Title Container: Cartoon Assets Positioned Safely Around Title WITHOUT Covering Text */}
-        <div className="relative max-w-5xl mx-auto py-2">
-          {/* Top-Left Floating Dumbbell - Framed in outer margin */}
-          <div className="hidden lg:block absolute -top-8 -left-8 xl:-left-20 animate-float pointer-events-none z-0">
-            <div className="relative">
-              <CartoonDumbbell className="w-20 h-20 xl:w-28 xl:h-28 drop-shadow-2xl" />
-              <div className="px-2.5 py-0.5 rounded-full bg-[#18181b]/95 border-2 border-red-500 text-white text-[9px] font-black uppercase tracking-wider shadow-xl whitespace-nowrap rotate-[-8deg] inline-block">
-                🏋️ 50 KG SQUAD
-              </div>
-            </div>
-          </div>
+        {/* Main Hero Headline */}
+        <h1 className="text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-black uppercase tracking-tight text-white font-display leading-[0.92] max-w-4xl mx-auto select-text">
+          Put Your <span className="text-red-500 inline-block">Money</span> Where Your{' '}
+          <span className="underline decoration-red-600 decoration-4 sm:decoration-8">Sweat</span> Is.
+        </h1>
 
-          {/* Top-Right Floating Money - Framed in outer margin */}
-          <div className="hidden lg:block absolute -top-8 -right-8 xl:-right-20 animate-float-slow pointer-events-none z-0">
-            <div className="relative">
-              <CartoonMoneyStack className="w-20 h-20 xl:w-28 xl:h-28 drop-shadow-2xl" />
-              <div className="px-2.5 py-0.5 rounded-full bg-emerald-950/95 border-2 border-emerald-500 text-emerald-300 text-[9px] font-black uppercase tracking-wider shadow-xl whitespace-nowrap rotate-[8deg] inline-block">
-                💸 ₹250 FINES
-              </div>
-            </div>
-          </div>
-
-          {/* Bottom-Left Pirate Skull - Framed in outer margin */}
-          <div className="hidden xl:block absolute -bottom-6 -left-16 animate-float-reverse pointer-events-none z-0">
-            <div className="relative">
-              <CartoonShameSkull className="w-20 h-20 drop-shadow-2xl" />
-              <div className="px-2 py-0.5 rounded-full bg-[#121214] border border-red-600 text-red-400 text-[8px] font-mono font-bold shadow-lg whitespace-nowrap inline-block">
-                💀 WANTED SLACKERS
-              </div>
-            </div>
-          </div>
-
-          {/* Bottom-Right Streak Shield - Framed in outer margin */}
-          <div className="hidden xl:block absolute -bottom-6 -right-16 animate-float pointer-events-none z-0">
-            <div className="relative">
-              <CartoonStreakShield className="w-20 h-20 drop-shadow-2xl" />
-              <div className="px-2 py-0.5 rounded-full bg-blue-950 border border-blue-500 text-blue-300 text-[8px] font-mono font-bold shadow-lg whitespace-nowrap inline-block">
-                🛡️ STREAK SAVED
-              </div>
-            </div>
-          </div>
-
-          {/* Main Hero Headline (Layered above icons with clear horizontal padding) */}
-          <h1 className="relative z-10 text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-black uppercase tracking-tight text-white font-display leading-[0.92] max-w-4xl mx-auto px-4 select-text">
-            Put Your <span className="text-red-500 inline-block">Money</span> Where Your{' '}
-            <span className="underline decoration-red-600 decoration-4 sm:decoration-8">Sweat</span> Is.
-          </h1>
-        </div>
-
-        <p className="max-w-2xl mx-auto text-sm sm:text-base text-zinc-300 font-medium leading-relaxed relative z-10">
+        <p className="max-w-2xl mx-auto text-sm sm:text-base text-zinc-300 font-medium leading-relaxed">
           Form private fitness accountability pacts with friends. Stake financial penalties on every workout.
           Slackers forfeit <strong className="text-white font-black">₹250 per missed day</strong> directly into the dividend pool paid to members who hit 100% — and get roasted on the{' '}
           <strong className="text-red-400 font-black">One Piece Shame Wall</strong>.
         </p>
 
-        {/* Cartoon Badges Strip on Mobile / Tablet (Cleanly positioned below text, zero collision) */}
-        <div className="lg:hidden flex items-center justify-center gap-3 pt-1">
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-[#141416]/90 border border-zinc-800 text-xs font-bold text-zinc-300">
-            <CartoonDumbbell className="w-5 h-5 inline-block" />
-            <span>Iron Squads</span>
-          </div>
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-emerald-950/40 border border-emerald-800 text-xs font-bold text-emerald-400">
-            <CartoonMoneyStack className="w-5 h-5 inline-block" />
-            <span>Cash Loot</span>
-          </div>
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-blue-950/40 border border-blue-800 text-xs font-bold text-blue-300">
-            <CartoonStreakShield className="w-5 h-5 inline-block" />
-            <span>Rest Shields</span>
-          </div>
-        </div>
-
         {/* Hero CTAs */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2 relative z-10">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
           <button
             onClick={() => {
               playGong();
