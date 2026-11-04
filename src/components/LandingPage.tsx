@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import {
   Flame,
   Shield,
@@ -6,9 +8,13 @@ import {
   Skull,
   Camera,
   ArrowRight,
-  CheckCircle2,
   ChevronDown,
   Sparkles,
+  Zap,
+  Layers,
+  HelpCircle,
+  Activity,
+  CheckCircle2,
 } from 'lucide-react';
 import { playPop, playGong } from '../utils/audio';
 import {
@@ -20,6 +26,15 @@ interface LandingPageProps {
   onEnterHub: () => void;
   onOpenAuth: () => void;
 }
+
+const NAV_SECTIONS = [
+  { id: 'hero', label: 'Overview', icon: Zap },
+  { id: 'features', label: 'How It Works', icon: Shield },
+  { id: 'calculator', label: 'Dividend Calculator', icon: Coins },
+  { id: 'how-it-works', label: '3-Step Flow', icon: Layers },
+  { id: 'preview', label: 'Live Preview', icon: Activity },
+  { id: 'faq', label: 'FAQ', icon: HelpCircle },
+];
 
 export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth }) => {
   // Calculator state
@@ -34,6 +49,167 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
   // FAQ Accordion open index
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
+  // Scroll and active section tracking
+  const [scrolled, setScrolled] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [activeSection, setActiveSection] = useState('hero');
+  const pageRef = useRef<HTMLDivElement>(null);
+
+  // Smooth scroll helper
+  const scrollToSection = (id: string) => {
+    playPop();
+    const el = document.getElementById(id);
+    if (el) {
+      const topOffset = 84;
+      const elementPosition = el.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - topOffset;
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth',
+      });
+    }
+  };
+
+  // Scroll listener for moving header & side bar tracking
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      setScrolled(scrollY > 40);
+
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = docHeight > 0 ? (scrollY / docHeight) * 100 : 0;
+      setScrollProgress(Math.min(100, Math.max(0, progress)));
+
+      // Determine active section based on scroll position
+      const sections = ['hero', 'features', 'calculator', 'how-it-works', 'preview', 'faq'];
+      for (const sectionId of [...sections].reverse()) {
+        const el = document.getElementById(sectionId);
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          if (rect.top <= window.innerHeight * 0.45) {
+            setActiveSection(sectionId);
+            break;
+          }
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // GSAP ScrollTrigger Animations
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    gsap.registerPlugin(ScrollTrigger);
+
+    const ctx = gsap.context(() => {
+      // 1. Hero Entrance animations
+      gsap.from('.gsap-hero-badge', {
+        y: -25,
+        opacity: 0,
+        duration: 0.8,
+        ease: 'power2.out',
+      });
+      gsap.from('.gsap-hero-title', {
+        y: 45,
+        opacity: 0,
+        duration: 1,
+        ease: 'power3.out',
+        delay: 0.1,
+      });
+      gsap.from('.gsap-hero-sub', {
+        y: 30,
+        opacity: 0,
+        duration: 0.85,
+        ease: 'power2.out',
+        delay: 0.25,
+      });
+      gsap.from('.gsap-hero-cta', {
+        y: 20,
+        opacity: 0,
+        duration: 0.8,
+        ease: 'back.out(1.4)',
+        delay: 0.4,
+      });
+      gsap.from('.gsap-stat-card', {
+        y: 30,
+        opacity: 0,
+        duration: 0.75,
+        stagger: 0.1,
+        ease: 'power2.out',
+        delay: 0.5,
+      });
+
+      // 2. 4 Pillars / Features section scroll animation
+      gsap.from('.gsap-pillar-card', {
+        scrollTrigger: {
+          trigger: '#features',
+          start: 'top 80%',
+        },
+        y: 45,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.12,
+        ease: 'power3.out',
+      });
+
+      // 3. Calculator section scroll animation
+      gsap.from('.gsap-calculator-box', {
+        scrollTrigger: {
+          trigger: '#calculator',
+          start: 'top 75%',
+        },
+        scale: 0.96,
+        y: 35,
+        opacity: 0,
+        duration: 0.85,
+        ease: 'power3.out',
+      });
+
+      // 4. How It Works 3-Steps scroll animation
+      gsap.from('.gsap-step-card', {
+        scrollTrigger: {
+          trigger: '#how-it-works',
+          start: 'top 80%',
+        },
+        y: 40,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.15,
+        ease: 'power3.out',
+      });
+
+      // 5. Product Preview scroll animation
+      gsap.from('.gsap-preview-card', {
+        scrollTrigger: {
+          trigger: '#preview',
+          start: 'top 75%',
+        },
+        y: 40,
+        opacity: 0,
+        duration: 0.85,
+        ease: 'power3.out',
+      });
+
+      // 6. FAQ Section scroll animation
+      gsap.from('.gsap-faq-item', {
+        scrollTrigger: {
+          trigger: '#faq',
+          start: 'top 80%',
+        },
+        y: 25,
+        opacity: 0,
+        duration: 0.65,
+        stagger: 0.08,
+        ease: 'power2.out',
+      });
+    }, pageRef);
+
+    return () => ctx.revert();
+  }, []);
+
   // Calculator computations
   const totalWeeklyStakes = calcMembers * calcDays * calcPenalty;
   const totalForfeitedFines = calcSlackers * (calcDays / 2) * calcPenalty;
@@ -41,7 +217,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
   const estimatedDividendPerWinner = Math.round(totalForfeitedFines / winnersCount);
 
   return (
-    <div className="min-h-screen bg-[#070709] text-[#f4f4f5] font-sans selection:bg-red-600 selection:text-white relative overflow-x-hidden">
+    <div ref={pageRef} className="min-h-screen bg-[#070709] text-[#f4f4f5] font-sans selection:bg-red-600 selection:text-white relative overflow-x-hidden">
       {/* WebGL Grain Gradient Background (Breathing Film Grain) */}
       <div className="fixed inset-0 z-0 pointer-events-none opacity-45">
         <GrainGradient
@@ -58,93 +234,202 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
         />
       </div>
 
-      {/* Top Navigation Bar */}
-      <header className="sticky top-0 z-40 w-full bg-[#09090b]/85 backdrop-blur-md border-b border-[#27272a]/70 h-16 px-4 sm:px-8 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-500 via-red-600 to-red-800 flex items-center justify-center text-white glow-red shadow-lg border border-red-400/40">
-            <Flame className="w-5 h-5 fill-white" />
-          </div>
-          <div>
-            <div className="flex items-center gap-1.5">
-              <span className="text-base sm:text-lg font-black tracking-tight text-white uppercase font-sans">
-                STAKE<span className="text-red-500">FIT</span>
-              </span>
-              <span className="px-1.5 py-0.5 rounded text-[8px] font-black uppercase bg-red-600 text-white">
-                PRO
-              </span>
+      {/* ======================================================== */}
+      {/* Top Bar: Morphs & Moves into a Floating Dock on Scroll */}
+      {/* ======================================================== */}
+      <div
+        className={`transition-all duration-300 z-50 ${
+          scrolled
+            ? 'fixed top-3 left-0 right-0 px-3 sm:px-6'
+            : 'sticky top-0 w-full'
+        }`}
+      >
+        <header
+          className={`transition-all duration-300 flex items-center justify-between relative overflow-hidden ${
+            scrolled
+              ? 'max-w-5xl mx-auto rounded-2xl bg-[#09090b]/90 backdrop-blur-xl border border-red-500/40 shadow-[0_12px_40px_rgba(0,0,0,0.85)] h-14 px-4 sm:px-6'
+              : 'w-full bg-[#09090b]/85 backdrop-blur-md border-b border-[#27272a]/70 h-16 px-4 sm:px-8'
+          }`}
+        >
+          {/* Moving Scroll Progress Indicator along the bottom rim */}
+          <div
+            className="absolute bottom-0 left-0 h-[2.5px] bg-gradient-to-r from-red-600 via-amber-500 to-emerald-400 transition-all duration-75 shadow-[0_0_10px_#ef4444]"
+            style={{ width: `${scrollProgress}%` }}
+          />
+
+          <div className="flex items-center gap-3">
+            <div
+              onClick={() => scrollToSection('hero')}
+              className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-red-500 via-red-600 to-red-800 flex items-center justify-center text-white glow-red shadow-lg border border-red-400/40 cursor-pointer shrink-0 hover:scale-105 transition-transform"
+            >
+              <Flame className="w-5 h-5 fill-white" />
             </div>
-            <p className="text-[9px] text-zinc-400 font-bold uppercase tracking-wider hidden sm:block">
-              Financial Fitness Accountability
-            </p>
+            <div onClick={() => scrollToSection('hero')} className="cursor-pointer">
+              <div className="flex items-center gap-1.5">
+                <span className="text-base sm:text-lg font-black tracking-tight text-white uppercase font-sans">
+                  STAKE<span className="text-red-500">FIT</span>
+                </span>
+                <span className="px-1.5 py-0.5 rounded text-[8px] font-black uppercase bg-red-600 text-white">
+                  PRO
+                </span>
+              </div>
+              <p className="text-[9px] text-zinc-400 font-bold uppercase tracking-wider hidden sm:block">
+                Financial Fitness Accountability
+              </p>
+            </div>
           </div>
+
+          {/* Interactive Navigation Links with Active Scroll Highlighting */}
+          <div className="hidden lg:flex items-center gap-6 text-xs font-black uppercase tracking-wider">
+            <button
+              onClick={() => scrollToSection('features')}
+              className={`transition-colors py-1 ${
+                activeSection === 'features'
+                  ? 'text-red-400 border-b-2 border-red-500 font-black'
+                  : 'text-zinc-400 hover:text-white'
+              }`}
+            >
+              How It Works
+            </button>
+            <button
+              onClick={() => scrollToSection('calculator')}
+              className={`transition-colors py-1 ${
+                activeSection === 'calculator'
+                  ? 'text-emerald-400 border-b-2 border-emerald-500 font-black'
+                  : 'text-zinc-400 hover:text-emerald-400'
+              }`}
+            >
+              Dividend Calculator
+            </button>
+            <button
+              onClick={() => scrollToSection('how-it-works')}
+              className={`transition-colors py-1 ${
+                activeSection === 'how-it-works'
+                  ? 'text-white border-b-2 border-red-500 font-black'
+                  : 'text-zinc-400 hover:text-white'
+              }`}
+            >
+              3-Step Flow
+            </button>
+            <button
+              onClick={() => scrollToSection('preview')}
+              className={`transition-colors py-1 ${
+                activeSection === 'preview'
+                  ? 'text-red-400 border-b-2 border-red-500 font-black'
+                  : 'text-zinc-400 hover:text-red-400'
+              }`}
+            >
+              Live Preview
+            </button>
+            <button
+              onClick={() => scrollToSection('faq')}
+              className={`transition-colors py-1 ${
+                activeSection === 'faq'
+                  ? 'text-white border-b-2 border-red-500 font-black'
+                  : 'text-zinc-400 hover:text-white'
+              }`}
+            >
+              FAQ
+            </button>
+          </div>
+
+          <div className="flex items-center gap-2.5">
+            <button
+              onClick={() => {
+                playPop();
+                onOpenAuth();
+              }}
+              className="px-3.5 py-1.5 sm:py-2 rounded-xl bg-[#141416] hover:bg-zinc-800 text-zinc-200 text-xs font-black uppercase tracking-wider transition-all border border-zinc-700"
+            >
+              Sign In
+            </button>
+
+            <button
+              onClick={() => {
+                playPop();
+                onEnterHub();
+              }}
+              className="flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-black uppercase tracking-wider transition-all shadow-lg shadow-red-950/60 glow-red border border-red-400/40 active:scale-95"
+            >
+              <span>Your Squads ⚡</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </header>
+      </div>
+
+      {/* ======================================================== */}
+      {/* Floating Side Bar (Moves & Tracks Scroll Down the Page) */}
+      {/* ======================================================== */}
+      <aside
+        className="hidden xl:flex fixed right-4 sm:right-6 top-1/2 -translate-y-1/2 z-40 flex-col items-center gap-2.5 p-2.5 rounded-2xl bg-[#09090b]/85 backdrop-blur-xl border border-zinc-800/90 shadow-[0_12px_40px_rgba(0,0,0,0.85)] group select-none transition-all duration-300 hover:border-red-500/40"
+        aria-label="Scroll Navigation Rail"
+      >
+        {/* Scroll % Badge */}
+        <div className="text-[10px] font-mono font-black text-red-400 bg-red-950/70 border border-red-900/80 px-2 py-0.5 rounded-md shadow-xs">
+          {Math.round(scrollProgress)}%
         </div>
 
-        <div className="hidden lg:flex items-center gap-7 text-xs font-black uppercase tracking-wider text-zinc-400">
-          <a href="#how-it-works" className="hover:text-white transition-colors">
-            How It Works
-          </a>
-          <a href="#calculator" className="hover:text-emerald-400 transition-colors">
-            Dividend Calculator
-          </a>
-          <a href="#preview" className="hover:text-red-400 transition-colors">
-            Live Preview
-          </a>
-          <a href="#features" className="hover:text-white transition-colors">
-            Game Mechanics
-          </a>
-          <a href="#faq" className="hover:text-white transition-colors">
-            FAQ
-          </a>
+        {/* Vertical Moving Tracker Line */}
+        <div className="relative w-1 h-36 bg-zinc-800 rounded-full my-1 overflow-hidden">
+          <div
+            className="w-full bg-gradient-to-b from-red-600 via-amber-500 to-emerald-400 transition-all duration-100 rounded-full shadow-[0_0_8px_#ef4444]"
+            style={{ height: `${scrollProgress}%` }}
+          />
         </div>
 
-        <div className="flex items-center gap-2.5">
-          <button
-            onClick={() => {
-              playPop();
-              onOpenAuth();
-            }}
-            className="px-3.5 py-2 rounded-xl bg-[#141416] hover:bg-zinc-800 text-zinc-200 text-xs font-black uppercase tracking-wider transition-all border border-zinc-700"
-          >
-            Sign In
-          </button>
+        {/* Section Icons Navigation */}
+        <div className="flex flex-col items-center gap-2">
+          {NAV_SECTIONS.map((sec) => {
+            const Icon = sec.icon;
+            const isActive = activeSection === sec.id;
+            return (
+              <button
+                key={sec.id}
+                onClick={() => scrollToSection(sec.id)}
+                className={`relative group/btn p-2 rounded-xl transition-all ${
+                  isActive
+                    ? 'bg-red-600 text-white shadow-lg glow-red scale-110'
+                    : 'text-zinc-400 hover:text-white hover:bg-zinc-800/80'
+                }`}
+                title={sec.label}
+              >
+                <Icon className="w-4 h-4" />
 
-          <button
-            onClick={() => {
-              playPop();
-              onEnterHub();
-            }}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-black uppercase tracking-wider transition-all shadow-lg shadow-red-950/60 glow-red border border-red-400/40 active:scale-95"
-          >
-            <span>Your Squads ⚡</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </button>
+                {/* Floating Tooltip Label to the left */}
+                <span className="absolute right-12 top-1/2 -translate-y-1/2 px-2.5 py-1 rounded-lg bg-[#141416] text-white text-[11px] font-mono font-bold whitespace-nowrap shadow-xl border border-zinc-700 opacity-0 group-hover/btn:opacity-100 transition-all duration-150 pointer-events-none translate-x-1 group-hover/btn:translate-x-0">
+                  {sec.label}
+                </span>
+              </button>
+            );
+          })}
         </div>
-      </header>
+      </aside>
 
       {/* ======================================================== */}
       {/* Hero Section */}
       {/* ======================================================== */}
-      <section className="relative z-10 pt-12 pb-16 sm:pt-20 sm:pb-24 px-4 sm:px-8 max-w-5xl mx-auto text-center space-y-7">
+      <section id="hero" className="relative z-10 pt-12 pb-16 sm:pt-20 sm:pb-24 px-4 sm:px-8 max-w-5xl mx-auto text-center space-y-7">
         {/* Top Tag Pill */}
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-950/70 border border-red-700/80 text-red-400 text-xs font-mono font-black shadow-lg glow-red">
+        <div className="gsap-hero-badge inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-950/70 border border-red-700/80 text-red-400 text-xs font-mono font-black shadow-lg glow-red">
           <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse" />
           <span>Real Financial Stakes • Peer Camera Vouches • Sunday Dividends</span>
         </div>
 
         {/* Main Hero Headline */}
-        <h1 className="text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-black uppercase tracking-tight text-white font-display leading-[0.92] max-w-4xl mx-auto select-text">
+        <h1 className="gsap-hero-title text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-black uppercase tracking-tight text-white font-display leading-[0.92] max-w-4xl mx-auto select-text">
           Put Your <span className="text-red-500 inline-block">Money</span> Where Your{' '}
           <span className="underline decoration-red-600 decoration-4 sm:decoration-8">Sweat</span> Is.
         </h1>
 
-        <p className="max-w-2xl mx-auto text-sm sm:text-base text-zinc-300 font-medium leading-relaxed">
+        <p className="gsap-hero-sub max-w-2xl mx-auto text-sm sm:text-base text-zinc-300 font-medium leading-relaxed">
           Form private fitness accountability pacts with friends. Stake financial penalties on every workout.
           Slackers forfeit <strong className="text-white font-black">₹250 per missed day</strong> directly into the dividend pool paid to members who hit 100% — and get roasted on the{' '}
           <strong className="text-red-400 font-black">One Piece Shame Wall</strong>.
         </p>
 
         {/* Hero CTAs */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
+        <div className="gsap-hero-cta flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
           <button
             onClick={() => {
               playGong();
@@ -170,7 +455,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
 
         {/* Live Social Proof Stats Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 pt-8 max-w-4xl mx-auto text-center font-mono relative z-10">
-          <div className="p-4 rounded-2xl bg-[#121214]/90 border border-[#27272a] shadow-xl relative overflow-hidden group backdrop-blur-sm">
+          <div className="gsap-stat-card p-4 rounded-2xl bg-[#121214]/90 border border-[#27272a] shadow-xl relative overflow-hidden group backdrop-blur-sm">
             <div className="text-2xl sm:text-3xl font-black text-white font-display">₹25,000+</div>
             <div className="text-[10px] text-zinc-400 uppercase font-black mt-1 tracking-wider">
               Stakes Locked
@@ -178,7 +463,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
             <span className="absolute -right-2 -bottom-2 text-3xl opacity-15">💰</span>
           </div>
 
-          <div className="p-4 rounded-2xl bg-[#121214]/90 border border-[#27272a] shadow-xl relative overflow-hidden group backdrop-blur-sm">
+          <div className="gsap-stat-card p-4 rounded-2xl bg-[#121214]/90 border border-[#27272a] shadow-xl relative overflow-hidden group backdrop-blur-sm">
             <div className="text-2xl sm:text-3xl font-black text-emerald-400 font-display">460+</div>
             <div className="text-[10px] text-zinc-400 uppercase font-black mt-1 tracking-wider">
               Verified Workouts
@@ -186,7 +471,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
             <span className="absolute -right-2 -bottom-2 text-3xl opacity-15">🏋️</span>
           </div>
 
-          <div className="p-4 rounded-2xl bg-[#121214]/90 border border-[#27272a] shadow-xl relative overflow-hidden group backdrop-blur-sm">
+          <div className="gsap-stat-card p-4 rounded-2xl bg-[#121214]/90 border border-[#27272a] shadow-xl relative overflow-hidden group backdrop-blur-sm">
             <div className="text-2xl sm:text-3xl font-black text-amber-400 font-display">28 Days</div>
             <div className="text-[10px] text-zinc-400 uppercase font-black mt-1 tracking-wider">
               Top Active Streak
@@ -194,7 +479,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
             <span className="absolute -right-2 -bottom-2 text-3xl opacity-15">🔥</span>
           </div>
 
-          <div className="p-4 rounded-2xl bg-[#121214]/90 border border-[#27272a] shadow-xl relative overflow-hidden group backdrop-blur-sm">
+          <div className="gsap-stat-card p-4 rounded-2xl bg-[#121214]/90 border border-[#27272a] shadow-xl relative overflow-hidden group backdrop-blur-sm">
             <div className="text-2xl sm:text-3xl font-black text-red-500 font-display">0 Cheats</div>
             <div className="text-[10px] text-zinc-400 uppercase font-black mt-1 tracking-wider">
               Peer-Enforced
@@ -219,7 +504,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
           {/* Pillar 1 */}
-          <div className="p-5 sm:p-6 rounded-3xl bg-[#121214]/90 border border-[#27272a] hover:border-red-600/50 transition-all space-y-2.5 group shadow-xl backdrop-blur-sm">
+          <div className="gsap-pillar-card p-5 sm:p-6 rounded-3xl bg-[#121214]/90 border border-[#27272a] hover:border-red-600/50 transition-all space-y-2.5 group shadow-xl backdrop-blur-sm">
             <div className="w-11 h-11 rounded-2xl bg-red-600/20 border border-red-500/40 flex items-center justify-center text-red-500 group-hover:scale-110 transition-transform">
               <Coins className="w-5 h-5" />
             </div>
@@ -232,7 +517,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
           </div>
 
           {/* Pillar 2 */}
-          <div className="p-5 sm:p-6 rounded-3xl bg-[#121214]/90 border border-[#27272a] hover:border-emerald-600/50 transition-all space-y-2.5 group shadow-xl backdrop-blur-sm">
+          <div className="gsap-pillar-card p-5 sm:p-6 rounded-3xl bg-[#121214]/90 border border-[#27272a] hover:border-emerald-600/50 transition-all space-y-2.5 group shadow-xl backdrop-blur-sm">
             <div className="w-11 h-11 rounded-2xl bg-emerald-600/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform">
               <Camera className="w-5 h-5" />
             </div>
@@ -245,7 +530,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
           </div>
 
           {/* Pillar 3 */}
-          <div className="p-5 sm:p-6 rounded-3xl bg-[#121214]/90 border border-[#27272a] hover:border-amber-600/50 transition-all space-y-2.5 group shadow-xl backdrop-blur-sm">
+          <div className="gsap-pillar-card p-5 sm:p-6 rounded-3xl bg-[#121214]/90 border border-[#27272a] hover:border-amber-600/50 transition-all space-y-2.5 group shadow-xl backdrop-blur-sm">
             <div className="w-11 h-11 rounded-2xl bg-amber-600/20 border border-amber-500/40 flex items-center justify-center text-amber-400 group-hover:scale-110 transition-transform">
               <Skull className="w-5 h-5" />
             </div>
@@ -258,7 +543,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
           </div>
 
           {/* Pillar 4 */}
-          <div className="p-5 sm:p-6 rounded-3xl bg-[#121214]/90 border border-[#27272a] hover:border-blue-600/50 transition-all space-y-2.5 group shadow-xl backdrop-blur-sm">
+          <div className="gsap-pillar-card p-5 sm:p-6 rounded-3xl bg-[#121214]/90 border border-[#27272a] hover:border-blue-600/50 transition-all space-y-2.5 group shadow-xl backdrop-blur-sm">
             <div className="w-11 h-11 rounded-2xl bg-blue-600/20 border border-blue-500/40 flex items-center justify-center text-blue-400 group-hover:scale-110 transition-transform">
               <Shield className="w-5 h-5" />
             </div>
@@ -289,7 +574,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
           </p>
         </div>
 
-        <div className="p-6 sm:p-8 rounded-3xl bg-[#121214]/90 border-2 border-emerald-500/50 shadow-2xl relative overflow-hidden backdrop-blur-sm">
+        <div className="gsap-calculator-box p-6 sm:p-8 rounded-3xl bg-[#121214]/90 border-2 border-emerald-500/50 shadow-2xl relative overflow-hidden backdrop-blur-sm">
           {/* Background cartoon coin accent */}
           <div className="absolute -right-6 -bottom-6 pointer-events-none opacity-20">
             <CartoonGoldCoin className="w-48 h-48" />
@@ -443,7 +728,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Step 1 */}
-          <div className="p-6 rounded-3xl bg-[#121214]/90 border border-[#27272a] space-y-3 relative overflow-hidden group hover:border-red-600/50 transition-all shadow-xl backdrop-blur-sm">
+          <div className="gsap-step-card p-6 rounded-3xl bg-[#121214]/90 border border-[#27272a] space-y-3 relative overflow-hidden group hover:border-red-600/50 transition-all shadow-xl backdrop-blur-sm">
             <div className="w-12 h-12 rounded-2xl bg-red-600/20 text-red-500 border border-red-500/40 flex items-center justify-center font-black text-xl">
               1
             </div>
@@ -457,7 +742,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
           </div>
 
           {/* Step 2 */}
-          <div className="p-6 rounded-3xl bg-[#121214]/90 border border-[#27272a] space-y-3 relative overflow-hidden group hover:border-emerald-600/50 transition-all shadow-xl backdrop-blur-sm">
+          <div className="gsap-step-card p-6 rounded-3xl bg-[#121214]/90 border border-[#27272a] space-y-3 relative overflow-hidden group hover:border-emerald-600/50 transition-all shadow-xl backdrop-blur-sm">
             <div className="w-12 h-12 rounded-2xl bg-emerald-600/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center font-black text-xl">
               2
             </div>
@@ -471,7 +756,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
           </div>
 
           {/* Step 3 */}
-          <div className="p-6 rounded-3xl bg-[#121214]/90 border border-[#27272a] space-y-3 relative overflow-hidden group hover:border-amber-600/50 transition-all shadow-xl backdrop-blur-sm">
+          <div className="gsap-step-card p-6 rounded-3xl bg-[#121214]/90 border border-[#27272a] space-y-3 relative overflow-hidden group hover:border-amber-600/50 transition-all shadow-xl backdrop-blur-sm">
             <div className="w-12 h-12 rounded-2xl bg-amber-600/20 text-amber-400 border border-amber-500/40 flex items-center justify-center font-black text-xl">
               3
             </div>
@@ -528,7 +813,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
         </div>
 
         {/* Preview Frame */}
-        <div className="p-4 sm:p-6 rounded-3xl bg-[#121214]/95 border-2 border-[#27272a] shadow-2xl max-w-4xl mx-auto backdrop-blur-sm">
+        <div className="gsap-preview-card p-4 sm:p-6 rounded-3xl bg-[#121214]/95 border-2 border-[#27272a] shadow-2xl max-w-4xl mx-auto backdrop-blur-sm">
           {activePreviewTab === 'feed' && (
             <div className="space-y-4">
               <div className="flex items-center justify-between p-3.5 rounded-2xl bg-[#18181b] border border-zinc-800">
@@ -650,7 +935,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
             return (
               <div
                 key={index}
-                className="rounded-2xl bg-[#121214]/90 border border-[#27272a] overflow-hidden transition-all backdrop-blur-sm"
+                className="gsap-faq-item rounded-2xl bg-[#121214]/90 border border-[#27272a] overflow-hidden transition-all backdrop-blur-sm"
               >
                 <button
                   onClick={() => setOpenFaq(isOpen ? null : index)}
