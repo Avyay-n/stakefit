@@ -159,7 +159,7 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
               className="text-red-600 font-black uppercase leading-none select-none text-center whitespace-nowrap"
               style={{
                 fontFamily: "'Bebas Neue', 'Barlow Condensed', sans-serif",
-                fontSize: 'clamp(5.5rem, min(25vw, 38vh), 27rem)',
+                fontSize: 'clamp(6.5rem, min(30vw, 44vh), 34rem)',
                 letterSpacing: '0.04em',
               }}
             >
@@ -186,7 +186,7 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
               className="text-black font-black uppercase leading-none select-none text-center whitespace-nowrap"
               style={{
                 fontFamily: "'Bebas Neue', 'Barlow Condensed', sans-serif",
-                fontSize: 'clamp(5.5rem, min(25vw, 38vh), 27rem)',
+                fontSize: 'clamp(6.5rem, min(30vw, 44vh), 34rem)',
                 letterSpacing: '0.04em',
               }}
             >
