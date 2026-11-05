@@ -235,7 +235,7 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
           className="group flex flex-col items-center cursor-pointer focus:outline-none relative"
         >
           {/* IN BLACK HALF (Comfortably above the 50% meeting line): Inverted White Pill */}
-          <div className="-translate-y-[calc(100%+14px)] flex items-center gap-3 px-5 py-2 sm:px-6 sm:py-2.5 rounded-full bg-white border-2 border-white text-black text-xs sm:text-sm font-mono font-black uppercase tracking-widest shadow-[0_4px_25px_rgba(255,255,255,0.25)] group-hover:scale-105 group-hover:bg-zinc-100 transition-all duration-300">
+          <div className="-translate-y-[calc(100%+10px)] flex items-center gap-3 px-5 py-2 sm:px-6 sm:py-2.5 rounded-full bg-white border-2 border-white text-black text-xs sm:text-sm font-mono font-black uppercase tracking-widest shadow-[0_4px_25px_rgba(255,255,255,0.25)] group-hover:scale-105 group-hover:bg-zinc-100 transition-all duration-300">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-red-600" />
@@ -244,9 +244,9 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
             <ChevronDown className="w-4 h-4 text-red-600 group-hover:translate-y-0.5 transition-transform duration-200" />
           </div>
 
-          {/* IN RED HALF (Comfortably below the 50% meeting line): Minimalist Animated Scroll Mouse Indicator */}
-          <div className="translate-y-[14px] w-5 h-8 rounded-full border-2 border-black flex items-start justify-center p-1 shadow-sm">
-            <div className="w-1 h-2 rounded-full bg-black animate-bounce" />
+          {/* IN RED HALF (Closer to scroll message, enlarged size): Minimalist Animated Scroll Mouse Indicator */}
+          <div className="translate-y-[6px] w-[26px] h-10 rounded-full border-[2.5px] border-black flex items-start justify-center p-1.5 shadow-sm">
+            <div className="w-1.5 h-2.5 rounded-full bg-black animate-bounce" />
           </div>
         </button>
       </div>
