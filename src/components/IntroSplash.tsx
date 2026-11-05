@@ -215,9 +215,9 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
               )}
             </div>
 
-            {/* 2. Professional Boxed STAKE FIT Brandmark */}
+            {/* 2. Professional Boxed STAKE FIT Brandmark (Filled, Word-Sized, Left-Aligned) */}
             <div
-              className={`flex flex-col items-center gap-3 sm:gap-4 lg:gap-5 select-none font-display transition-all duration-700 ${
+              className={`flex flex-col items-start gap-2.5 sm:gap-3.5 lg:gap-4 select-none font-display transition-all duration-700 ${
                 stage === 'explode'
                   ? 'opacity-100 translate-x-0 scale-100'
                   : 'opacity-0 -translate-x-12 scale-95 pointer-events-none'
@@ -226,16 +226,16 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
                 transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
               }}
             >
-              {/* STAKE: Inside Red Glowing Box */}
-              <div className="w-full flex items-center justify-center px-6 py-2 sm:px-8 sm:py-3 md:px-10 md:py-3.5 rounded-2xl border-2 sm:border-4 border-red-500 bg-red-950/25 shadow-[0_0_30px_rgba(239,68,68,0.6),inset_0_0_20px_rgba(239,68,68,0.25)]">
-                <span className="text-white text-5xl sm:text-7xl md:text-8xl lg:text-[7.5rem] xl:text-[9rem] font-black uppercase tracking-tight leading-none drop-shadow-[0_4px_24px_rgba(0,0,0,0.9)]">
+              {/* STAKE: Solid Red Filled Box, Sized to Word */}
+              <div className="inline-flex items-center justify-center px-4 py-1.5 sm:px-6 sm:py-2 md:px-8 md:py-2.5 rounded-xl sm:rounded-2xl bg-red-600 border border-red-500 shadow-[0_0_35px_rgba(239,68,68,0.7)]">
+                <span className="text-white text-5xl sm:text-7xl md:text-8xl lg:text-[7.5rem] xl:text-[9rem] font-black uppercase tracking-tight leading-none drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
                   STAKE
                 </span>
               </div>
 
-              {/* FIT: Inside White Glowing Box */}
-              <div className="w-full flex items-center justify-center px-6 py-2 sm:px-8 sm:py-3 md:px-10 md:py-3.5 rounded-2xl border-2 sm:border-4 border-white bg-white/5 shadow-[0_0_30px_rgba(255,255,255,0.45),inset_0_0_20px_rgba(255,255,255,0.15)]">
-                <span className="text-red-500 text-5xl sm:text-7xl md:text-8xl lg:text-[7.5rem] xl:text-[9rem] font-black uppercase tracking-tight leading-none drop-shadow-[0_0_35px_rgba(239,68,68,0.6)]">
+              {/* FIT: Solid White Filled Box, Sized to Word */}
+              <div className="inline-flex items-center justify-center px-4 py-1.5 sm:px-6 sm:py-2 md:px-8 md:py-2.5 rounded-xl sm:rounded-2xl bg-white border border-white shadow-[0_0_35px_rgba(255,255,255,0.65)]">
+                <span className="text-red-600 text-5xl sm:text-7xl md:text-8xl lg:text-[7.5rem] xl:text-[9rem] font-black uppercase tracking-tight leading-none drop-shadow-[0_2px_8px_rgba(0,0,0,0.15)]">
                   FIT
                 </span>
               </div>
