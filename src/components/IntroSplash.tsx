@@ -214,14 +214,9 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
                   STAKE
                 </span>
 
-                {/* FIT: Directly Under STAKE in Shiny Vibrant Red with Harmonized Letter-Spacing */}
-                <span className="relative inline-block text-red-500 text-5xl sm:text-7xl md:text-8xl lg:text-[8.5rem] xl:text-[10.5rem] font-black uppercase tracking-[0.24em] pl-[0.24em]">
-                  <span>FIT</span>
-
-                  {/* Glossy Sheen Glare Streak */}
-                  <span className="absolute inset-0 overflow-hidden pointer-events-none">
-                    <span className="absolute -inset-y-6 -inset-x-12 w-24 bg-gradient-to-r from-transparent via-white/80 to-transparent rotate-[25deg] blur-[1px] animate-glare-beam" />
-                  </span>
+                {/* FIT: Directly Under STAKE in Solid Vibrant Red with Harmonized Letter-Spacing */}
+                <span className="text-red-500 text-5xl sm:text-7xl md:text-8xl lg:text-[8.5rem] xl:text-[10.5rem] font-black uppercase tracking-[0.24em] pl-[0.24em]">
+                  FIT
                 </span>
               </div>
             </div>
