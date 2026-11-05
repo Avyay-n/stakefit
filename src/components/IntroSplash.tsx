@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import lottie, { type AnimationItem } from 'lottie-web';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Dumbbell } from 'lucide-react';
 import { playPop, playGong } from '../utils/audio';
 import { ScrollDissolveReveal } from './ui/scroll-dissolve-reveal';
 import fireData from '../assets/animations/fire.json';
@@ -179,13 +179,20 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
         >
           {/* Center Brand Group: Much Bigger Fire + STAKE FIT Words Covering The Screen */}
           <div className="relative z-10 flex items-center justify-center px-4 max-w-[95vw]">
-            {/* The Blazing Fire Unit (Substantially Enriched & Scaled Up) */}
+            {/* The Blazing Fire Unit (With Forged Dumbbell Inside) */}
             <div className="relative shrink-0 flex items-center justify-center w-36 h-36 sm:w-56 sm:h-56 md:w-72 md:h-72 lg:w-88 lg:h-88 xl:w-[420px] xl:h-[420px] transition-transform duration-700">
               {/* Blazing Looping Flame Lottie (Continuous from start, no streak) */}
               <div
                 ref={fireContainerRef}
                 className="absolute inset-0 flex items-center justify-center pointer-events-none animate-in fade-in zoom-in-75 duration-700"
               />
+
+              {/* Glowing Forged Athletic Dumbbell In The Heart Of The Fire */}
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                <Dumbbell
+                  className="w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 text-white fill-white/10 stroke-[2.4] -rotate-12 drop-shadow-[0_0_20px_rgba(255,255,255,0.95)] drop-shadow-[0_0_45px_rgba(239,68,68,1)]"
+                />
+              </div>
 
               {/* Shockwave Fire Explosion Burst Lottie (Scaled to match the bigger fire) */}
               {stage === 'explode' && (
@@ -196,7 +203,7 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
               )}
             </div>
 
-            {/* The Words "STAKE FIT" Popping Out From The Fire (Massive, Covering More Screen) */}
+            {/* The Words "STAKE FIT" Popping Out (FIT Moved Under STAKE) */}
             <div
               className={`flex items-center overflow-hidden transition-all duration-700 ease-out ${
                 stage === 'explode'
@@ -207,17 +214,15 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
                 transitionProperty: 'max-width, opacity, transform, margin-left',
               }}
             >
-              <div className="flex items-center whitespace-nowrap text-6xl sm:text-8xl md:text-9xl lg:text-[11rem] xl:text-[13rem] font-black uppercase tracking-tight font-display select-none leading-none">
+              <div className="flex flex-col items-start leading-[0.82] select-none font-display">
                 {/* STAKE: Solid Bold White */}
-                <span className="text-white">
+                <span className="text-white text-5xl sm:text-7xl md:text-8xl lg:text-[8.5rem] xl:text-[10.5rem] font-black uppercase tracking-tight">
                   STAKE
                 </span>
 
-                {/* FIT: Shiny Vibrant Red with Gloss Sheen Beam */}
-                <span className="relative inline-block ml-3 sm:ml-5 lg:ml-7">
-                  <span className="text-red-500 font-black">
-                    FIT
-                  </span>
+                {/* FIT: Directly Under STAKE in Shiny Vibrant Red */}
+                <span className="relative inline-block text-red-500 text-5xl sm:text-7xl md:text-8xl lg:text-[8.5rem] xl:text-[10.5rem] font-black uppercase tracking-tight">
+                  <span>FIT</span>
 
                   {/* Glossy Sheen Glare Streak */}
                   <span className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -228,7 +233,7 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
             </div>
           </div>
 
-          {/* "SCROLL TO ENTER" Prompt Appearing Underneath (Bigger & Down Arrow Separated) */}
+          {/* "SCROLL TO ENTER" Prompt Appearing Underneath (Bright Red Glowing Border) */}
           <div
             className={`mt-12 sm:mt-16 md:mt-20 transition-all duration-700 pointer-events-auto ${
               stage === 'explode'
@@ -240,13 +245,13 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
               onClick={handleScrollToEnter}
               className="group flex flex-col items-center cursor-pointer focus:outline-none"
             >
-              {/* Bigger & Bolder Pill Prompt */}
-              <span className="px-8 py-3.5 sm:px-10 sm:py-4 md:px-12 md:py-4.5 rounded-full bg-red-950/70 border border-red-700/80 text-red-400 text-sm sm:text-base md:text-lg font-mono font-black uppercase tracking-widest shadow-xl shadow-red-950/70 group-hover:bg-red-900 group-hover:text-white transition-all">
+              {/* Bigger & Bolder Pill Prompt with Bright Red Glowing Border */}
+              <span className="px-8 py-3.5 sm:px-10 sm:py-4 md:px-12 md:py-4.5 rounded-full bg-black/85 border-2 border-red-500 text-red-400 text-sm sm:text-base md:text-lg font-mono font-black uppercase tracking-widest shadow-[0_0_30px_rgba(255,0,0,0.9),0_0_60px_rgba(239,68,68,0.55),inset_0_0_15px_rgba(255,0,0,0.3)] group-hover:border-red-400 group-hover:bg-red-950/60 group-hover:text-white group-hover:shadow-[0_0_40px_rgba(255,0,0,1),0_0_80px_rgba(239,68,68,0.8)] transition-all">
                 Scroll To Enter The Squad Pact ↓
               </span>
 
-              {/* Down Arrow Button Moved Further Down With Clean Space */}
-              <div className="mt-4 sm:mt-5 md:mt-6 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-zinc-900/95 border border-zinc-700 flex items-center justify-center text-zinc-300 group-hover:text-red-400 group-hover:border-red-500 transition-all animate-bounce shadow-lg shadow-black/80">
+              {/* Down Arrow Button with Bright Red Glowing Border & Lower Placement */}
+              <div className="mt-4 sm:mt-5 md:mt-6 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-zinc-950 border-2 border-red-500 flex items-center justify-center text-red-400 group-hover:text-white group-hover:border-red-400 group-hover:shadow-[0_0_25px_rgba(255,0,0,1)] transition-all animate-bounce shadow-[0_0_20px_rgba(255,0,0,0.85)]">
                 <ChevronDown className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
             </button>
