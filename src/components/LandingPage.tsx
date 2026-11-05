@@ -408,161 +408,169 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
         />
       )}
 
-      {/* Lenis Smooth Scroll Progress Indicator Bar */}
-      <div className="fixed top-0 left-0 right-0 h-[3px] bg-red-600/20 z-50 pointer-events-none">
-        <div className="gsap-scroll-progress h-full w-full bg-gradient-to-r from-red-600 via-orange-500 to-red-600 origin-left scale-x-0 shadow-[0_0_12px_rgba(239,68,68,0.9)]" />
-      </div>
-
-      {/* Atmospheric Deep Red / Athletic Grain Background with Increased Red Wave Coverage */}
-      <div className="fixed inset-0 pointer-events-none z-0 opacity-85">
-        <GrainGradient
-          colorLight="#991b1b"
-          colorMid="#450a0a"
-          colorDark="#070709"
-          position={-0.14}
-          softness={0.58}
-          scale={1.2}
-          grain={0.28}
-          grainSize={1.1}
-          speed={1.6}
-        />
-      </div>
-
-      {/* ======================================================== */}
-      {/* Top Navigation Bar (Stationary Full-Width Header) */}
-      {/* ======================================================== */}
-      <header className="sticky top-0 z-40 w-full bg-[#09090b]/85 backdrop-blur-md border-b border-[#27272a]/70 h-16 px-4 sm:px-8 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div
-            onClick={() => scrollToSection('hero')}
-            className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-500 via-red-600 to-red-800 flex items-center justify-center text-white glow-red shadow-lg border border-red-400/40 cursor-pointer shrink-0 hover:scale-105 transition-transform"
-          >
-            <Flame className="w-5 h-5 fill-white" />
-          </div>
-          <div onClick={() => scrollToSection('hero')} className="cursor-pointer">
-            <div className="flex items-center gap-1.5">
-              <span className="text-base sm:text-lg font-black tracking-tight text-white uppercase font-sans">
-                STAKE<span className="text-red-500">FIT</span>
-              </span>
-              <span className="px-1.5 py-0.5 rounded text-[8px] font-black uppercase bg-red-600 text-white">
-                PRO
-              </span>
-            </div>
-            <p className="text-[9px] text-zinc-400 font-bold uppercase tracking-wider hidden sm:block">
-              Financial Fitness Accountability
-            </p>
-          </div>
+      {/* Lenis Smooth Scroll Progress Indicator Bar (Home Page Only) */}
+      {!showIntro && (
+        <div className="fixed top-0 left-0 right-0 h-[3px] bg-red-600/20 z-50 pointer-events-none">
+          <div className="gsap-scroll-progress h-full w-full bg-gradient-to-r from-red-600 via-orange-500 to-red-600 origin-left scale-x-0 shadow-[0_0_12px_rgba(239,68,68,0.9)]" />
         </div>
+      )}
 
-        {/* Interactive Navigation Links with Active Scroll Highlighting */}
-        <div className="hidden lg:flex items-center gap-7 text-xs font-black uppercase tracking-wider">
-          <button
-            onClick={() => scrollToSection('features')}
-            className={`transition-colors py-1 ${
-              activeSection === 'features'
-                ? 'text-red-400 border-b-2 border-red-500 font-black'
-                : 'text-zinc-400 hover:text-white'
-            }`}
-          >
-            How It Works
-          </button>
-          <button
-            onClick={() => scrollToSection('calculator')}
-            className={`transition-colors py-1 ${
-              activeSection === 'calculator'
-                ? 'text-orange-400 border-b-2 border-orange-500 font-black'
-                : 'text-zinc-400 hover:text-orange-400'
-            }`}
-          >
-            Dividend Calculator
-          </button>
-          <button
-            onClick={() => scrollToSection('how-it-works')}
-            className={`transition-colors py-1 ${
-              activeSection === 'how-it-works'
-                ? 'text-white border-b-2 border-red-500 font-black'
-                : 'text-zinc-400 hover:text-white'
-            }`}
-          >
-            3-Step Flow
-          </button>
-          <button
-            onClick={() => scrollToSection('preview')}
-            className={`transition-colors py-1 ${
-              activeSection === 'preview'
-                ? 'text-red-400 border-b-2 border-red-500 font-black'
-                : 'text-zinc-400 hover:text-red-400'
-            }`}
-          >
-            Live Preview
-          </button>
-          <button
-            onClick={() => scrollToSection('faq')}
-            className={`transition-colors py-1 ${
-              activeSection === 'faq'
-                ? 'text-white border-b-2 border-red-500 font-black'
-                : 'text-zinc-400 hover:text-white'
-            }`}
-          >
-            FAQ
-          </button>
+      {/* Atmospheric Deep Red / Athletic Grain Background (Home Page Only - Pure Black during Intro) */}
+      {!showIntro && (
+        <div className="fixed inset-0 pointer-events-none z-0 opacity-85 transition-opacity duration-1000">
+          <GrainGradient
+            colorLight="#991b1b"
+            colorMid="#450a0a"
+            colorDark="#070709"
+            position={-0.14}
+            softness={0.58}
+            scale={1.2}
+            grain={0.28}
+            grainSize={1.1}
+            speed={1.6}
+          />
         </div>
-
-        <div className="flex items-center gap-2.5">
-          <button
-            onClick={() => {
-              playPop();
-              onOpenAuth();
-            }}
-            className="px-3.5 py-2 rounded-xl bg-[#141416] hover:bg-zinc-800 text-zinc-200 text-xs font-black uppercase tracking-wider transition-all border border-zinc-700"
-          >
-            Sign In
-          </button>
-
-          <button
-            onClick={() => {
-              playPop();
-              onEnterHub();
-            }}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-black uppercase tracking-wider transition-all shadow-lg shadow-red-950/60 glow-red border border-red-400/40 active:scale-95"
-          >
-            <span>Your Squads ⚡</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </button>
-        </div>
-      </header>
+      )}
 
       {/* ======================================================== */}
-      {/* Floating Side Bar (Section Navigation Rail) */}
+      {/* Top Navigation Bar (Home Page Only) */}
       {/* ======================================================== */}
-      <aside
-        className="hidden xl:flex fixed right-4 sm:right-6 top-1/2 -translate-y-1/2 z-40 flex-col items-center gap-2 p-2 rounded-2xl bg-[#09090b]/85 backdrop-blur-xl border border-zinc-800/90 shadow-[0_12px_40px_rgba(0,0,0,0.85)] group select-none transition-all duration-300 hover:border-red-500/40"
-        aria-label="Section Navigation Rail"
-      >
-        {NAV_SECTIONS.map((sec) => {
-          const Icon = sec.icon;
-          const isActive = activeSection === sec.id;
-          return (
-            <button
-              key={sec.id}
-              onClick={() => scrollToSection(sec.id)}
-              className={`relative group/btn p-2 rounded-xl transition-all ${
-                isActive
-                  ? 'bg-red-600 text-white shadow-lg glow-red scale-110'
-                  : 'text-zinc-400 hover:text-white hover:bg-zinc-800/80'
-              }`}
-              title={sec.label}
+      {!showIntro && (
+        <header className="sticky top-0 z-40 w-full bg-[#09090b]/85 backdrop-blur-md border-b border-[#27272a]/70 h-16 px-4 sm:px-8 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div
+              onClick={() => scrollToSection('hero')}
+              className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-500 via-red-600 to-red-800 flex items-center justify-center text-white glow-red shadow-lg border border-red-400/40 cursor-pointer shrink-0 hover:scale-105 transition-transform"
             >
-              <Icon className="w-4 h-4" />
+              <Flame className="w-5 h-5 fill-white" />
+            </div>
+            <div onClick={() => scrollToSection('hero')} className="cursor-pointer">
+              <div className="flex items-center gap-1.5">
+                <span className="text-base sm:text-lg font-black tracking-tight text-white uppercase font-sans">
+                  STAKE<span className="text-red-500">FIT</span>
+                </span>
+                <span className="px-1.5 py-0.5 rounded text-[8px] font-black uppercase bg-red-600 text-white">
+                  PRO
+                </span>
+              </div>
+              <p className="text-[9px] text-zinc-400 font-bold uppercase tracking-wider hidden sm:block">
+                Financial Fitness Accountability
+              </p>
+            </div>
+          </div>
 
-              {/* Floating Tooltip Label to the left */}
-              <span className="absolute right-12 top-1/2 -translate-y-1/2 px-2.5 py-1 rounded-lg bg-[#141416] text-white text-[11px] font-mono font-bold whitespace-nowrap shadow-xl border border-zinc-700 opacity-0 group-hover/btn:opacity-100 transition-all duration-150 pointer-events-none translate-x-1 group-hover/btn:translate-x-0">
-                {sec.label}
-              </span>
+          {/* Interactive Navigation Links with Active Scroll Highlighting */}
+          <div className="hidden lg:flex items-center gap-7 text-xs font-black uppercase tracking-wider">
+            <button
+              onClick={() => scrollToSection('features')}
+              className={`transition-colors py-1 ${
+                activeSection === 'features'
+                  ? 'text-red-400 border-b-2 border-red-500 font-black'
+                  : 'text-zinc-400 hover:text-white'
+              }`}
+            >
+              How It Works
             </button>
-          );
-        })}
-      </aside>
+            <button
+              onClick={() => scrollToSection('calculator')}
+              className={`transition-colors py-1 ${
+                activeSection === 'calculator'
+                  ? 'text-orange-400 border-b-2 border-orange-500 font-black'
+                  : 'text-zinc-400 hover:text-orange-400'
+              }`}
+            >
+              Dividend Calculator
+            </button>
+            <button
+              onClick={() => scrollToSection('how-it-works')}
+              className={`transition-colors py-1 ${
+                activeSection === 'how-it-works'
+                  ? 'text-white border-b-2 border-red-500 font-black'
+                  : 'text-zinc-400 hover:text-white'
+              }`}
+            >
+              3-Step Flow
+            </button>
+            <button
+              onClick={() => scrollToSection('preview')}
+              className={`transition-colors py-1 ${
+                activeSection === 'preview'
+                  ? 'text-red-400 border-b-2 border-red-500 font-black'
+                  : 'text-zinc-400 hover:text-red-400'
+              }`}
+            >
+              Live Preview
+            </button>
+            <button
+              onClick={() => scrollToSection('faq')}
+              className={`transition-colors py-1 ${
+                activeSection === 'faq'
+                  ? 'text-white border-b-2 border-red-500 font-black'
+                  : 'text-zinc-400 hover:text-white'
+              }`}
+            >
+              FAQ
+            </button>
+          </div>
+
+          <div className="flex items-center gap-2.5">
+            <button
+              onClick={() => {
+                playPop();
+                onOpenAuth();
+              }}
+              className="px-3.5 py-2 rounded-xl bg-[#141416] hover:bg-zinc-800 text-zinc-200 text-xs font-black uppercase tracking-wider transition-all border border-zinc-700"
+            >
+              Sign In
+            </button>
+
+            <button
+              onClick={() => {
+                playPop();
+                onEnterHub();
+              }}
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-black uppercase tracking-wider transition-all shadow-lg shadow-red-950/60 glow-red border border-red-400/40 active:scale-95"
+            >
+              <span>Your Squads ⚡</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </header>
+      )}
+
+      {/* ======================================================== */}
+      {/* Floating Side Bar (Section Navigation Rail - Home Page Only) */}
+      {/* ======================================================== */}
+      {!showIntro && (
+        <aside
+          className="hidden xl:flex fixed right-4 sm:right-6 top-1/2 -translate-y-1/2 z-40 flex-col items-center gap-2 p-2 rounded-2xl bg-[#09090b]/85 backdrop-blur-xl border border-zinc-800/90 shadow-[0_12px_40px_rgba(0,0,0,0.85)] group select-none transition-all duration-300 hover:border-red-500/40"
+          aria-label="Section Navigation Rail"
+        >
+          {NAV_SECTIONS.map((sec) => {
+            const Icon = sec.icon;
+            const isActive = activeSection === sec.id;
+            return (
+              <button
+                key={sec.id}
+                onClick={() => scrollToSection(sec.id)}
+                className={`relative group/btn p-2 rounded-xl transition-all ${
+                  isActive
+                    ? 'bg-red-600 text-white shadow-lg glow-red scale-110'
+                    : 'text-zinc-400 hover:text-white hover:bg-zinc-800/80'
+                }`}
+                title={sec.label}
+              >
+                <Icon className="w-4 h-4" />
+
+                {/* Floating Tooltip Label to the left */}
+                <span className="absolute right-12 top-1/2 -translate-y-1/2 px-2.5 py-1 rounded-lg bg-[#141416] text-white text-[11px] font-mono font-bold whitespace-nowrap shadow-xl border border-zinc-700 opacity-0 group-hover/btn:opacity-100 transition-all duration-150 pointer-events-none translate-x-1 group-hover/btn:translate-x-0">
+                  {sec.label}
+                </span>
+              </button>
+            );
+          })}
+        </aside>
+      )}
 
       {/* ======================================================== */}
       {/* Hero Section */}

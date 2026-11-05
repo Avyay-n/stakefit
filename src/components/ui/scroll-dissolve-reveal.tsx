@@ -1,8 +1,7 @@
-import React, { useEffect, useRef, useMemo } from "react";
+import React, { useRef, useMemo } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useTexture, OrthographicCamera } from "@react-three/drei";
 import * as THREE from "three";
-import { useScroll, MotionValue } from "framer-motion";
 import { cn } from "../../lib/utils";
 
 const coverVertexShader = `
@@ -13,6 +12,7 @@ const coverVertexShader = `
   }
 `;
 
+// Burning Fire Dissolve Shader (Rich Red & Orange Flame Edge, No Gray/Black)
 const coverFragmentShader = `
   uniform sampler2D uTexture;
   uniform vec2 uResolution;
@@ -101,9 +101,9 @@ const coverFragmentShader = `
 
     vec4 texColor = texture2D(uTexture, uv);
     
-    float gray = getLuminance(texColor.rgb);
-    vec3 grayscaleColor = vec3(gray);
-    texColor.rgb = mix(texColor.rgb, grayscaleColor, uGrayscale);
+    // Burning fire tint instead of cold grey
+    vec3 fireCharColor = vec3(0.04, 0.01, 0.0);
+    vec3 baseColor = mix(texColor.rgb, fireCharColor, uGrayscale * 0.85);
     
     vec2 centeredUv = vUv - uCenter;
     float aspect = uResolution.x / uResolution.y;
@@ -112,11 +112,10 @@ const coverFragmentShader = `
     
     float angle = atan(centeredUv.y, centeredUv.x);
     
-    float noiseScale = 6.0;
+    float noiseScale = 5.0;
     vec2 pixelatedUv = floor(vUv * uResolution / noiseScale) * noiseScale / uResolution;
-    float blockNoise = fbm(pixelatedUv * 100.0) * 0.15;
-    
-    float angularNoise = fbm(vec2(angle * 5.0, 0.0)) * 0.15;
+    float blockNoise = fbm(pixelatedUv * 90.0) * 0.16;
+    float angularNoise = fbm(vec2(angle * 5.0, uTime * 0.4)) * 0.14;
     
     float totalNoise = blockNoise + angularNoise;
     float noisyDist = dist + totalNoise;
@@ -124,32 +123,38 @@ const coverFragmentShader = `
     float maxDist = length(vec2(aspect * 0.5, 0.5));
     float normalizedDist = noisyDist / maxDist;
     
-    float dissolveThreshold = uDissolve * 1.5; 
+    float dissolveThreshold = uDissolve * 1.55; 
     
     vec2 texelSize = 1.0 / uResolution;
     float edge = sobel(uTexture, uv, texelSize);
-    
-    edge = pow(edge, 0.7) * 2.0;
+    edge = pow(edge, 0.65) * 2.2;
     edge = clamp(edge, 0.0, 1.0);
     
-    float dissolveMask = smoothstep(dissolveThreshold - 0.03, dissolveThreshold, normalizedDist);
+    float dissolveMask = smoothstep(dissolveThreshold - 0.035, dissolveThreshold, normalizedDist);
     
-    vec3 edgeColor = vec3(1.0, 1.0, 1.0);
+    // BURNING FIRE EDGE COLORS: Vivid crimson red and fiery bright orange mix
+    vec3 flameRed = vec3(0.95, 0.12, 0.02);
+    vec3 flameOrange = vec3(1.0, 0.48, 0.04);
+    vec3 flameYellow = vec3(1.0, 0.88, 0.22);
     
-    vec3 baseColor = mix(texColor.rgb, vec3(0.0), uGrayscale);
+    vec3 fireEdgeColor = mix(flameRed, flameOrange, clamp(edge * 1.4, 0.0, 1.0));
+    fireEdgeColor = mix(fireEdgeColor, flameYellow, clamp(pow(edge, 2.0), 0.0, 1.0));
+    
     vec3 finalColor = baseColor;
     
-    float edgeGlowIntensity = uEdgeIntensity * 2.0;
-    float edgeGlow = edge * edgeGlowIntensity * (1.0 + uGrayscale * 3.0);
-    finalColor += edgeColor * edgeGlow * uEdgeBrightness;
+    float edgeGlowIntensity = uEdgeIntensity * 3.0;
+    float edgeGlow = edge * edgeGlowIntensity * (1.2 + uGrayscale * 2.5);
+    finalColor += fireEdgeColor * edgeGlow * uEdgeBrightness;
     
-    float edgeZoneWidth = 0.15 * (1.0 - uDissolve) + 0.02;
-    float edgeZone = smoothstep(dissolveThreshold - edgeZoneWidth, dissolveThreshold - edgeZoneWidth + 0.04, normalizedDist) * 
-                     smoothstep(dissolveThreshold + 0.02, dissolveThreshold - 0.02, normalizedDist);
-    float sparkle = hash(floor(vUv * uResolution / 4.0)) * edgeZone;
+    // Burning Ember Sparkles in Fire Red/Orange/Yellow
+    float edgeZoneWidth = 0.16 * (1.0 - uDissolve) + 0.03;
+    float edgeZone = smoothstep(dissolveThreshold - edgeZoneWidth, dissolveThreshold - edgeZoneWidth + 0.045, normalizedDist) * 
+                     smoothstep(dissolveThreshold + 0.025, dissolveThreshold - 0.025, normalizedDist);
+    float sparkle = hash(floor(vUv * uResolution / 3.5)) * edgeZone;
     
-    float edgeBrightness = (1.0 - uDissolve) * uEdgeBrightness * (1.0 + uGrayscale * 2.0);
-    finalColor += vec3(sparkle * 3.0 * edgeBrightness);
+    float edgeBrightness = (1.0 - uDissolve) * uEdgeBrightness * (1.0 + uGrayscale * 1.8);
+    vec3 emberColor = mix(flameOrange, flameYellow, hash(floor(vUv * uResolution / 2.0)));
+    finalColor += emberColor * (sparkle * 4.5 * edgeBrightness);
     
     float alpha = dissolveMask * texColor.a;
 
@@ -157,6 +162,7 @@ const coverFragmentShader = `
   }
 `;
 
+// Burning Fire Dissolve Shader for Revealed Layer
 const coverFragmentShaderReverse = `
   uniform sampler2D uTexture;
   uniform vec2 uResolution;
@@ -215,23 +221,21 @@ const coverFragmentShaderReverse = `
 
     vec4 texColor = texture2D(uTexture, uv);
     
-    float gray = getLuminance(texColor.rgb);
-    vec3 grayscaleColor = vec3(gray);
-    texColor.rgb = mix(texColor.rgb, grayscaleColor, uGrayscale);
-    
     vec2 texelSize = 1.0 / uResolution;
     float edge = sobel(uTexture, uv, texelSize);
-    
-    edge = pow(edge, 0.7) * 2.0;
+    edge = pow(edge, 0.65) * 2.2;
     edge = clamp(edge, 0.0, 1.0);
     
-    vec3 edgeColor = vec3(1.0, 1.0, 1.0);
+    // BURNING FIRE EDGE COLORS
+    vec3 flameRed = vec3(0.95, 0.12, 0.02);
+    vec3 flameOrange = vec3(1.0, 0.52, 0.05);
+    vec3 fireEdge = mix(flameRed, flameOrange, clamp(edge * 1.5, 0.0, 1.0));
     
-    vec3 darkBase = vec3(0.0);
+    vec3 darkBase = vec3(0.01, 0.0, 0.0);
     vec3 baseColor = mix(texColor.rgb, darkBase, uDarkness);
     
-    float edgeGlow = edge * uEdgeIntensity * 2.0;
-    baseColor += edgeColor * edgeGlow;
+    float edgeGlow = edge * uEdgeIntensity * 2.8;
+    baseColor += fireEdge * edgeGlow;
     
     vec3 finalColor = clamp(baseColor, 0.0, 1.0);
 
@@ -242,17 +246,14 @@ const coverFragmentShaderReverse = `
 interface SceneProps {
   imageFront: string;
   imageBack: string;
-  scrollYProgress: MotionValue<number>;
+  progress: number;
 }
 
-const Scene = ({ imageFront, imageBack, scrollYProgress }: SceneProps) => {
+const Scene = ({ imageFront, imageBack, progress }: SceneProps) => {
   const [texture1, texture2] = useTexture([imageFront, imageBack]);
   const material1Ref = useRef<THREE.ShaderMaterial>(null);
   const material2Ref = useRef<THREE.ShaderMaterial>(null);
   const { size } = useThree();
-  const invalidate = useThree((state) => state.invalidate);
-
-  useEffect(() => scrollYProgress.on("change", () => invalidate()), [invalidate, scrollYProgress]);
 
   const uniforms1 = useMemo(
     () => ({
@@ -297,7 +298,6 @@ const Scene = ({ imageFront, imageBack, scrollYProgress }: SceneProps) => {
 
   useFrame((state) => {
     const timeInSeconds = state.clock.getElapsedTime();
-    const progress = scrollYProgress.get();
 
     if (material1Ref.current) {
       material1Ref.current.uniforms.uTime.value = timeInSeconds;
@@ -309,7 +309,7 @@ const Scene = ({ imageFront, imageBack, scrollYProgress }: SceneProps) => {
       material1Ref.current.uniforms.uDissolve.value = progress;
       const grayscaleProgress = Math.min(1.0, progress / 0.4);
       material1Ref.current.uniforms.uGrayscale.value = grayscaleProgress;
-      material1Ref.current.uniforms.uEdgeIntensity.value = progress * 0.5;
+      material1Ref.current.uniforms.uEdgeIntensity.value = progress * 0.7;
       material1Ref.current.uniforms.uEdgeBrightness.value = 1.0 - progress;
     }
 
@@ -320,9 +320,9 @@ const Scene = ({ imageFront, imageBack, scrollYProgress }: SceneProps) => {
         size.height
       );
 
-      const acceleratedProgress = Math.min(1.0, progress * 1.1);
+      const acceleratedProgress = Math.min(1.0, progress * 1.15);
       material2Ref.current.uniforms.uEdgeIntensity.value =
-        0.6 * (1.0 - acceleratedProgress);
+        0.8 * (1.0 - acceleratedProgress);
       material2Ref.current.uniforms.uDarkness.value =
         1.0 - acceleratedProgress;
       material2Ref.current.uniforms.uGrayscale.value =
@@ -359,55 +359,41 @@ const Scene = ({ imageFront, imageBack, scrollYProgress }: SceneProps) => {
 export interface ScrollDissolveRevealProps {
   imageFront: string;
   imageBack: string;
+  progress: number;
   className?: string;
-  containerClassName?: string;
-  scrollContainerRef?: React.RefObject<HTMLElement | null>;
   children?: React.ReactNode;
 }
 
 export function ScrollDissolveReveal({
   imageFront,
   imageBack,
+  progress,
   className,
-  containerClassName,
-  scrollContainerRef,
   children,
 }: ScrollDissolveRevealProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end end"],
-    ...(scrollContainerRef && { container: scrollContainerRef }),
-  });
-
   return (
-    <div
-      ref={containerRef}
-      className={cn("relative h-[250vh] w-full", containerClassName)}
-    >
-      <div className={cn("sticky top-0 h-screen w-full overflow-hidden", className)}>
-        <Canvas dpr={1} frameloop="demand" gl={{ antialias: false, alpha: false }}>
-          <OrthographicCamera
-            makeDefault
-            manual
-            left={-1}
-            right={1}
-            top={1}
-            bottom={-1}
-            near={0.1}
-            far={10}
-            position={[0, 0, 1]}
+    <div className={cn("relative w-full h-full overflow-hidden select-none", className)}>
+      <Canvas dpr={1} frameloop="always" gl={{ antialias: false, alpha: false }}>
+        <OrthographicCamera
+          makeDefault
+          manual
+          left={-1}
+          right={1}
+          top={1}
+          bottom={-1}
+          near={0.1}
+          far={10}
+          position={[0, 0, 1]}
+        />
+        <React.Suspense fallback={null}>
+          <Scene
+            imageFront={imageFront}
+            imageBack={imageBack}
+            progress={progress}
           />
-          <React.Suspense fallback={null}>
-            <Scene
-              imageFront={imageFront}
-              imageBack={imageBack}
-              scrollYProgress={scrollYProgress}
-            />
-          </React.Suspense>
-        </Canvas>
-        {children}
-      </div>
+        </React.Suspense>
+      </Canvas>
+      {children}
     </div>
   );
 }

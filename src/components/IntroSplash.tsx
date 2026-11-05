@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { playPop, playGong } from '../utils/audio';
 import { ScrollDissolveReveal } from './ui/scroll-dissolve-reveal';
@@ -8,20 +8,23 @@ interface IntroSplashProps {
 }
 
 export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
-  // Phase 1: 'fire-only' for first 2 seconds
+  // Phase 1: 'fire-only' for the first 2 seconds
   // Phase 2: 'words-pop' after 2 seconds
   const [phase, setPhase] = useState<'fire-only' | 'words-pop'>('fire-only');
-  const [userScrolled, setUserScrolled] = useState(false);
+  const [dissolveProgress, setDissolveProgress] = useState(0);
+  const targetProgressRef = useRef(0);
+  const currentProgressRef = useRef(0);
+  const animFrameRef = useRef<number | null>(null);
 
   useEffect(() => {
-    // Stage 1: Audio cue on fire ignition
+    // Initial ignition sound
     try {
       playPop();
     } catch {
       // Audio safeguard
     }
 
-    // Stage 2: In the first 2 seconds only fire is lit.
+    // In the first 2 seconds, only the fire is lit.
     // At 2.0s, the words pop out from the fire to the right!
     const timer = setTimeout(() => {
       setPhase('words-pop');
@@ -46,124 +49,180 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
     };
   }, [onComplete]);
 
-  // Handle scroll trigger to complete intro dissolve
+  // Smooth in-place dissolve loop driven by scroll/wheel
   useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 150) {
-        setUserScrolled(true);
-      }
-      // When scrolled near end of dissolve container (e.g. > 1100px)
-      if (window.scrollY > 950) {
-        onComplete();
+    let touchStartY = 0;
+
+    const handleWheel = (e: WheelEvent) => {
+      // Accumulate scroll in place without page moving up
+      const delta = e.deltaY;
+      if (delta > 0) {
+        targetProgressRef.current = Math.min(1.0, targetProgressRef.current + delta * 0.0016);
+      } else {
+        targetProgressRef.current = Math.max(0.0, targetProgressRef.current + delta * 0.0016);
       }
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartY = e.touches[0].clientY;
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      const delta = touchStartY - e.touches[0].clientY;
+      touchStartY = e.touches[0].clientY;
+      if (delta > 0) {
+        targetProgressRef.current = Math.min(1.0, targetProgressRef.current + delta * 0.0035);
+      }
+    };
+
+    window.addEventListener('wheel', handleWheel, { passive: true });
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
+    window.addEventListener('touchmove', handleTouchMove, { passive: true });
+
+    // Smooth physics RAF loop
+    const updateProgress = () => {
+      currentProgressRef.current += (targetProgressRef.current - currentProgressRef.current) * 0.14;
+      setDissolveProgress(currentProgressRef.current);
+
+      // Once dissolved > 96%, finish and enter home page
+      if (currentProgressRef.current >= 0.96) {
+        onComplete();
+        return;
+      }
+
+      animFrameRef.current = requestAnimationFrame(updateProgress);
+    };
+
+    animFrameRef.current = requestAnimationFrame(updateProgress);
+
+    return () => {
+      window.removeEventListener('wheel', handleWheel);
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchmove', handleTouchMove);
+      if (animFrameRef.current) {
+        cancelAnimationFrame(animFrameRef.current);
+      }
+    };
   }, [onComplete]);
 
+  // Auto-dissolve when clicking "Scroll to Enter"
   const handleScrollToEnter = () => {
-    window.scrollTo({
-      top: 1050,
-      behavior: 'smooth',
-    });
-    setTimeout(() => {
-      onComplete();
-    }, 850);
+    targetProgressRef.current = 1.0;
   };
 
+  // Overlay fire & text fade out smoothly as dissolve starts
+  const overlayOpacity = Math.max(0, 1 - dissolveProgress * 2.8);
+
   return (
-    <div className="relative w-full bg-black">
-      {/* Three.js / Shader Scroll Dissolve Reveal Component */}
+    <div className="fixed inset-0 z-[100] w-full h-full bg-black overflow-hidden select-none">
+      {/* Burning Fire Scroll Dissolve Reveal Component (In Place) */}
       <ScrollDissolveReveal
         imageFront="/intro-front.png"
         imageBack="/home-preview.jpg"
-        containerClassName="relative h-[240vh] w-full"
+        progress={dissolveProgress}
+        className="absolute inset-0 w-full h-full"
       >
-        {/* Full-Screen Sticky Overlay on top of the Shader Canvas */}
+        {/* Full-Screen Overlay on top of the Shader Canvas */}
         <div
-          className={`absolute inset-0 flex flex-col items-center justify-center pointer-events-none select-none transition-opacity duration-700 ${
-            userScrolled ? 'opacity-20' : 'opacity-100'
-          }`}
+          className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none transition-opacity duration-200"
+          style={{ opacity: overlayOpacity }}
         >
           {/* Skip Button */}
           <button
             onClick={onComplete}
-            className="absolute top-6 right-6 pointer-events-auto px-3.5 py-1.5 rounded-lg text-xs font-mono font-bold text-zinc-500 hover:text-white bg-black/50 hover:bg-zinc-900 border border-zinc-800 transition-all z-30"
+            className="absolute top-6 right-6 pointer-events-auto px-3.5 py-1.5 rounded-lg text-xs font-mono font-bold text-zinc-500 hover:text-white bg-black/60 hover:bg-zinc-900 border border-zinc-800 transition-all z-30"
           >
             Skip ✕
           </button>
 
-          {/* Fire Light Ambient Radial Glow */}
+          {/* Fire Light Ambient Glow */}
           <div
-            className="absolute w-[340px] h-[340px] sm:w-[500px] sm:h-[500px] rounded-full pointer-events-none blur-3xl transition-all duration-1000"
+            className="absolute w-[360px] h-[360px] sm:w-[520px] sm:h-[520px] rounded-full pointer-events-none blur-3xl transition-all duration-1000"
             style={{
               background:
-                'radial-gradient(circle, rgba(239,68,68,0.35) 0%, rgba(249,115,22,0.2) 35%, rgba(0,0,0,0) 70%)',
+                'radial-gradient(circle, rgba(239,68,68,0.38) 0%, rgba(249,115,22,0.22) 38%, rgba(0,0,0,0) 70%)',
             }}
           />
 
-          {/* Center Brand Group: Free-Standing Fire + Words Popping Out */}
+          {/* Center Brand Group: Free-Standing Fire (Image 2) + Words Popping Out */}
           <div className="relative z-10 flex items-center justify-center px-4">
-            {/* Free-Standing Blazing Fire (NO BOX, NO CONTAINER, PURE ORGANIC FLAME) */}
-            <div className="relative flex items-center justify-center transition-all duration-700">
-              {/* Organic Flame SVG Tongues */}
+            {/* Free-Standing Blazing Fire (Matching Image 2: No Box, Curved Flame Tongues) */}
+            <div className="relative flex items-center justify-center">
               <div className="relative animate-flame-flicker">
+                {/* Athletic Multi-Tier Flame SVG (Exact 3-Color Fire from Image 2) */}
                 <svg
-                  viewBox="0 0 100 130"
-                  className="w-20 h-28 sm:w-28 sm:h-36 lg:w-32 lg:h-44 drop-shadow-[0_0_35px_rgba(239,68,68,0.95)] drop-shadow-[0_0_65px_rgba(249,115,22,0.7)]"
+                  viewBox="0 0 120 140"
+                  className="w-24 h-32 sm:w-32 sm:h-44 lg:w-36 lg:h-48 drop-shadow-[0_0_30px_rgba(239,68,68,0.95)] drop-shadow-[0_0_60px_rgba(249,115,22,0.7)]"
                 >
                   <defs>
-                    <linearGradient id="flameOuter" x1="0%" y1="100%" x2="0%" y2="0%">
-                      <stop offset="0%" stopColor="#7f1d1d" />
-                      <stop offset="35%" stopColor="#dc2626" />
-                      <stop offset="70%" stopColor="#f97316" />
-                      <stop offset="100%" stopColor="#fbbf24" />
+                    {/* Outer Red Flame Gradient */}
+                    <linearGradient id="fireOuterRed" x1="0%" y1="100%" x2="0%" y2="0%">
+                      <stop offset="0%" stopColor="#b91c1c" />
+                      <stop offset="40%" stopColor="#dc2626" />
+                      <stop offset="85%" stopColor="#ef4444" />
+                      <stop offset="100%" stopColor="#f87171" />
                     </linearGradient>
-                    <linearGradient id="flameInner" x1="0%" y1="100%" x2="0%" y2="0%">
-                      <stop offset="0%" stopColor="#ea580c" />
-                      <stop offset="50%" stopColor="#fde047" />
-                      <stop offset="100%" stopColor="#ffffff" />
+
+                    {/* Middle Orange Flame Gradient */}
+                    <linearGradient id="fireMidOrange" x1="0%" y1="100%" x2="0%" y2="0%">
+                      <stop offset="0%" stopColor="#c2410c" />
+                      <stop offset="45%" stopColor="#ea580c" />
+                      <stop offset="80%" stopColor="#f97316" />
+                      <stop offset="100%" stopColor="#fb923c" />
+                    </linearGradient>
+
+                    {/* Inner Golden-Yellow Core Gradient */}
+                    <linearGradient id="fireInnerYellow" x1="0%" y1="100%" x2="0%" y2="0%">
+                      <stop offset="0%" stopColor="#eab308" />
+                      <stop offset="50%" stopColor="#facc15" />
+                      <stop offset="100%" stopColor="#fef08a" />
                     </linearGradient>
                   </defs>
 
-                  {/* Outer Blazing Tongue */}
+                  {/* Outer Red Flame (Curved athletic tips matching Image 2) */}
                   <path
-                    d="M50 5 C62 30 85 55 85 85 C85 110 68 125 50 125 C32 125 15 110 15 85 C15 55 38 30 50 5 Z"
-                    fill="url(#flameOuter)"
+                    d="M60 5 C68 28 82 38 88 52 C95 68 84 82 92 98 C96 106 90 118 78 126 C66 134 46 134 34 126 C22 118 16 104 22 92 C26 84 20 74 24 62 C28 50 40 40 42 26 C44 14 54 8 60 5 Z"
+                    fill="url(#fireOuterRed)"
                   />
-                  {/* Secondary Flicker Flame Tongue */}
+                  {/* Left and Right Outer Flame Hooks */}
                   <path
-                    d="M50 25 C60 48 76 68 74 92 C72 112 60 122 50 122 C40 122 28 112 26 92 C24 68 40 48 50 25 Z"
-                    fill="url(#flameOuter)"
-                    opacity="0.9"
+                    d="M24 72 C14 80 12 94 18 106 C24 118 40 130 60 130 C80 130 96 118 102 106 C108 94 106 80 96 72 C92 84 86 96 76 104 C66 112 46 112 38 102 C30 92 28 82 24 72 Z"
+                    fill="#dc2626"
+                    opacity="0.85"
                   />
-                  {/* Glowing Core Flame Tongue */}
+
+                  {/* Middle Orange Flame (Nested tongues matching Image 2) */}
                   <path
-                    d="M50 50 C57 68 66 82 64 98 C62 112 56 118 50 118 C44 118 38 112 36 98 C34 82 43 68 50 50 Z"
-                    fill="url(#flameInner)"
+                    d="M60 28 C66 45 76 54 78 68 C80 82 72 90 76 102 C78 108 72 118 64 122 C56 126 44 126 36 120 C28 114 26 102 30 92 C34 82 32 72 36 60 C40 48 52 38 60 28 Z"
+                    fill="url(#fireMidOrange)"
                   />
-                  {/* Ultra-Bright Center Spark Core */}
-                  <ellipse cx="50" cy="100" rx="8" ry="14" fill="#ffffff" opacity="0.95" />
+
+                  {/* Inner Golden-Yellow Core Flame */}
+                  <path
+                    d="M58 56 C64 70 70 78 68 90 C66 102 58 112 50 114 C42 112 36 102 38 90 C40 80 46 70 54 60 C56 58 57 57 58 56 Z"
+                    fill="url(#fireInnerYellow)"
+                  />
+                  {/* Bright Core Heat Center */}
+                  <ellipse cx="52" cy="100" rx="9" ry="14" fill="#ffffff" opacity="0.9" />
                 </svg>
 
-                {/* Rising Fiery Sparks & Embers Floating Upward */}
+                {/* Rising Sparks / Embers floating upward */}
                 <div className="absolute inset-0 pointer-events-none">
                   <span
                     className="absolute w-1.5 h-1.5 rounded-full bg-amber-300 blur-[0.5px] animate-spark-rise"
-                    style={{ top: '15%', left: '35%', animationDelay: '0.1s', '--spark-drift': '-18px' } as React.CSSProperties}
+                    style={{ top: '15%', left: '35%', animationDelay: '0.1s', '--spark-drift': '-16px' } as React.CSSProperties}
                   />
                   <span
                     className="absolute w-2 h-2 rounded-full bg-orange-400 blur-[0.5px] animate-spark-rise"
-                    style={{ top: '10%', left: '55%', animationDelay: '0.4s', '--spark-drift': '22px' } as React.CSSProperties}
+                    style={{ top: '10%', left: '55%', animationDelay: '0.35s', '--spark-drift': '20px' } as React.CSSProperties}
                   />
                   <span
                     className="absolute w-1.5 h-1.5 rounded-full bg-red-400 blur-[0.5px] animate-spark-rise"
-                    style={{ top: '25%', left: '48%', animationDelay: '0.7s', '--spark-drift': '-10px' } as React.CSSProperties}
+                    style={{ top: '25%', left: '46%', animationDelay: '0.65s', '--spark-drift': '-10px' } as React.CSSProperties}
                   />
                   <span
                     className="absolute w-1 h-1 rounded-full bg-amber-200 blur-[0.5px] animate-spark-rise"
-                    style={{ top: '35%', left: '60%', animationDelay: '1.0s', '--spark-drift': '14px' } as React.CSSProperties}
+                    style={{ top: '35%', left: '62%', animationDelay: '0.95s', '--spark-drift': '14px' } as React.CSSProperties}
                   />
                 </div>
               </div>
