@@ -231,9 +231,9 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
         </div>
       </div>
 
-      {/* Floating Scroll Prompt (Anchored at the bottom of the screen, fades out when zooming) */}
+      {/* Floating Scroll Prompt (Positioned on the right side, avoids center text, fades out when zooming) */}
       <div
-        className={`absolute bottom-6 sm:bottom-10 left-1/2 -translate-x-1/2 z-30 transition-all duration-300 pointer-events-auto ${
+        className={`absolute bottom-6 sm:bottom-10 right-6 sm:right-10 lg:right-14 z-30 transition-all duration-300 pointer-events-auto ${
           isZooming ? 'opacity-0 translate-y-4 pointer-events-none' : 'opacity-100 translate-y-0'
         }`}
       >
@@ -245,7 +245,7 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
           className="group flex flex-col items-center gap-2 sm:gap-3 cursor-pointer focus:outline-none"
         >
           {/* Sleek Black Pill Button with Red Accent */}
-          <div className="flex items-center gap-3 px-6 py-2.5 sm:px-8 sm:py-3 rounded-full bg-black border-2 border-black text-white text-xs sm:text-sm font-mono font-black uppercase tracking-widest shadow-[0_10px_30px_rgba(0,0,0,0.5)] group-hover:scale-105 group-hover:bg-zinc-950 transition-all duration-300">
+          <div className="flex items-center gap-3 px-5 py-2.5 sm:px-7 sm:py-3 rounded-full bg-black border-2 border-black text-white text-xs sm:text-sm font-mono font-black uppercase tracking-widest shadow-[0_10px_30px_rgba(0,0,0,0.5)] group-hover:scale-105 group-hover:bg-zinc-950 transition-all duration-300">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
