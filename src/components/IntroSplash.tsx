@@ -142,13 +142,10 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
         }}
       >
         {/* ======================================================== */}
-        {/* TOP HALF SCREEN: SOLID BLACK BACKGROUND */}
+        {/* TOP HALF SCREEN: SOLID BLACK BACKGROUND (PURE CLEAN BLACK, NO GRID) */}
         {/* ======================================================== */}
         <div className="relative w-full h-1/2 bg-black flex items-center justify-center overflow-hidden">
-          {/* Subtle noise grain for athletic realism */}
-          <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]" />
-
-          {/* HUGE TEXT: "STAKE" IN SOLID RED (UI Pro Max Bold Sports Display Font, Zero Glare) */}
+          {/* HUGE TEXT: "STAKE" IN SOLID RED (UI Pro Max Bold Sports Display Font, Zero Glare, Optically Centered) */}
           <div
             className="relative flex items-center justify-center px-4 w-full"
             style={{
@@ -159,8 +156,9 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
               className="text-red-600 font-black uppercase leading-none select-none text-center whitespace-nowrap"
               style={{
                 fontFamily: "'Bebas Neue', 'Barlow Condensed', sans-serif",
-                fontSize: 'clamp(8rem, min(36vw, 58vh), 46rem)',
+                fontSize: 'clamp(7.5rem, min(35vw, 54vh), 44rem)',
                 letterSpacing: '0.03em',
+                transform: 'translateY(0.055em)',
               }}
             >
               STAKE
@@ -169,13 +167,24 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
         </div>
 
         {/* ======================================================== */}
-        {/* BOTTOM HALF SCREEN: SOLID RED BACKGROUND */}
+        {/* BOTTOM HALF SCREEN: SOLID RED BACKGROUND WITH ATHLETIC GRID */}
         {/* ======================================================== */}
         <div className="relative w-full h-1/2 bg-red-600 flex items-center justify-center overflow-hidden">
-          {/* Subtle athletic texture */}
-          <div className="absolute inset-0 opacity-[0.04] pointer-events-none bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:16px_16px]" />
+          {/* Tactical athletic grid texture (ONLY in red color region) */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              backgroundImage: `
+                linear-gradient(to right, rgba(0, 0, 0, 0.12) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 0, 0, 0.12) 1px, transparent 1px),
+                radial-gradient(circle, rgba(0, 0, 0, 0.18) 1.5px, transparent 1.5px)
+              `,
+              backgroundSize: '36px 36px, 36px 36px, 36px 36px',
+              backgroundPosition: '0 0, 0 0, 0 0',
+            }}
+          />
 
-          {/* HUGE TEXT: "FIT" IN SOLID BLACK (UI Pro Max Bold Sports Display Font, Zero Glare) */}
+          {/* HUGE TEXT: "FIT" IN SOLID BLACK (UI Pro Max Bold Sports Display Font, Zero Glare, Optically Centered) */}
           <div
             className="relative flex items-center justify-center px-4 w-full"
             style={{
@@ -186,8 +195,9 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
               className="text-black font-black uppercase leading-none select-none text-center whitespace-nowrap"
               style={{
                 fontFamily: "'Bebas Neue', 'Barlow Condensed', sans-serif",
-                fontSize: 'clamp(8rem, min(36vw, 58vh), 46rem)',
+                fontSize: 'clamp(7.5rem, min(35vw, 54vh), 44rem)',
                 letterSpacing: '0.03em',
+                transform: 'translateY(0.055em)',
               }}
             >
               FIT
