@@ -396,22 +396,35 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
       className="min-h-screen bg-[#070709] text-[#f4f4f5] font-sans selection:bg-red-600 selection:text-white relative overflow-x-hidden"
     >
       {/* Full-Screen Fire & Logo Intro Animation */}
-      {showIntro && <IntroSplash onComplete={() => setShowIntro(false)} />}
+      {showIntro && (
+        <IntroSplash
+          onComplete={() => {
+            setShowIntro(false);
+            window.scrollTo({ top: 0, behavior: 'instant' });
+            setTimeout(() => {
+              ScrollTrigger.refresh();
+            }, 100);
+          }}
+        />
+      )}
 
       {/* Lenis Smooth Scroll Progress Indicator Bar */}
       <div className="fixed top-0 left-0 right-0 h-[3px] bg-red-600/20 z-50 pointer-events-none">
         <div className="gsap-scroll-progress h-full w-full bg-gradient-to-r from-red-600 via-orange-500 to-red-600 origin-left scale-x-0 shadow-[0_0_12px_rgba(239,68,68,0.9)]" />
       </div>
 
-      {/* Atmospheric Deep Red / Athletic Grain Background */}
-      <div className="fixed inset-0 pointer-events-none z-0 opacity-70">
+      {/* Atmospheric Deep Red / Athletic Grain Background with Increased Red Wave Coverage */}
+      <div className="fixed inset-0 pointer-events-none z-0 opacity-85">
         <GrainGradient
-          colorLight="#3b0a0e"
-          colorMid="#1c0508"
+          colorLight="#991b1b"
+          colorMid="#450a0a"
           colorDark="#070709"
-          grain={0.25}
+          position={-0.14}
+          softness={0.58}
+          scale={1.2}
+          grain={0.28}
           grainSize={1.1}
-          speed={1.5}
+          speed={1.6}
         />
       </div>
 
