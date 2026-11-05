@@ -130,15 +130,6 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
             opacity: 1;
           }
         }
-
-        @keyframes whiteLetterGlare {
-          0% {
-            background-position: -250% 0;
-          }
-          100% {
-            background-position: 250% 0;
-          }
-        }
       `}</style>
 
       {/* Main Scaling Split Container (Transforms from the exact center seam) */}
@@ -157,7 +148,7 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
           {/* Subtle noise grain for athletic realism */}
           <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]" />
 
-          {/* HUGE TEXT: "STAKE" IN RED WITH PURE WHITE SHINY GLARE ON LETTERS */}
+          {/* HUGE TEXT: "STAKE" IN SOLID RED (UI Pro Max Bold Sports Display Font, Zero Glare) */}
           <div
             className="relative flex items-center justify-center px-4 w-full"
             style={{
@@ -165,19 +156,11 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
             }}
           >
             <h1
-              className="font-black tracking-normal uppercase leading-none select-none text-center whitespace-nowrap"
+              className="text-red-600 font-black uppercase leading-none select-none text-center whitespace-nowrap"
               style={{
-                fontFamily: "'Alphakind', 'Barlow Condensed', sans-serif",
-                fontSize: 'clamp(4rem, min(20vw, 34vh), 23rem)',
-                letterSpacing: '0.02em',
-                background:
-                  'linear-gradient(115deg, #dc2626 0%, #dc2626 38%, rgba(255, 255, 255, 0.95) 48%, #ffffff 50%, rgba(255, 255, 255, 0.95) 52%, #dc2626 62%, #dc2626 100%)',
-                backgroundSize: '250% 100%',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-                color: 'transparent',
-                animation: 'whiteLetterGlare 2.8s cubic-bezier(0.4, 0, 0.2, 1) infinite',
+                fontFamily: "'Bebas Neue', 'Barlow Condensed', sans-serif",
+                fontSize: 'clamp(5.5rem, min(25vw, 38vh), 27rem)',
+                letterSpacing: '0.04em',
               }}
             >
               STAKE
@@ -192,7 +175,7 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
           {/* Subtle athletic texture */}
           <div className="absolute inset-0 opacity-[0.04] pointer-events-none bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:16px_16px]" />
 
-          {/* HUGE TEXT: "FIT" IN BLACK WITH PURE WHITE SHINY GLARE ON LETTERS */}
+          {/* HUGE TEXT: "FIT" IN SOLID BLACK (UI Pro Max Bold Sports Display Font, Zero Glare) */}
           <div
             className="relative flex items-center justify-center px-4 w-full"
             style={{
@@ -200,19 +183,11 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
             }}
           >
             <h1
-              className="font-black tracking-normal uppercase leading-none select-none text-center whitespace-nowrap"
+              className="text-black font-black uppercase leading-none select-none text-center whitespace-nowrap"
               style={{
-                fontFamily: "'Alphakind', 'Barlow Condensed', sans-serif",
-                fontSize: 'clamp(4rem, min(20vw, 34vh), 23rem)',
-                letterSpacing: '0.02em',
-                background:
-                  'linear-gradient(115deg, #000000 0%, #000000 38%, rgba(255, 255, 255, 0.95) 48%, #ffffff 50%, rgba(255, 255, 255, 0.95) 52%, #000000 62%, #000000 100%)',
-                backgroundSize: '250% 100%',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-                color: 'transparent',
-                animation: 'whiteLetterGlare 2.8s cubic-bezier(0.4, 0, 0.2, 1) 0.35s infinite',
+                fontFamily: "'Bebas Neue', 'Barlow Condensed', sans-serif",
+                fontSize: 'clamp(5.5rem, min(25vw, 38vh), 27rem)',
+                letterSpacing: '0.04em',
               }}
             >
               FIT
