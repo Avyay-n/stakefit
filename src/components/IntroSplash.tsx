@@ -142,10 +142,24 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
         }}
       >
         {/* ======================================================== */}
-        {/* TOP HALF SCREEN: SOLID BLACK BACKGROUND (PURE CLEAN BLACK, NO GRID) */}
+        {/* TOP HALF SCREEN: SOLID BLACK BACKGROUND WITH RED ATHLETIC GRID */}
         {/* ======================================================== */}
         <div className="relative w-full h-1/2 bg-black flex items-center justify-center overflow-hidden">
-          {/* HUGE TEXT: "STAKE" IN SOLID RED (UI Pro Max Bold Sports Display Font, Zero Glare, Optically Centered) */}
+          {/* Tactical athletic grid texture in RED (for black region) */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              backgroundImage: `
+                linear-gradient(to right, rgba(220, 38, 38, 0.16) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(220, 38, 38, 0.16) 1px, transparent 1px),
+                radial-gradient(circle, rgba(220, 38, 38, 0.28) 1.5px, transparent 1.5px)
+              `,
+              backgroundSize: '36px 36px, 36px 36px, 36px 36px',
+              backgroundPosition: '0 0, 0 0, 0 0',
+            }}
+          />
+
+          {/* HUGE TEXT: "STAKE" IN SOLID RED WITH TACTICAL GRID (UI Pro Max Bold Sports Display Font, Zero Glare, Optically Centered) */}
           <div
             className="relative flex items-center justify-center px-4 w-full"
             style={{
@@ -153,12 +167,22 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
             }}
           >
             <h1
-              className="text-red-600 font-black uppercase leading-none select-none text-center whitespace-nowrap"
+              className="font-black uppercase leading-none select-none text-center whitespace-nowrap"
               style={{
                 fontFamily: "'Bebas Neue', 'Barlow Condensed', sans-serif",
                 fontSize: 'clamp(7.5rem, min(35vw, 54vh), 44rem)',
                 letterSpacing: '0.03em',
                 transform: 'translateY(0.055em)',
+                backgroundColor: '#dc2626',
+                backgroundImage: `
+                  linear-gradient(to right, rgba(0, 0, 0, 0.25) 1px, transparent 1px),
+                  linear-gradient(to bottom, rgba(0, 0, 0, 0.25) 1px, transparent 1px),
+                  radial-gradient(circle, rgba(0, 0, 0, 0.35) 1.5px, transparent 1.5px)
+                `,
+                backgroundSize: '36px 36px, 36px 36px, 36px 36px',
+                backgroundPosition: '0 0, 0 0, 0 0',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
               }}
             >
               STAKE
@@ -170,7 +194,7 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
         {/* BOTTOM HALF SCREEN: SOLID RED BACKGROUND WITH ATHLETIC GRID */}
         {/* ======================================================== */}
         <div className="relative w-full h-1/2 bg-red-600 flex items-center justify-center overflow-hidden">
-          {/* Tactical athletic grid texture (ONLY in red color region) */}
+          {/* Tactical athletic grid texture (in black for red region) */}
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
@@ -184,7 +208,7 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
             }}
           />
 
-          {/* HUGE TEXT: "FIT" IN SOLID BLACK (UI Pro Max Bold Sports Display Font, Zero Glare, Optically Centered) */}
+          {/* HUGE TEXT: "FIT" IN SOLID BLACK WITH RED TACTICAL GRID (UI Pro Max Bold Sports Display Font, Zero Glare, Optically Centered) */}
           <div
             className="relative flex items-center justify-center px-4 w-full"
             style={{
@@ -192,12 +216,22 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
             }}
           >
             <h1
-              className="text-black font-black uppercase leading-none select-none text-center whitespace-nowrap"
+              className="font-black uppercase leading-none select-none text-center whitespace-nowrap"
               style={{
                 fontFamily: "'Bebas Neue', 'Barlow Condensed', sans-serif",
                 fontSize: 'clamp(7.5rem, min(35vw, 54vh), 44rem)',
                 letterSpacing: '0.03em',
                 transform: 'translateY(0.055em)',
+                backgroundColor: '#000000',
+                backgroundImage: `
+                  linear-gradient(to right, rgba(220, 38, 38, 0.5) 1px, transparent 1px),
+                  linear-gradient(to bottom, rgba(220, 38, 38, 0.5) 1px, transparent 1px),
+                  radial-gradient(circle, rgba(220, 38, 38, 0.7) 1.5px, transparent 1.5px)
+                `,
+                backgroundSize: '36px 36px, 36px 36px, 36px 36px',
+                backgroundPosition: '0 0, 0 0, 0 0',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
               }}
             >
               FIT
