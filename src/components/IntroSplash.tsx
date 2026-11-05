@@ -215,27 +215,28 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
               )}
             </div>
 
-            {/* 2. Professional Boxed STAKE FIT Brandmark (Filled, Word-Sized, Left-Aligned) */}
+            {/* 2. Flat Sharp Boxed STAKE FIT Brandmark (Sticking, No Curves, No Glow, Cartoon Fire Font) */}
             <div
-              className={`flex flex-col items-start gap-2.5 sm:gap-3.5 lg:gap-4 select-none font-display transition-all duration-700 ${
+              className={`flex flex-col items-start gap-0 select-none transition-all duration-700 ${
                 stage === 'explode'
                   ? 'opacity-100 translate-x-0 scale-100'
                   : 'opacity-0 -translate-x-12 scale-95 pointer-events-none'
               }`}
               style={{
                 transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
+                fontFamily: "'Bangers', 'Barlow Condensed', cursive, sans-serif",
               }}
             >
-              {/* STAKE: Solid Red Filled Box, Sized to Word */}
-              <div className="inline-flex items-center justify-center px-4 py-1.5 sm:px-6 sm:py-2 md:px-8 md:py-2.5 rounded-xl sm:rounded-2xl bg-red-600 border border-red-500 shadow-[0_0_35px_rgba(239,68,68,0.7)]">
-                <span className="text-white text-5xl sm:text-7xl md:text-8xl lg:text-[7.5rem] xl:text-[9rem] font-black uppercase tracking-tight leading-none drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
+              {/* STAKE: Solid Red Filled Box (Sharp 90-degree corners, no glow, sized to word) */}
+              <div className="inline-flex items-center justify-center px-5 py-1.5 sm:px-7 sm:py-2.5 md:px-9 md:py-3 rounded-none bg-red-600">
+                <span className="text-white text-6xl sm:text-7xl md:text-8xl lg:text-[8rem] xl:text-[9.5rem] uppercase tracking-wide leading-none">
                   STAKE
                 </span>
               </div>
 
-              {/* FIT: Solid White Filled Box, Sized to Word */}
-              <div className="inline-flex items-center justify-center px-4 py-1.5 sm:px-6 sm:py-2 md:px-8 md:py-2.5 rounded-xl sm:rounded-2xl bg-white border border-white shadow-[0_0_35px_rgba(255,255,255,0.65)]">
-                <span className="text-red-600 text-5xl sm:text-7xl md:text-8xl lg:text-[7.5rem] xl:text-[9rem] font-black uppercase tracking-tight leading-none drop-shadow-[0_2px_8px_rgba(0,0,0,0.15)]">
+              {/* FIT: Solid White Filled Box (Sharp 90-degree corners, sticking directly to STAKE, no glow, sized to word) */}
+              <div className="inline-flex items-center justify-center px-5 py-1.5 sm:px-7 sm:py-2.5 md:px-9 md:py-3 rounded-none bg-white">
+                <span className="text-red-600 text-6xl sm:text-7xl md:text-8xl lg:text-[8rem] xl:text-[9.5rem] uppercase tracking-wide leading-none">
                   FIT
                 </span>
               </div>
