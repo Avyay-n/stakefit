@@ -173,8 +173,8 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
                 transform: 'translateY(0.055em)',
                 backgroundColor: '#dc2626',
                 backgroundImage: `
-                  linear-gradient(to right, rgba(0, 0, 0, 0.25) 1px, transparent 1px),
-                  linear-gradient(to bottom, rgba(0, 0, 0, 0.25) 1px, transparent 1px)
+                  linear-gradient(to right, rgba(0, 0, 0, 0.16) 1px, transparent 1px),
+                  linear-gradient(to bottom, rgba(0, 0, 0, 0.16) 1px, transparent 1px)
                 `,
                 backgroundSize: '36px 36px',
                 WebkitBackgroundClip: 'text',
@@ -189,14 +189,17 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
         {/* ======================================================== */}
         {/* BOTTOM HALF SCREEN: SOLID RED BACKGROUND WITH ATHLETIC GRID */}
         {/* ======================================================== */}
-        <div className="relative w-full h-1/2 bg-red-600 flex items-center justify-center overflow-hidden">
-          {/* Tactical athletic grid texture (pure black lines, no dots) */}
+        <div
+          className="relative w-full h-1/2 flex items-center justify-center overflow-hidden"
+          style={{ backgroundColor: '#dc2626' }}
+        >
+          {/* Tactical athletic grid texture (pure black lines, matching STAKE grid opacity) */}
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
               backgroundImage: `
-                linear-gradient(to right, rgba(0, 0, 0, 0.12) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(0, 0, 0, 0.12) 1px, transparent 1px)
+                linear-gradient(to right, rgba(0, 0, 0, 0.16) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 0, 0, 0.16) 1px, transparent 1px)
               `,
               backgroundSize: '36px 36px',
             }}
