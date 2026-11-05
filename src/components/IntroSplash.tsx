@@ -1,7 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
+import lottie, { type AnimationItem } from 'lottie-web';
 import { ChevronDown } from 'lucide-react';
 import { playPop, playGong } from '../utils/audio';
 import { ScrollDissolveReveal } from './ui/scroll-dissolve-reveal';
+import streakData from '../assets/animations/streak.json';
+import fireData from '../assets/animations/fire.json';
+import explodeData from '../assets/animations/explode.json';
 
 interface IntroSplashProps {
   onComplete: () => void;
@@ -9,31 +13,63 @@ interface IntroSplashProps {
 
 export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
   // 3-Stage Fire Animation Progression:
-  // Stage 1: 'streak' (0s - 0.7s) - Flame streak shoots in and sparks fire
-  // Stage 2: 'glow' (0.7s - 1.8s) - Intense burning, heat bloom & throbbing glow
-  // Stage 3: 'explode' (1.8s+) - Fiery shockwave explosion, revealing STAKE FIT & scroll message
-  const [stage, setStage] = useState<'streak' | 'glow' | 'explode'>('streak');
+  // Stage 1: 'streak' (0s - 1.3s) - Flame streak shoots in and ignites the fire
+  // Stage 2: 'burn'   (1.3s - 2.2s) - Fire is lit! Fluid blazing flame loops intensely
+  // Stage 3: 'explode' (2.2s+) - Fiery shockwave explosion, revealing STAKE FIT & scroll message
+  const [stage, setStage] = useState<'streak' | 'burn' | 'explode'>('streak');
   const [hasExploded, setHasExploded] = useState(false);
   const [dissolveProgress, setDissolveProgress] = useState(0);
 
+  const streakContainerRef = useRef<HTMLDivElement>(null);
+  const fireContainerRef = useRef<HTMLDivElement>(null);
+  const explodeContainerRef = useRef<HTMLDivElement>(null);
+
+  const animsRef = useRef<AnimationItem[]>([]);
   const targetProgressRef = useRef(0);
   const currentProgressRef = useRef(0);
   const animFrameRef = useRef<number | null>(null);
 
+  // Initialize and choreograph the 3-stage Lottie animations
   useEffect(() => {
-    // Stage 1: Flame streak ignition sound
+    // Stage 1: Flame Streak Ignition
     try {
       playPop();
     } catch {
       // Audio safeguard
     }
 
-    // Transition to Stage 2: Intense Burning & Heat Glow at 0.7s
-    const timer1 = setTimeout(() => {
-      setStage('glow');
-    }, 700);
+    // 1. Load Flame Streak Lottie (Ignition)
+    if (streakContainerRef.current) {
+      const streakAnim = lottie.loadAnimation({
+        container: streakContainerRef.current,
+        renderer: 'svg',
+        loop: false,
+        autoplay: true,
+        animationData: streakData,
+      });
+      streakAnim.setSpeed(1.6);
+      animsRef.current.push(streakAnim);
+    }
 
-    // Transition to Stage 3: Fiery Shockwave Explosion & Reveal at 1.8s
+    // 2. Load Blazing Flame Lottie (Continuous Fluid Burning)
+    if (fireContainerRef.current) {
+      const fireAnim = lottie.loadAnimation({
+        container: fireContainerRef.current,
+        renderer: 'svg',
+        loop: true,
+        autoplay: true,
+        animationData: fireData,
+      });
+      fireAnim.setSpeed(1.1);
+      animsRef.current.push(fireAnim);
+    }
+
+    // Transition to Stage 2: Fire Lit & Burning at 1.3s
+    const timer1 = setTimeout(() => {
+      setStage('burn');
+    }, 1300);
+
+    // Transition to Stage 3: Fiery Shockwave Explosion & Word Reveal at 2.2s
     const timer2 = setTimeout(() => {
       setStage('explode');
       setHasExploded(true);
@@ -42,11 +78,24 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
       } catch {
         // Audio safeguard
       }
-    }, 1800);
 
-    // Escape key skips directly into home page
+      // Play Explosion Shockwave Lottie
+      if (explodeContainerRef.current) {
+        const explodeAnim = lottie.loadAnimation({
+          container: explodeContainerRef.current,
+          renderer: 'svg',
+          loop: false,
+          autoplay: true,
+          animationData: explodeData,
+        });
+        explodeAnim.setSpeed(1.3);
+        animsRef.current.push(explodeAnim);
+      }
+    }, 2200);
+
+    // Escape or Enter key shortcut to enter home page
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
+      if (e.key === 'Escape' || e.key === 'Enter') {
         onComplete();
       }
     };
@@ -56,10 +105,12 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
       clearTimeout(timer1);
       clearTimeout(timer2);
       window.removeEventListener('keydown', handleKeyDown);
+      animsRef.current.forEach((anim) => anim.destroy());
+      animsRef.current = [];
     };
   }, [onComplete]);
 
-  // Smooth in-place dissolve loop driven by scroll/wheel
+  // Smooth in-place dissolve loop driven by scroll / wheel / swipe
   useEffect(() => {
     let touchStartY = 0;
 
@@ -96,7 +147,7 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
       currentProgressRef.current += (targetProgressRef.current - currentProgressRef.current) * 0.14;
       setDissolveProgress(currentProgressRef.current);
 
-      // Once dissolved > 96%, finish and enter home page
+      // Once dissolved > 96%, finish and transition into home page
       if (currentProgressRef.current >= 0.96) {
         onComplete();
         return;
@@ -117,7 +168,7 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
     };
   }, [hasExploded, onComplete]);
 
-  // Auto-dissolve when clicking "Scroll to Enter"
+  // Click handler for "Scroll To Enter" button
   const handleScrollToEnter = () => {
     targetProgressRef.current = 1.0;
   };
@@ -127,12 +178,12 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
 
   return (
     <div className="fixed inset-0 z-[100] w-full h-full bg-black overflow-hidden select-none">
-      {/* Burning Fire Scroll Dissolve Reveal Component (In Place) */}
+      {/* Burning Fire Scroll Dissolve Reveal Component (In Place, Pure Black Canvas) */}
       <ScrollDissolveReveal
         imageFront="/intro-front.png"
         imageBack="/home-preview.jpg"
         progress={dissolveProgress}
-        className="absolute inset-0 w-full h-full"
+        className="absolute inset-0 w-full h-full bg-black"
       >
         {/* Full-Screen Overlay on top of the Shader Canvas */}
         <div
@@ -141,164 +192,41 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
           }`}
           style={{ opacity: overlayOpacity }}
         >
-          {/* Skip Button */}
-          <button
-            onClick={onComplete}
-            className="absolute top-6 right-6 pointer-events-auto px-3.5 py-1.5 rounded-lg text-xs font-mono font-bold text-zinc-500 hover:text-white bg-black/60 hover:bg-zinc-900 border border-zinc-800 transition-all z-30"
-          >
-            Skip ✕
-          </button>
-
-          {/* Ambient Fire Glow Heat Aura */}
-          <div
-            className={`absolute w-[360px] h-[360px] sm:w-[540px] sm:h-[540px] rounded-full pointer-events-none blur-3xl transition-all duration-700 ${
-              stage === 'streak'
-                ? 'opacity-40 scale-75'
-                : stage === 'glow'
-                ? 'opacity-85 scale-125'
-                : 'opacity-100 scale-140'
-            }`}
-            style={{
-              background:
-                'radial-gradient(circle, rgba(239,68,68,0.45) 0%, rgba(249,115,22,0.28) 38%, rgba(0,0,0,0) 70%)',
-            }}
-          />
-
-          {/* Stage 3: Fiery Shockwave Explosion Ring */}
-          {stage === 'explode' && (
-            <div className="absolute w-44 h-44 rounded-full border-4 pointer-events-none animate-shockwave" />
-          )}
-
-          {/* Stage 3: Dispersed Explosion Sparks */}
-          {stage === 'explode' && (
-            <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
-              {[
-                { x: '120px', y: '-90px', delay: '0s', size: 'w-2.5 h-2.5', bg: 'bg-yellow-300' },
-                { x: '-130px', y: '-110px', delay: '0.04s', size: 'w-2 h-2', bg: 'bg-orange-400' },
-                { x: '160px', y: '50px', delay: '0.08s', size: 'w-3 h-3', bg: 'bg-red-500' },
-                { x: '-150px', y: '60px', delay: '0.02s', size: 'w-2 h-2', bg: 'bg-amber-300' },
-                { x: '90px', y: '130px', delay: '0.06s', size: 'w-2 h-2', bg: 'bg-orange-500' },
-                { x: '-80px', y: '120px', delay: '0.1s', size: 'w-2.5 h-2.5', bg: 'bg-yellow-400' },
-                { x: '0px', y: '-160px', delay: '0.05s', size: 'w-2 h-2', bg: 'bg-red-400' },
-                { x: '0px', y: '150px', delay: '0.07s', size: 'w-2 h-2', bg: 'bg-amber-400' },
-              ].map((sp, idx) => (
-                <span
-                  key={idx}
-                  className={`absolute rounded-full ${sp.size} ${sp.bg} blur-[0.5px] animate-ember-burst`}
-                  style={
-                    {
-                      '--burst-x': sp.x,
-                      '--burst-y': sp.y,
-                      animationDelay: sp.delay,
-                    } as React.CSSProperties
-                  }
-                />
-              ))}
-            </div>
-          )}
-
-          {/* Center Brand Group: Unified Free-Standing Fire + Words Popping Out */}
+          {/* Center Brand Group: Fire + Words "STAKE FIT" Popping Out To The Right */}
           <div className="relative z-10 flex items-center justify-center px-4">
-            {/* The Unified Athletic Fire (Exact same flame throughout all 3 stages) */}
-            <div
-              className={`relative flex items-center justify-center transition-all duration-700 ${
-                stage === 'streak'
-                  ? 'animate-flame-streak'
-                  : stage === 'glow'
-                  ? 'animate-flame-glow-pulse'
-                  : 'animate-flame-flicker'
-              }`}
-            >
-              {/* Athletic Multi-Tier Flame SVG (Exact 3-Color Fire from Image 2) */}
-              <svg
-                viewBox="0 0 120 140"
-                className={`transition-all duration-500 ${
-                  stage === 'streak'
-                    ? 'w-20 h-28 sm:w-28 sm:h-36'
-                    : stage === 'glow'
-                    ? 'w-26 h-36 sm:w-36 sm:h-48 scale-110 drop-shadow-[0_0_40px_rgba(239,68,68,1)] drop-shadow-[0_0_80px_rgba(249,115,22,0.85)]'
-                    : 'w-24 h-32 sm:w-32 sm:h-44 lg:w-36 lg:h-48 drop-shadow-[0_0_35px_rgba(239,68,68,0.95)] drop-shadow-[0_0_65px_rgba(249,115,22,0.7)]'
+            {/* The Unified Fire Unit (Streak -> Burning Flame -> Fiery Shockwave) */}
+            <div className="relative shrink-0 flex items-center justify-center w-24 h-24 sm:w-32 sm:h-32 lg:w-40 lg:h-40">
+              {/* Stage 1: Flame Streak Ignition Lottie */}
+              <div
+                ref={streakContainerRef}
+                className={`absolute inset-0 flex items-center justify-center transition-opacity duration-300 pointer-events-none ${
+                  stage === 'streak' ? 'opacity-100' : 'opacity-0'
                 }`}
-              >
-                <defs>
-                  {/* Outer Red Flame Gradient */}
-                  <linearGradient id="fireOuterRed" x1="0%" y1="100%" x2="0%" y2="0%">
-                    <stop offset="0%" stopColor="#b91c1c" />
-                    <stop offset="40%" stopColor="#dc2626" />
-                    <stop offset="85%" stopColor="#ef4444" />
-                    <stop offset="100%" stopColor="#f87171" />
-                  </linearGradient>
+              />
 
-                  {/* Middle Orange Flame Gradient */}
-                  <linearGradient id="fireMidOrange" x1="0%" y1="100%" x2="0%" y2="0%">
-                    <stop offset="0%" stopColor="#c2410c" />
-                    <stop offset="45%" stopColor="#ea580c" />
-                    <stop offset="80%" stopColor="#f97316" />
-                    <stop offset="100%" stopColor="#fb923c" />
-                  </linearGradient>
+              {/* Stage 2 & 3: Blazing Looping Flame Lottie */}
+              <div
+                ref={fireContainerRef}
+                className={`absolute inset-0 flex items-center justify-center transition-opacity duration-500 pointer-events-none ${
+                  stage !== 'streak' ? 'opacity-100' : 'opacity-0'
+                }`}
+              />
 
-                  {/* Inner Golden-Yellow Core Gradient */}
-                  <linearGradient id="fireInnerYellow" x1="0%" y1="100%" x2="0%" y2="0%">
-                    <stop offset="0%" stopColor="#eab308" />
-                    <stop offset="50%" stopColor="#facc15" />
-                    <stop offset="100%" stopColor="#fef08a" />
-                  </linearGradient>
-                </defs>
-
-                {/* Outer Red Flame (Curved athletic tips matching Image 2) */}
-                <path
-                  d="M60 5 C68 28 82 38 88 52 C95 68 84 82 92 98 C96 106 90 118 78 126 C66 134 46 134 34 126 C22 118 16 104 22 92 C26 84 20 74 24 62 C28 50 40 40 42 26 C44 14 54 8 60 5 Z"
-                  fill="url(#fireOuterRed)"
+              {/* Stage 3: Shockwave Fire Explosion Burst Lottie */}
+              {stage === 'explode' && (
+                <div
+                  ref={explodeContainerRef}
+                  className="absolute w-[360px] h-[430px] sm:w-[500px] sm:h-[600px] pointer-events-none z-20 flex items-center justify-center -translate-y-3"
                 />
-                {/* Left and Right Outer Flame Hooks */}
-                <path
-                  d="M24 72 C14 80 12 94 18 106 C24 118 40 130 60 130 C80 130 96 118 102 106 C108 94 106 80 96 72 C92 84 86 96 76 104 C66 112 46 112 38 102 C30 92 28 82 24 72 Z"
-                  fill="#dc2626"
-                  opacity="0.85"
-                />
-
-                {/* Middle Orange Flame (Nested tongues matching Image 2) */}
-                <path
-                  d="M60 28 C66 45 76 54 78 68 C80 82 72 90 76 102 C78 108 72 118 64 122 C56 126 44 126 36 120 C28 114 26 102 30 92 C34 82 32 72 36 60 C40 48 52 38 60 28 Z"
-                  fill="url(#fireMidOrange)"
-                />
-
-                {/* Inner Golden-Yellow Core Flame */}
-                <path
-                  d="M58 56 C64 70 70 78 68 90 C66 102 58 112 50 114 C42 112 36 102 38 90 C40 80 46 70 54 60 C56 58 57 57 58 56 Z"
-                  fill="url(#fireInnerYellow)"
-                />
-                {/* Bright Core Heat Center */}
-                <ellipse cx="52" cy="100" rx="9" ry="14" fill="#ffffff" opacity="0.9" />
-              </svg>
-
-              {/* Rising Sparks & Embers during burning */}
-              <div className="absolute inset-0 pointer-events-none">
-                <span
-                  className="absolute w-1.5 h-1.5 rounded-full bg-amber-300 blur-[0.5px] animate-spark-rise"
-                  style={{ top: '15%', left: '35%', animationDelay: '0.1s', '--spark-drift': '-16px' } as React.CSSProperties}
-                />
-                <span
-                  className="absolute w-2 h-2 rounded-full bg-orange-400 blur-[0.5px] animate-spark-rise"
-                  style={{ top: '10%', left: '55%', animationDelay: '0.35s', '--spark-drift': '20px' } as React.CSSProperties}
-                />
-                <span
-                  className="absolute w-1.5 h-1.5 rounded-full bg-red-400 blur-[0.5px] animate-spark-rise"
-                  style={{ top: '25%', left: '46%', animationDelay: '0.65s', '--spark-drift': '-10px' } as React.CSSProperties}
-                />
-                <span
-                  className="absolute w-1 h-1 rounded-full bg-amber-200 blur-[0.5px] animate-spark-rise"
-                  style={{ top: '35%', left: '62%', animationDelay: '0.95s', '--spark-drift': '14px' } as React.CSSProperties}
-                />
-              </div>
+              )}
             </div>
 
-            {/* The Words "STAKE FIT" Popping Out From The Explosion (NO "PRO") */}
+            {/* The Words "STAKE FIT" Popping Out From The Fire To The Right (NO "PRO") */}
             <div
-              className={`flex items-center overflow-hidden transition-all duration-800 ease-out ${
+              className={`flex items-center overflow-hidden transition-all duration-700 ease-out ${
                 stage === 'explode'
-                  ? 'max-w-[850px] opacity-100 translate-x-0 ml-4 sm:ml-7'
-                  : 'max-w-0 opacity-0 -translate-x-14 ml-0'
+                  ? 'max-w-[850px] opacity-100 translate-x-0 ml-3 sm:ml-6'
+                  : 'max-w-0 opacity-0 -translate-x-12 ml-0'
               }`}
               style={{
                 transitionProperty: 'max-width, opacity, transform, margin-left',
@@ -306,13 +234,13 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
             >
               <div className="flex items-center whitespace-nowrap text-5xl sm:text-7xl lg:text-8xl font-black uppercase tracking-tight font-display select-none">
                 {/* STAKE: Solid Bold White */}
-                <span className="text-white drop-shadow-[0_0_30px_rgba(255,255,255,0.4)]">
+                <span className="text-white">
                   STAKE
                 </span>
 
-                {/* FIT: Shiny Vibrant Red with Glare Sheen */}
+                {/* FIT: Shiny Vibrant Red with Gloss Sheen Beam */}
                 <span className="relative inline-block ml-2 sm:ml-3">
-                  <span className="animate-money-glare inline-block text-red-500 font-black drop-shadow-[0_0_35px_rgba(239,68,68,0.95)]">
+                  <span className="text-red-500 font-black">
                     FIT
                   </span>
 
