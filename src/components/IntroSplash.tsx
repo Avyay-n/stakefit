@@ -201,7 +201,7 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
         className={`absolute top-1/2 right-6 sm:right-10 lg:right-14 z-30 transition-all duration-300 pointer-events-auto flex flex-col items-center ${
           isZooming ? 'opacity-0 translate-y-4 pointer-events-none' : 'opacity-100 translate-y-0'
         }`}
-        style={{ transform: 'translateY(-41px)' }}
+        style={{ transform: 'translateY(-54px)' }}
       >
         <button
           onClick={(e) => {
@@ -210,8 +210,8 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
           }}
           className="group flex flex-col items-center cursor-pointer focus:outline-none"
         >
-          {/* IN BLACK HALF: Pill sitting closely above the 50% seam line */}
-          <div className="mb-2 flex items-center gap-3 px-5 py-2 sm:px-6 sm:py-2.5 rounded-full bg-white border-2 border-white text-black text-xs sm:text-sm font-mono font-black uppercase tracking-widest shadow-[0_4px_25px_rgba(255,255,255,0.25)] group-hover:scale-105 group-hover:bg-zinc-100 transition-all duration-300 whitespace-nowrap">
+          {/* IN BLACK HALF: Pill lifted cleanly above the 50% seam line with breathing room */}
+          <div className="mb-5 flex items-center gap-3 px-5 py-2 sm:px-6 sm:py-2.5 rounded-full bg-white border-2 border-white text-black text-xs sm:text-sm font-mono font-black uppercase tracking-widest shadow-[0_4px_25px_rgba(255,255,255,0.25)] group-hover:scale-105 group-hover:bg-zinc-100 transition-all duration-300 whitespace-nowrap">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-red-600" />
