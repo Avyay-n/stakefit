@@ -117,21 +117,17 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
       className="fixed inset-0 z-[100] w-full h-full overflow-hidden select-none cursor-pointer bg-black"
     >
       <style>{`
-        @keyframes leftToRightReveal {
+        @keyframes slowLeftToRightReveal {
           0% {
             clip-path: inset(0 100% 0 0);
-            opacity: 0;
-            transform: translateX(-40px);
-            filter: blur(8px);
+            opacity: 0.2;
           }
-          30% {
-            opacity: 0.9;
+          12% {
+            opacity: 1;
           }
           100% {
             clip-path: inset(0 0% 0 0);
             opacity: 1;
-            transform: translateX(0);
-            filter: blur(0px);
           }
         }
 
@@ -165,7 +161,7 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
           <div
             className="relative flex items-center justify-center px-4 w-full"
             style={{
-              animation: 'leftToRightReveal 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both',
+              animation: 'slowLeftToRightReveal 1.2s cubic-bezier(0.3, 0.0, 0.2, 1) 0.05s both',
             }}
           >
             <h1
@@ -200,7 +196,7 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
           <div
             className="relative flex items-center justify-center px-4 w-full"
             style={{
-              animation: 'leftToRightReveal 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both',
+              animation: 'slowLeftToRightReveal 1.2s cubic-bezier(0.3, 0.0, 0.2, 1) 0.12s both',
             }}
           >
             <h1
