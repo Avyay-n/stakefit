@@ -223,7 +223,7 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
 
       {/* Floating Scroll Prompt (Positioned across the 50% Horizon Meeting Line on the right side) */}
       <div
-        className={`absolute top-1/2 -translate-y-1/2 right-6 sm:right-10 lg:right-14 z-30 transition-all duration-300 pointer-events-auto ${
+        className={`absolute top-1/2 right-6 sm:right-10 lg:right-14 z-30 transition-all duration-300 pointer-events-auto flex flex-col items-center ${
           isZooming ? 'opacity-0 translate-y-4 pointer-events-none' : 'opacity-100 translate-y-0'
         }`}
       >
@@ -232,10 +232,10 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
             e.stopPropagation();
             triggerZoom();
           }}
-          className="group flex flex-col items-center cursor-pointer focus:outline-none"
+          className="group flex flex-col items-center cursor-pointer focus:outline-none relative"
         >
-          {/* IN BLACK HALF (Above the meeting line): Inverted White Pill with Black Text & Red Accents */}
-          <div className="mb-2.5 flex items-center gap-3 px-5 py-2 sm:px-6 sm:py-2.5 rounded-full bg-white border-2 border-white text-black text-xs sm:text-sm font-mono font-black uppercase tracking-widest shadow-[0_4px_25px_rgba(255,255,255,0.25)] group-hover:scale-105 group-hover:bg-zinc-100 transition-all duration-300">
+          {/* IN BLACK HALF (Comfortably above the 50% meeting line): Inverted White Pill */}
+          <div className="-translate-y-[calc(100%+14px)] flex items-center gap-3 px-5 py-2 sm:px-6 sm:py-2.5 rounded-full bg-white border-2 border-white text-black text-xs sm:text-sm font-mono font-black uppercase tracking-widest shadow-[0_4px_25px_rgba(255,255,255,0.25)] group-hover:scale-105 group-hover:bg-zinc-100 transition-all duration-300">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-red-600" />
@@ -244,8 +244,8 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
             <ChevronDown className="w-4 h-4 text-red-600 group-hover:translate-y-0.5 transition-transform duration-200" />
           </div>
 
-          {/* IN RED HALF (Below the meeting line): Minimalist Animated Scroll Mouse Indicator */}
-          <div className="mt-2.5 w-5 h-8 rounded-full border-2 border-black flex items-start justify-center p-1 shadow-sm">
+          {/* IN RED HALF (Comfortably below the 50% meeting line): Minimalist Animated Scroll Mouse Indicator */}
+          <div className="translate-y-[14px] w-5 h-8 rounded-full border-2 border-black flex items-start justify-center p-1 shadow-sm">
             <div className="w-1 h-2 rounded-full bg-black animate-bounce" />
           </div>
         </button>
