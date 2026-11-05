@@ -162,13 +162,17 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
   const overlayOpacity = Math.max(0, 1 - dissolveProgress * 2.8);
 
   return (
-    <div className="fixed inset-0 z-[100] w-full h-full bg-black overflow-hidden select-none">
-      {/* Burning Fire Scroll Dissolve Reveal Component (In Place, Pure Black Canvas) */}
+    <div
+      className="fixed inset-0 z-[100] w-full h-full overflow-hidden select-none"
+      style={{ background: 'linear-gradient(to bottom, #dc2626 50%, #ffffff 50%)' }}
+    >
+      {/* Burning Fire Scroll Dissolve Reveal Component (Half Red, Half White Split Canvas) */}
       <ScrollDissolveReveal
         imageFront="/intro-front.png"
         imageBack="/home-preview.jpg"
         progress={dissolveProgress}
-        className="absolute inset-0 w-full h-full bg-black"
+        className="absolute inset-0 w-full h-full"
+        style={{ background: 'linear-gradient(to bottom, #dc2626 50%, #ffffff 50%)' }}
       >
         {/* Full-Screen Overlay on top of the Shader Canvas */}
         <div
@@ -215,7 +219,7 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
               )}
             </div>
 
-            {/* 2. Flat Sharp Boxed STAKE FIT Brandmark (Sticking, No Curves, No Glow, Cartoon Fire Font) */}
+            {/* 2. Flat Sharp Boxed STAKE FIT Brandmark (Sticking, Sharp 90-deg Corners, Bangers Fire Font) */}
             <div
               className={`flex flex-col items-start gap-0 select-none transition-all duration-700 ${
                 stage === 'explode'
@@ -227,15 +231,15 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
                 fontFamily: "'Bangers', 'Barlow Condensed', cursive, sans-serif",
               }}
             >
-              {/* STAKE: Solid Red Filled Box (Sharp 90-degree corners, no glow, sized to word) */}
-              <div className="inline-flex items-center justify-center px-5 py-1.5 sm:px-7 sm:py-2.5 md:px-9 md:py-3 rounded-none bg-red-600">
+              {/* STAKE: Solid Red Filled Box (Sharp 90-degree corners, no glow, sized to word, crisp black border & depth) */}
+              <div className="inline-flex items-center justify-center px-5 py-1.5 sm:px-7 sm:py-2.5 md:px-9 md:py-3 rounded-none bg-red-600 border-2 sm:border-[3px] border-black shadow-[0_10px_25px_rgba(0,0,0,0.35)]">
                 <span className="text-white text-6xl sm:text-7xl md:text-8xl lg:text-[8rem] xl:text-[9.5rem] uppercase tracking-wide leading-none">
                   STAKE
                 </span>
               </div>
 
-              {/* FIT: Solid White Filled Box (Sharp 90-degree corners, sticking directly to STAKE, no glow, sized to word) */}
-              <div className="inline-flex items-center justify-center px-5 py-1.5 sm:px-7 sm:py-2.5 md:px-9 md:py-3 rounded-none bg-white">
+              {/* FIT: Solid White Filled Box (Sharp 90-degree corners, sticking directly to STAKE, no glow, sized to word, crisp black border) */}
+              <div className="inline-flex items-center justify-center px-5 py-1.5 sm:px-7 sm:py-2.5 md:px-9 md:py-3 rounded-none bg-white border-2 sm:border-[3px] border-black border-t-0 -mt-[2px] sm:-mt-[3px] shadow-[0_10px_25px_rgba(0,0,0,0.2)]">
                 <span className="text-red-600 text-6xl sm:text-7xl md:text-8xl lg:text-[8rem] xl:text-[9.5rem] uppercase tracking-wide leading-none">
                   FIT
                 </span>
@@ -243,9 +247,9 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
             </div>
           </div>
 
-          {/* 3. Sleek Interactive Scroll Prompt (UI Pro High-Tech Pill) */}
+          {/* 3. Sleek Interactive Scroll Prompt (UI Pro High-Tech Pill, Anchored at Bottom) */}
           <div
-            className={`mt-10 sm:mt-14 transition-all duration-700 pointer-events-auto ${
+            className={`absolute bottom-6 sm:bottom-10 left-1/2 -translate-x-1/2 z-30 transition-all duration-700 pointer-events-auto ${
               stage === 'explode'
                 ? 'opacity-100 translate-y-0'
                 : 'opacity-0 translate-y-6 pointer-events-none'
@@ -256,10 +260,10 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
           >
             <button
               onClick={handleScrollToEnter}
-              className="group flex flex-col items-center gap-3 cursor-pointer focus:outline-none"
+              className="group flex flex-col items-center gap-2 sm:gap-3 cursor-pointer focus:outline-none"
             >
               {/* Ultra-Sleek Pill Button with Glowing Red Neon Border */}
-              <div className="flex items-center gap-3 px-7 py-3 sm:px-9 sm:py-3.5 rounded-full bg-black/90 border-2 border-red-500 text-red-400 text-xs sm:text-sm font-mono font-black uppercase tracking-widest shadow-[0_0_25px_rgba(255,0,0,0.85),0_0_55px_rgba(239,68,68,0.45),inset_0_0_12px_rgba(255,0,0,0.25)] group-hover:border-red-400 group-hover:bg-red-950/70 group-hover:text-white group-hover:shadow-[0_0_35px_rgba(255,0,0,1),0_0_70px_rgba(239,68,68,0.7)] group-hover:scale-105 transition-all duration-300">
+              <div className="flex items-center gap-3 px-7 py-3 sm:px-9 sm:py-3.5 rounded-full bg-black border-2 border-red-600 text-red-400 text-xs sm:text-sm font-mono font-black uppercase tracking-widest shadow-[0_0_20px_rgba(239,68,68,0.6),0_10px_25px_rgba(0,0,0,0.35)] group-hover:border-red-400 group-hover:bg-red-950/90 group-hover:text-white group-hover:shadow-[0_0_30px_rgba(239,68,68,0.85)] group-hover:scale-105 transition-all duration-300">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
@@ -269,8 +273,8 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
               </div>
 
               {/* Minimalist Animated Scroll Mouse Indicator */}
-              <div className="w-5 h-8 rounded-full border-2 border-zinc-700 group-hover:border-red-500 flex items-start justify-center p-1 transition-colors duration-300">
-                <div className="w-1 h-2 rounded-full bg-red-500 animate-bounce" />
+              <div className="w-5 h-8 rounded-full border-2 border-zinc-900 group-hover:border-red-600 flex items-start justify-center p-1 transition-colors duration-300">
+                <div className="w-1 h-2 rounded-full bg-red-600 animate-bounce" />
               </div>
             </button>
           </div>

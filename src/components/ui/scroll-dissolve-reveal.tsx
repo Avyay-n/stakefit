@@ -361,6 +361,7 @@ export interface ScrollDissolveRevealProps {
   imageBack: string;
   progress: number;
   className?: string;
+  style?: React.CSSProperties;
   children?: React.ReactNode;
 }
 
@@ -369,10 +370,11 @@ export function ScrollDissolveReveal({
   imageBack,
   progress,
   className,
+  style,
   children,
 }: ScrollDissolveRevealProps) {
   return (
-    <div className={cn("relative w-full h-full overflow-hidden select-none", className)}>
+    <div className={cn("relative w-full h-full overflow-hidden select-none", className)} style={style}>
       <Canvas dpr={1} frameloop="always" gl={{ antialias: false, alpha: false }}>
         <OrthographicCamera
           makeDefault
