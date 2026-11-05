@@ -120,9 +120,9 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
         @keyframes slowLeftToRightReveal {
           0% {
             clip-path: inset(0 100% 0 0);
-            opacity: 0.2;
+            opacity: 0.1;
           }
-          12% {
+          8% {
             opacity: 1;
           }
           100% {
@@ -149,7 +149,7 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
           <div
             className="relative flex items-center justify-center px-4 w-full"
             style={{
-              animation: 'slowLeftToRightReveal 1.2s cubic-bezier(0.3, 0.0, 0.2, 1) 0.05s both',
+              animation: 'slowLeftToRightReveal 2s cubic-bezier(0.25, 0.0, 0.15, 1) 0.05s both',
             }}
           >
             <h1
@@ -188,7 +188,7 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
           <div
             className="relative flex items-center justify-center px-4 w-full"
             style={{
-              animation: 'slowLeftToRightReveal 1.2s cubic-bezier(0.3, 0.0, 0.2, 1) 0.12s both',
+              animation: 'slowLeftToRightReveal 2s cubic-bezier(0.25, 0.0, 0.15, 1) 0.1s both',
             }}
           >
             <h1
