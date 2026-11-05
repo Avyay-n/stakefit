@@ -215,9 +215,9 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
               )}
             </div>
 
-            {/* 2. Professional STAKE FIT Typographic Lockup (Clean Athletic Balance) */}
+            {/* 2. Professional Boxed STAKE FIT Brandmark */}
             <div
-              className={`flex flex-col items-center md:items-start select-none font-display transition-all duration-700 ${
+              className={`flex flex-col items-center gap-3 sm:gap-4 lg:gap-5 select-none font-display transition-all duration-700 ${
                 stage === 'explode'
                   ? 'opacity-100 translate-x-0 scale-100'
                   : 'opacity-0 -translate-x-12 scale-95 pointer-events-none'
@@ -226,18 +226,19 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
                 transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
               }}
             >
-              {/* STAKE: Solid Bold White */}
-              <span className="text-white text-6xl sm:text-7xl md:text-8xl lg:text-[8.5rem] xl:text-[10rem] font-black uppercase tracking-tight leading-[0.85] drop-shadow-[0_4px_24px_rgba(0,0,0,0.9)]">
-                STAKE
-              </span>
+              {/* STAKE: Inside Red Glowing Box */}
+              <div className="w-full flex items-center justify-center px-6 py-2 sm:px-8 sm:py-3 md:px-10 md:py-3.5 rounded-2xl border-2 sm:border-4 border-red-500 bg-red-950/25 shadow-[0_0_30px_rgba(239,68,68,0.6),inset_0_0_20px_rgba(239,68,68,0.25)]">
+                <span className="text-white text-5xl sm:text-7xl md:text-8xl lg:text-[7.5rem] xl:text-[9rem] font-black uppercase tracking-tight leading-none drop-shadow-[0_4px_24px_rgba(0,0,0,0.9)]">
+                  STAKE
+                </span>
+              </div>
 
-              {/* FIT: Directly Under STAKE in Solid Bold Vibrant Red */}
-              <span className="text-red-500 text-6xl sm:text-7xl md:text-8xl lg:text-[8.5rem] xl:text-[10rem] font-black uppercase tracking-tight leading-[0.85] drop-shadow-[0_0_35px_rgba(239,68,68,0.55)]">
-                FIT
-              </span>
-
-              {/* Athletic Speed Accent Bar: Unifies the lockup with high-performance energy */}
-              <div className="mt-3 sm:mt-4 w-full h-1.5 sm:h-2 bg-gradient-to-r from-red-600 via-orange-500 to-transparent rounded-full opacity-90 shadow-[0_0_14px_rgba(239,68,68,0.8)]" />
+              {/* FIT: Inside White Glowing Box */}
+              <div className="w-full flex items-center justify-center px-6 py-2 sm:px-8 sm:py-3 md:px-10 md:py-3.5 rounded-2xl border-2 sm:border-4 border-white bg-white/5 shadow-[0_0_30px_rgba(255,255,255,0.45),inset_0_0_20px_rgba(255,255,255,0.15)]">
+                <span className="text-red-500 text-5xl sm:text-7xl md:text-8xl lg:text-[7.5rem] xl:text-[9rem] font-black uppercase tracking-tight leading-none drop-shadow-[0_0_35px_rgba(239,68,68,0.6)]">
+                  FIT
+                </span>
+              </div>
             </div>
           </div>
 
