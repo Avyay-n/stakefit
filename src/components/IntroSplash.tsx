@@ -165,11 +165,11 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
             }}
           >
             <h1
-              className="font-black tracking-tight uppercase leading-none select-none text-center whitespace-nowrap"
+              className="font-black tracking-normal uppercase leading-none select-none text-center whitespace-nowrap"
               style={{
-                fontFamily: "'Barlow Condensed', sans-serif",
-                fontSize: 'clamp(4.5rem, min(22vw, 36vh), 25rem)',
-                letterSpacing: '-0.02em',
+                fontFamily: "'Alphakind', 'Barlow Condensed', sans-serif",
+                fontSize: 'clamp(4rem, min(20vw, 34vh), 23rem)',
+                letterSpacing: '0.02em',
                 background:
                   'linear-gradient(115deg, #dc2626 0%, #dc2626 38%, rgba(255, 255, 255, 0.95) 48%, #ffffff 50%, rgba(255, 255, 255, 0.95) 52%, #dc2626 62%, #dc2626 100%)',
                 backgroundSize: '250% 100%',
@@ -200,11 +200,11 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
             }}
           >
             <h1
-              className="font-black tracking-tight uppercase leading-none select-none text-center whitespace-nowrap"
+              className="font-black tracking-normal uppercase leading-none select-none text-center whitespace-nowrap"
               style={{
-                fontFamily: "'Barlow Condensed', sans-serif",
-                fontSize: 'clamp(4.5rem, min(22vw, 36vh), 25rem)',
-                letterSpacing: '-0.02em',
+                fontFamily: "'Alphakind', 'Barlow Condensed', sans-serif",
+                fontSize: 'clamp(4rem, min(20vw, 34vh), 23rem)',
+                letterSpacing: '0.02em',
                 background:
                   'linear-gradient(115deg, #000000 0%, #000000 38%, rgba(255, 255, 255, 0.95) 48%, #ffffff 50%, rgba(255, 255, 255, 0.95) 52%, #000000 62%, #000000 100%)',
                 backgroundSize: '250% 100%',

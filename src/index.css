@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: 'Alphakind';
+  src: url('/fonts/Alphakind.otf') format('opentype'),
+       url('/fonts/Alphakind.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 @layer base {
   :root {
     --bg-main: #09090b;
