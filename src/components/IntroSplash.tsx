@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import lottie, { type AnimationItem } from 'lottie-web';
-import { ChevronDown, Dumbbell } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { playPop, playGong } from '../utils/audio';
 import { ScrollDissolveReveal } from './ui/scroll-dissolve-reveal';
+import { CartoonDumbbell } from './illustrations/CartoonAssets';
 import fireData from '../assets/animations/fire.json';
 import explodeData from '../assets/animations/explode.json';
 
@@ -163,6 +164,12 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
 
   return (
     <div className="fixed inset-0 z-[100] w-full h-full bg-black overflow-hidden select-none">
+      {/* Full-Screen Glowing Bright Red Border Frame (For Intro Animation Only) */}
+      <div
+        className="fixed inset-2.5 sm:inset-4 lg:inset-5 rounded-2xl sm:rounded-3xl border-2 sm:border-[3px] border-red-500 pointer-events-none z-50 shadow-[0_0_30px_rgba(255,0,0,0.9),0_0_60px_rgba(239,68,68,0.5),inset_0_0_20px_rgba(255,0,0,0.25)] transition-opacity duration-300"
+        style={{ opacity: overlayOpacity }}
+      />
+
       {/* Burning Fire Scroll Dissolve Reveal Component (In Place, Pure Black Canvas) */}
       <ScrollDissolveReveal
         imageFront="/intro-front.png"
@@ -177,22 +184,15 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
           }`}
           style={{ opacity: overlayOpacity }}
         >
-          {/* Center Brand Group: Much Bigger Fire + STAKE FIT Words Covering The Screen */}
+          {/* Center Brand Group: Fire + Centered STAKE FIT + Cartoon Dumbbell */}
           <div className="relative z-10 flex items-center justify-center px-4 max-w-[95vw]">
-            {/* The Blazing Fire Unit (With Forged Dumbbell Inside) */}
+            {/* The Blazing Fire Unit (Pure Roaring Flame, Dumbbell Removed) */}
             <div className="relative shrink-0 flex items-center justify-center w-36 h-36 sm:w-56 sm:h-56 md:w-72 md:h-72 lg:w-88 lg:h-88 xl:w-[420px] xl:h-[420px] transition-transform duration-700">
               {/* Blazing Looping Flame Lottie (Continuous from start, no streak) */}
               <div
                 ref={fireContainerRef}
                 className="absolute inset-0 flex items-center justify-center pointer-events-none animate-in fade-in zoom-in-75 duration-700"
               />
-
-              {/* Glowing Forged Athletic Dumbbell In The Heart Of The Fire */}
-              <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-                <Dumbbell
-                  className="w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 text-white fill-white/10 stroke-[2.4] -rotate-12 drop-shadow-[0_0_20px_rgba(255,255,255,0.95)] drop-shadow-[0_0_45px_rgba(239,68,68,1)]"
-                />
-              </div>
 
               {/* Shockwave Fire Explosion Burst Lottie (Scaled to match the bigger fire) */}
               {stage === 'explode' && (
@@ -203,25 +203,26 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
               )}
             </div>
 
-            {/* The Words "STAKE FIT" Popping Out (FIT Moved Under STAKE) */}
+            {/* The Words "STAKE FIT" + Cartoon Dumbbell Beside It */}
             <div
               className={`flex items-center overflow-hidden transition-all duration-700 ease-out ${
                 stage === 'explode'
-                  ? 'max-w-[1300px] opacity-100 translate-x-0 ml-4 sm:ml-8 lg:ml-12'
+                  ? 'max-w-[1400px] opacity-100 translate-x-0 ml-4 sm:ml-8 lg:ml-12'
                   : 'max-w-0 opacity-0 -translate-x-16 ml-0'
               }`}
               style={{
                 transitionProperty: 'max-width, opacity, transform, margin-left',
               }}
             >
-              <div className="flex flex-col items-start leading-[0.82] select-none font-display">
+              {/* Stacked & Centered STAKE FIT with Balanced Tracking */}
+              <div className="flex flex-col items-center select-none font-display leading-[0.82]">
                 {/* STAKE: Solid Bold White */}
                 <span className="text-white text-5xl sm:text-7xl md:text-8xl lg:text-[8.5rem] xl:text-[10.5rem] font-black uppercase tracking-tight">
                   STAKE
                 </span>
 
-                {/* FIT: Directly Under STAKE in Shiny Vibrant Red */}
-                <span className="relative inline-block text-red-500 text-5xl sm:text-7xl md:text-8xl lg:text-[8.5rem] xl:text-[10.5rem] font-black uppercase tracking-tight">
+                {/* FIT: Directly Under STAKE in Shiny Vibrant Red with Harmonized Letter-Spacing */}
+                <span className="relative inline-block text-red-500 text-5xl sm:text-7xl md:text-8xl lg:text-[8.5rem] xl:text-[10.5rem] font-black uppercase tracking-[0.24em] pl-[0.24em]">
                   <span>FIT</span>
 
                   {/* Glossy Sheen Glare Streak */}
@@ -229,6 +230,11 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
                     <span className="absolute -inset-y-6 -inset-x-12 w-24 bg-gradient-to-r from-transparent via-white/80 to-transparent rotate-[25deg] blur-[1px] animate-glare-beam" />
                   </span>
                 </span>
+              </div>
+
+              {/* Chunky Cartoon Dumbbell Beside The STAKE FIT Name */}
+              <div className="relative shrink-0 flex items-center justify-center ml-4 sm:ml-6 lg:ml-8">
+                <CartoonDumbbell className="w-24 h-24 sm:w-36 sm:h-36 md:w-48 md:h-48 lg:w-56 lg:h-56 -rotate-12 drop-shadow-[0_0_30px_rgba(239,68,68,0.7)]" />
               </div>
             </div>
           </div>
