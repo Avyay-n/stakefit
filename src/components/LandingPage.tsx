@@ -43,8 +43,18 @@ const NAV_SECTIONS = [
 ];
 
 export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth }) => {
-  // Cinematic full-screen fire intro on first site open
+  // Cinematic full-screen fire intro on first site open (replays every time user refreshes)
   const [showIntro, setShowIntro] = useState(true);
+
+  // Reset scroll and guarantee animation replays fresh on page refresh
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      if ('scrollRestoration' in window.history) {
+        window.history.scrollRestoration = 'manual';
+      }
+      window.scrollTo(0, 0);
+    }
+  }, []);
 
   // Calculator state
   const [calcMembers, setCalcMembers] = useState(5);
