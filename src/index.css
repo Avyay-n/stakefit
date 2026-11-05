@@ -45,6 +45,54 @@
   box-shadow: 0 0 25px -3px rgba(255, 255, 255, 0.25);
 }
 
+.glow-orange {
+  box-shadow: 0 0 22px -2px rgba(249, 115, 22, 0.5), 0 0 10px -1px rgba(234, 88, 12, 0.35);
+}
+
+.glow-orange-lg {
+  box-shadow: 0 0 38px -2px rgba(249, 115, 22, 0.6), 0 0 16px 0 rgba(234, 88, 12, 0.45);
+}
+
+/* Custom Athletic Orange Slider */
+input[type="range"].slider-orange {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 8px;
+  border-radius: 9999px;
+  background: #1c1917;
+  outline: none;
+  border: 1px solid #292524;
+}
+
+input[type="range"].slider-orange::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #f97316;
+  border: 3px solid #ffffff;
+  box-shadow: 0 0 14px rgba(249, 115, 22, 0.85);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+input[type="range"].slider-orange::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+  box-shadow: 0 0 20px rgba(249, 115, 22, 1);
+}
+
+input[type="range"].slider-orange::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #f97316;
+  border: 3px solid #ffffff;
+  box-shadow: 0 0 14px rgba(249, 115, 22, 0.85);
+  cursor: pointer;
+}
+
 /* Custom athletic scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
@@ -175,5 +223,41 @@
   transform-origin: center center;
   will-change: transform;
 }
+
+/* Sweat Word Athletic Animation */
+@keyframes sweat-pulse {
+  0%, 100% {
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.4), 0 0 20px rgba(239, 68, 68, 0.25);
+    transform: scale(1);
+  }
+  50% {
+    text-shadow: 0 0 18px rgba(255, 255, 255, 0.85), 0 0 35px rgba(239, 68, 68, 0.55);
+    transform: scale(1.02);
+  }
+}
+
+.animate-sweat-word {
+  display: inline-block;
+  animation: sweat-pulse 2.2s ease-in-out infinite;
+}
+
+/* 3D Flip Card Utilities */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
 
 
