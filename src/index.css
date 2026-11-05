@@ -259,5 +259,71 @@ input[type="range"].slider-orange::-moz-range-thumb {
   transform: rotateY(180deg);
 }
 
+/* ======================================================== */
+/* Continuous Infinite Auto-Moving Marquee Loop */
+/* ======================================================== */
+@keyframes marquee-scroll {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee-infinite {
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll 24s linear infinite;
+  will-change: transform;
+}
+
+.animate-marquee-infinite:hover {
+  animation-play-state: paused;
+}
+
+/* ======================================================== */
+/* Splash Fire Flame & Ember Rising Animations */
+/* ======================================================== */
+@keyframes flame-flicker {
+  0%, 100% {
+    transform: scale(1) translateY(0px) rotate(-1deg);
+    filter: drop-shadow(0 0 25px rgba(239, 68, 68, 0.8)) drop-shadow(0 0 50px rgba(249, 115, 22, 0.6));
+  }
+  25% {
+    transform: scale(1.05, 0.96) translateY(-2px) rotate(1deg);
+    filter: drop-shadow(0 0 35px rgba(239, 68, 68, 0.95)) drop-shadow(0 0 65px rgba(249, 115, 22, 0.75));
+  }
+  50% {
+    transform: scale(0.97, 1.04) translateY(-4px) rotate(-1.5deg);
+    filter: drop-shadow(0 0 28px rgba(239, 68, 68, 0.85)) drop-shadow(0 0 55px rgba(249, 115, 22, 0.65));
+  }
+  75% {
+    transform: scale(1.03, 0.98) translateY(-1px) rotate(1.5deg);
+    filter: drop-shadow(0 0 40px rgba(239, 68, 68, 1)) drop-shadow(0 0 75px rgba(249, 115, 22, 0.8));
+  }
+}
+
+.animate-flame-flicker {
+  animation: flame-flicker 2.5s ease-in-out infinite;
+  will-change: transform, filter;
+}
+
+@keyframes spark-rise {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-80px) translateX(var(--spark-drift, 10px)) scale(0.2);
+    opacity: 0;
+  }
+}
+
+.animate-spark-rise {
+  animation: spark-rise 1.6s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+}
+
+
 
 

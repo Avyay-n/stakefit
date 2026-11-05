@@ -26,6 +26,7 @@ import {
 import { playPop, playGong } from '../utils/audio';
 import { CartoonGoldCoin } from './illustrations/CartoonAssets';
 import { GrainGradient } from './ui/GrainGradient';
+import { IntroSplash } from './IntroSplash';
 
 interface LandingPageProps {
   onEnterHub: () => void;
@@ -42,6 +43,9 @@ const NAV_SECTIONS = [
 ];
 
 export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth }) => {
+  // Cinematic full-screen fire intro on first site open
+  const [showIntro, setShowIntro] = useState(true);
+
   // Calculator state
   const [calcMembers, setCalcMembers] = useState(5);
   const [calcDays, setCalcDays] = useState(4);
@@ -180,28 +184,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
         delay: 0.25,
         clearProps: 'all',
       });
-      gsap.from('.gsap-stat-card', {
-        y: 20,
-        opacity: 0,
-        duration: 0.6,
-        stagger: 0.08,
-        ease: 'power2.out',
-        delay: 0.35,
-        clearProps: 'all',
-      });
-
-      // Parallax drift on Hero stats cards as user scrolls away
-      gsap.to('.gsap-stat-card', {
-        y: -30,
-        ease: 'none',
-        stagger: 0.04,
-        scrollTrigger: {
-          trigger: '#hero',
-          start: 'top top',
-          end: 'bottom top',
-          scrub: 1,
-        },
-      });
 
       // 2. 4 Pillars / Features entrance & alternating parallax depth scrub
       gsap.from('.gsap-pillar-card', {
@@ -236,18 +218,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
           start: 'top bottom',
           end: 'bottom top',
           scrub: 1.2,
-        },
-      });
-
-      // Marquee Ribbon scrub with scroll
-      gsap.to('.gsap-marquee-strip', {
-        x: -220,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: '#features',
-          start: 'top bottom',
-          end: 'bottom top',
-          scrub: 0.9,
         },
       });
 
@@ -425,6 +395,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
       ref={pageRef}
       className="min-h-screen bg-[#070709] text-[#f4f4f5] font-sans selection:bg-red-600 selection:text-white relative overflow-x-hidden"
     >
+      {/* Full-Screen Fire & Logo Intro Animation */}
+      {showIntro && <IntroSplash onComplete={() => setShowIntro(false)} />}
+
       {/* Lenis Smooth Scroll Progress Indicator Bar */}
       <div className="fixed top-0 left-0 right-0 h-[3px] bg-red-600/20 z-50 pointer-events-none">
         <div className="gsap-scroll-progress h-full w-full bg-gradient-to-r from-red-600 via-orange-500 to-red-600 origin-left scale-x-0 shadow-[0_0_12px_rgba(239,68,68,0.9)]" />
@@ -605,7 +578,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
 
         <p className="gsap-hero-sub max-w-2xl mx-auto text-sm sm:text-base text-zinc-300 font-medium leading-relaxed">
           Form private fitness accountability pacts with friends. Stake financial penalties on every workout.
-          Slackers forfeit <strong className="text-white font-black">₹250 per missed day</strong> directly into the dividend pool paid to members who hit 100% — and get roasted on the{' '}
+          Slackers forfeit <strong className="text-white font-black">their chosen penalty stake per missed workout</strong> directly into the dividend pool paid to members who hit 100% — and get roasted on the{' '}
           <strong className="text-red-400 font-black">Pirate Bounty Shame Wall</strong>.
         </p>
 
@@ -633,47 +606,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
             <span>Sign In / Demo Login</span>
           </button>
         </div>
-
-        {/* Live Social Proof Stats Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 pt-8 max-w-4xl mx-auto text-center font-mono relative z-10">
-          <div className="gsap-stat-card p-4 rounded-2xl bg-[#121214] border border-[#27272a] shadow-xl relative overflow-hidden group">
-            <div className="text-2xl sm:text-3xl font-black text-white font-display">₹25,000+</div>
-            <div className="text-[10px] text-zinc-400 uppercase font-black mt-1 tracking-wider">
-              Stakes Locked
-            </div>
-            <span className="absolute -right-2 -bottom-2 text-3xl opacity-15">💰</span>
-          </div>
-
-          <div className="gsap-stat-card p-4 rounded-2xl bg-[#121214] border border-[#27272a] shadow-xl relative overflow-hidden group">
-            <div className="text-2xl sm:text-3xl font-black text-emerald-400 font-display">460+</div>
-            <div className="text-[10px] text-zinc-400 uppercase font-black mt-1 tracking-wider">
-              Verified Workouts
-            </div>
-            <span className="absolute -right-2 -bottom-2 text-3xl opacity-15">🏋️</span>
-          </div>
-
-          <div className="gsap-stat-card p-4 rounded-2xl bg-[#121214] border border-[#27272a] shadow-xl relative overflow-hidden group">
-            <div className="text-2xl sm:text-3xl font-black text-amber-400 font-display">28 Days</div>
-            <div className="text-[10px] text-zinc-400 uppercase font-black mt-1 tracking-wider">
-              Top Active Streak
-            </div>
-            <span className="absolute -right-2 -bottom-2 text-3xl opacity-15">🔥</span>
-          </div>
-
-          <div className="gsap-stat-card p-4 rounded-2xl bg-[#121214] border border-[#27272a] shadow-xl relative overflow-hidden group">
-            <div className="text-2xl sm:text-3xl font-black text-red-500 font-display">0 Cheats</div>
-            <div className="text-[10px] text-zinc-400 uppercase font-black mt-1 tracking-wider">
-              Peer-Enforced
-            </div>
-            <span className="absolute -right-2 -bottom-2 text-3xl opacity-15">🛡️</span>
-          </div>
-        </div>
       </section>
 
-      {/* Lenis Scroll-Driven Kinetic Marquee Strip */}
-      <div className="relative overflow-hidden py-3 bg-[#0a0a0d] border-y border-zinc-800/80 my-4 select-none">
-        <div className="gsap-marquee-strip flex items-center gap-8 whitespace-nowrap text-xs font-mono font-black tracking-widest uppercase text-zinc-400 will-change-transform">
-          {[...Array(2)].map((_, i) => (
+      {/* Continuous Infinite Kinetic Marquee Strip */}
+      <div className="relative overflow-hidden py-3.5 bg-[#0a0a0d] border-y border-zinc-800/80 my-4 select-none">
+        <div className="animate-marquee-infinite flex items-center gap-8 whitespace-nowrap text-xs font-mono font-black tracking-widest uppercase text-zinc-400">
+          {[...Array(4)].map((_, i) => (
             <React.Fragment key={i}>
               <span className="flex items-center gap-2">
                 <span className="text-red-500">⚡</span> REAL MONEY STAKES
@@ -727,7 +665,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
               1. Financial Stakes & Cash Dividends
             </h3>
             <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed font-medium">
-              Miss a day, pay ₹250. Hit 100% quota, split all slacker fines on Sunday.
+              Miss a day, forfeit your stake. Hit 100% quota, split all slacker fines on Sunday.
             </p>
           </div>
 
@@ -976,7 +914,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
               Lock In The Squad Pact
             </h3>
             <p className="text-xs text-zinc-300 leading-relaxed">
-              Create a private squad with 1 to 10 friends. Agree on weekly workout frequency (e.g. 4 days) and set the penalty stake (e.g. ₹250 per missed workout).
+              Create a private squad with 1 to 10 friends. Agree on weekly workout frequency (e.g. 4 days) and set your custom stakes for every missed workout.
             </p>
             <span className="absolute top-4 right-4 text-3xl opacity-20">⚔️</span>
           </div>
