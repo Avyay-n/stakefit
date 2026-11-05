@@ -145,17 +145,15 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
         {/* TOP HALF SCREEN: SOLID BLACK BACKGROUND WITH RED ATHLETIC GRID */}
         {/* ======================================================== */}
         <div className="relative w-full h-1/2 bg-black flex items-center justify-center overflow-hidden">
-          {/* Tactical athletic grid texture in RED (for black region) */}
+          {/* Tactical athletic grid texture in RED (pure lines, no dots) */}
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
               backgroundImage: `
                 linear-gradient(to right, rgba(220, 38, 38, 0.16) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(220, 38, 38, 0.16) 1px, transparent 1px),
-                radial-gradient(circle, rgba(220, 38, 38, 0.28) 1.5px, transparent 1.5px)
+                linear-gradient(to bottom, rgba(220, 38, 38, 0.16) 1px, transparent 1px)
               `,
-              backgroundSize: '36px 36px, 36px 36px, 36px 36px',
-              backgroundPosition: '0 0, 0 0, 0 0',
+              backgroundSize: '36px 36px',
             }}
           />
 
@@ -176,11 +174,9 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
                 backgroundColor: '#dc2626',
                 backgroundImage: `
                   linear-gradient(to right, rgba(0, 0, 0, 0.25) 1px, transparent 1px),
-                  linear-gradient(to bottom, rgba(0, 0, 0, 0.25) 1px, transparent 1px),
-                  radial-gradient(circle, rgba(0, 0, 0, 0.35) 1.5px, transparent 1.5px)
+                  linear-gradient(to bottom, rgba(0, 0, 0, 0.25) 1px, transparent 1px)
                 `,
-                backgroundSize: '36px 36px, 36px 36px, 36px 36px',
-                backgroundPosition: '0 0, 0 0, 0 0',
+                backgroundSize: '36px 36px',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
               }}
@@ -194,17 +190,15 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
         {/* BOTTOM HALF SCREEN: SOLID RED BACKGROUND WITH ATHLETIC GRID */}
         {/* ======================================================== */}
         <div className="relative w-full h-1/2 bg-red-600 flex items-center justify-center overflow-hidden">
-          {/* Tactical athletic grid texture (in black for red region) */}
+          {/* Tactical athletic grid texture (pure black lines, no dots) */}
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
               backgroundImage: `
                 linear-gradient(to right, rgba(0, 0, 0, 0.12) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(0, 0, 0, 0.12) 1px, transparent 1px),
-                radial-gradient(circle, rgba(0, 0, 0, 0.18) 1.5px, transparent 1.5px)
+                linear-gradient(to bottom, rgba(0, 0, 0, 0.12) 1px, transparent 1px)
               `,
-              backgroundSize: '36px 36px, 36px 36px, 36px 36px',
-              backgroundPosition: '0 0, 0 0, 0 0',
+              backgroundSize: '36px 36px',
             }}
           />
 
@@ -225,11 +219,9 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
                 backgroundColor: '#000000',
                 backgroundImage: `
                   linear-gradient(to right, rgba(220, 38, 38, 0.5) 1px, transparent 1px),
-                  linear-gradient(to bottom, rgba(220, 38, 38, 0.5) 1px, transparent 1px),
-                  radial-gradient(circle, rgba(220, 38, 38, 0.7) 1.5px, transparent 1.5px)
+                  linear-gradient(to bottom, rgba(220, 38, 38, 0.5) 1px, transparent 1px)
                 `,
-                backgroundSize: '36px 36px, 36px 36px, 36px 36px',
-                backgroundPosition: '0 0, 0 0, 0 0',
+                backgroundSize: '36px 36px',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
               }}
