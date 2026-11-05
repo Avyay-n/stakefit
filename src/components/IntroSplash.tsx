@@ -3,7 +3,6 @@ import lottie, { type AnimationItem } from 'lottie-web';
 import { ChevronDown } from 'lucide-react';
 import { playPop, playGong } from '../utils/audio';
 import { ScrollDissolveReveal } from './ui/scroll-dissolve-reveal';
-import { CartoonDumbbell } from './illustrations/CartoonAssets';
 import fireData from '../assets/animations/fire.json';
 import explodeData from '../assets/animations/explode.json';
 
@@ -164,12 +163,6 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
 
   return (
     <div className="fixed inset-0 z-[100] w-full h-full bg-black overflow-hidden select-none">
-      {/* Full-Screen Glowing Bright Red Border Frame (For Intro Animation Only) */}
-      <div
-        className="fixed inset-2.5 sm:inset-4 lg:inset-5 rounded-2xl sm:rounded-3xl border-2 sm:border-[3px] border-red-500 pointer-events-none z-50 shadow-[0_0_30px_rgba(255,0,0,0.9),0_0_60px_rgba(239,68,68,0.5),inset_0_0_20px_rgba(255,0,0,0.25)] transition-opacity duration-300"
-        style={{ opacity: overlayOpacity }}
-      />
-
       {/* Burning Fire Scroll Dissolve Reveal Component (In Place, Pure Black Canvas) */}
       <ScrollDissolveReveal
         imageFront="/intro-front.png"
@@ -230,11 +223,6 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
                     <span className="absolute -inset-y-6 -inset-x-12 w-24 bg-gradient-to-r from-transparent via-white/80 to-transparent rotate-[25deg] blur-[1px] animate-glare-beam" />
                   </span>
                 </span>
-              </div>
-
-              {/* Chunky Cartoon Dumbbell Beside The STAKE FIT Name */}
-              <div className="relative shrink-0 flex items-center justify-center ml-4 sm:ml-6 lg:ml-8">
-                <CartoonDumbbell className="w-24 h-24 sm:w-36 sm:h-36 md:w-48 md:h-48 lg:w-56 lg:h-56 -rotate-12 drop-shadow-[0_0_30px_rgba(239,68,68,0.7)]" />
               </div>
             </div>
           </div>
