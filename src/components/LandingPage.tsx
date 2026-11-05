@@ -121,6 +121,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
       touchMultiplier: 1.8,
     });
     lenisRef.current = lenis;
+    if (showIntro) {
+      lenis.stop();
+    }
 
     // 2. Synchronize Lenis with GSAP ScrollTrigger
     lenis.on('scroll', ScrollTrigger.update);
@@ -410,10 +413,18 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterHub, onOpenAuth
         <IntroSplash
           onComplete={() => {
             setShowIntro(false);
+            if (lenisRef.current) {
+              lenisRef.current.scrollTo(0, { immediate: true });
+              lenisRef.current.start();
+            }
             window.scrollTo({ top: 0, behavior: 'instant' });
             setTimeout(() => {
+              if (lenisRef.current) {
+                lenisRef.current.scrollTo(0, { immediate: true });
+              }
+              window.scrollTo({ top: 0, behavior: 'instant' });
               ScrollTrigger.refresh();
-            }, 100);
+            }, 80);
           }}
         />
       )}

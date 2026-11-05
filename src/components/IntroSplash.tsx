@@ -110,11 +110,16 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
     };
   }, [onComplete]);
 
-  // Smooth in-place dissolve loop driven by scroll / wheel / swipe
+  // Lock body scroll and smooth in-place dissolve loop driven by scroll / wheel / swipe
   useEffect(() => {
+    // Prevent background page from scrolling under the intro
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
     let touchStartY = 0;
 
     const handleWheel = (e: WheelEvent) => {
+      e.preventDefault();
       // Only allow dissolve once explosion has revealed the text & prompt
       if (!hasExploded) return;
       const delta = e.deltaY;
@@ -130,6 +135,7 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
     };
 
     const handleTouchMove = (e: TouchEvent) => {
+      e.preventDefault();
       if (!hasExploded) return;
       const delta = touchStartY - e.touches[0].clientY;
       touchStartY = e.touches[0].clientY;
@@ -138,9 +144,9 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
       }
     };
 
-    window.addEventListener('wheel', handleWheel, { passive: true });
+    window.addEventListener('wheel', handleWheel, { passive: false });
     window.addEventListener('touchstart', handleTouchStart, { passive: true });
-    window.addEventListener('touchmove', handleTouchMove, { passive: true });
+    window.addEventListener('touchmove', handleTouchMove, { passive: false });
 
     // Smooth physics RAF loop
     const updateProgress = () => {
@@ -159,6 +165,7 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
     animFrameRef.current = requestAnimationFrame(updateProgress);
 
     return () => {
+      document.body.style.overflow = originalOverflow;
       window.removeEventListener('wheel', handleWheel);
       window.removeEventListener('touchstart', handleTouchStart);
       window.removeEventListener('touchmove', handleTouchMove);
